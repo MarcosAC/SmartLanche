@@ -1,0 +1,25 @@
+name: "Reportar Bug"
+description: "Use este template para relatar erros."
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descrição do problema"
+      placeholder: "O que está acontecendo?"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Como reproduzir"
+      placeholder: "Passos para o bug acontecer..."
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Comportamento esperado"
+  - type: textarea
+    id: evidence
+    attributes:
+      label: "Evidências"
+      placeholder: "Logs, imagens, vídeos..."
