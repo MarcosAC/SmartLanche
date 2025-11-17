@@ -1,0 +1,24 @@
+name: "✨ Solicitação de Funcionalidade"
+description: "Peça melhorias e novas funções"
+title: "[FEATURE] Descreva a funcionalidade"
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: proposta
+    attributes:
+      label: "Descrição da proposta"
+      placeholder: "Explique o que você deseja adicionar..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: valor
+    attributes:
+      label: "Qual o benefício?"
+      placeholder: "Como isso ajuda a lanchonete?"
+
+  - type: textarea
+    id: detalhes
+    attributes:
+      label: "Detalhamento técnico (opcional)"
+
