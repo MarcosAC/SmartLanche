@@ -1,24 +1,35 @@
-name: "✨ Solicitação de Funcionalidade"
-description: "Peça melhorias e novas funções"
+name: "🚀 Feature Request"
+description: "Sugira uma nova funcionalidade para o SmartLanche"
 title: "[FEATURE] Descreva a funcionalidade"
 labels: ["enhancement"]
+assignees: []
+
 body:
-  - type: textarea
-    id: proposta
+  - type: markdown
     attributes:
-      label: "Descrição da proposta"
-      placeholder: "Explique o que você deseja adicionar..."
+      value: "## ✨ Nova funcionalidade"
+
+  - type: textarea
+    id: user_story
+    attributes:
+      label: "User Story"
+      placeholder: "Como <tipo de usuário>, eu desejo <funcionalidade>, para <benefício>."
     validations:
       required: true
 
   - type: textarea
-    id: valor
+    id: descricao
     attributes:
-      label: "Qual o benefício?"
-      placeholder: "Como isso ajuda a lanchonete?"
+      label: "Descrição detalhada da funcionalidade"
+      placeholder: "Explique claramente o que deve ser implementado."
 
   - type: textarea
-    id: detalhes
+    id: alternativas
     attributes:
-      label: "Detalhamento técnico (opcional)"
+      label: "Alternativas consideradas"
+      placeholder: "Liste outras possíveis abordagens."
 
+  - type: textarea
+    id: extras
+    attributes:
+      label: "Informações adicionais"
