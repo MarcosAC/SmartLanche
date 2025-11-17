@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Documentação Oficial
+  - name: Documentação do SmartLanche
     url: https://github.com/MarcosAC/SmartLanche/tree/main/docs
     about: Consulte a documentação antes de abrir uma issue.
