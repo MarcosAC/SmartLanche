@@ -20,83 +20,91 @@ jobs:
       #
       # -------------------------- LABELS --------------------------
       #
-      - name: Criar labels
-        uses: EndBug/labeler@v2
+      - name: Criar Labels
+        uses: actions/github-script@v7
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: |
-            bug: Problemas e falhas do sistema
-            enhancement: Novas funcionalidades
-            documentation: Melhorias na documentação
-            backlog: Itens planejados
-            prioridade-alta: Tarefas urgentes
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const labels = [
+              { name: "bug", description: "Problemas e falhas do sistema", color: "d73a4a" },
+              { name: "enhancement", description: "Novas funcionalidades", color: "a2eeef" },
+              { name: "documentation", description: "Melhorias na documentação", color: "0075ca" },
+              { name: "backlog", description: "Itens planejados para o futuro", color: "5319e7" },
+              { name: "prioridade-alta", description: "Tarefas urgentes", color: "b60205" }
+            ];
+
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ...label
+                });
+              } catch (error) {
+                if (error.status !== 422) throw error;
+              }
+            }
 
       #
       # -------------------------- MILESTONES --------------------------
       #
-      - name: Criar Milestone Sprint 1
-        uses: octokit/request-action@v2.x
+      - name: Criar Milestones
+        uses: actions/github-script@v7
         with:
-          route: POST /repos/${{ github.repository }}/milestones
-          title: Sprint 1 - Setup e Arquitetura
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const milestones = [
+              "Sprint 1 - Setup e Arquitetura",
+              "Sprint 2 - Produtos e Estoque",
+              "Sprint 3 - Pedidos e Caixa",
+              "Sprint 4 - Relatórios e Integração",
+              "Sprint 5 - Revisão Final"
+            ];
 
-      - name: Criar Milestone Sprint 2
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/milestones
-          title: Sprint 2 - Produtos e Estoque
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Criar Milestone Sprint 3
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/milestones
-          title: Sprint 3 - Pedidos e Caixa
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            for (const title of milestones) {
+              try {
+                await github.rest.issues.createMilestone({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title
+                });
+              } catch (error) {
+                if (error.status !== 422) throw error;
+              }
+            }
 
       #
       # -------------------------- PROJETO KANBAN --------------------------
       #
       - name: Criar Projeto Kanban
         id: create_project
-        uses: octokit/request-action@v2.x
+        uses: actions/github-script@v7
         with:
-          route: POST /repos/${{ github.repository }}/projects
-          name: SmartLanche - Kanban
-          body: Projeto de acompanhamento de desenvolvimento
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const project = await github.rest.projects.createForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "SmartLanche - Kanban",
+              body: "Projeto automatizado para gerenciamento via Scrum."
+            });
 
-      - name: Log do ID do projeto
-        run: echo "Projeto criado com ID: ${{ steps.create_project.outputs.data.id }}"
+            core.setOutput("project_id", project.data.id);
 
       #
       # -------------------------- COLUNAS --------------------------
       #
-      - name: Criar Coluna To Do
-        uses: octokit/request-action@v2.x
+      - name: Criar Colunas
+        uses: actions/github-script@v7
         with:
-          route: POST /projects/${{ steps.create_project.outputs.data.id }}/columns
-          name: To Do
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const project_id = ${{ steps.create_project.outputs.project_id }};
+            const columns = ["To Do", "Doing", "Done"];
 
-      - name: Criar Coluna Doing
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /projects/${{ steps.create_project.outputs.data.id }}/columns
-          name: Doing
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Criar Coluna Done
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /projects/${{ steps.create_project.outputs.data.id }}/columns
-          name: Done
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            for (const name of columns) {
+              await github.rest.projects.createColumn({
+                project_id,
+                name
+              });
+            }
