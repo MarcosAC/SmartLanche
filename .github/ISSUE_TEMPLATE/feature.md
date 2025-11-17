@@ -1,1 +1,1 @@
-feature template
+## Descrição da funcionalidade
