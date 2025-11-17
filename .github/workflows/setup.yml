@@ -3,15 +3,14 @@ name: Setup SmartLanche Project Structure
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 jobs:
   setup:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-      issues: write
-      actions: write
-      pull-requests: write
 
     steps:
       - name: Checkout repo
@@ -23,20 +22,55 @@ jobs:
           mkdir -p docs
           mkdir -p scripts
 
-      - name: Create issue templates
+      - name: Create modern YAML issue templates
         run: |
-          echo "## Descrição da funcionalidade" > .github/ISSUE_TEMPLATE/feature.md
-          echo "## Descrição do bug" > .github/ISSUE_TEMPLATE/bug.md
+          cat << 'EOF' > .github/ISSUE_TEMPLATE/bug_report.yml
+          name: "🐞 Bug Report"
+          description: "Reporte um problema encontrado no SmartLanche"
+          title: "[BUG] Descreva o problema"
+          labels: ["bug"]
+          body:
+            - type: textarea
+              id: descricao
+              attributes:
+                label: "Descrição"
+              validations:
+                required: true
+          EOF
 
-      - name: Create base documentation
+          cat << 'EOF' > .github/ISSUE_TEMPLATE/feature_request.yml
+          name: "🚀 Feature Request"
+          description: "Sugira uma nova funcionalidade"
+          title: "[FEATURE] Descreva a funcionalidade"
+          labels: ["enhancement"]
+          EOF
+
+          cat << 'EOF' > .github/ISSUE_TEMPLATE/task.yml
+          name: "📝 Task"
+          description: "Tarefa técnica"
+          title: "[TASK] Nova tarefa"
+          labels: ["task"]
+          EOF
+
+          cat << 'EOF' > .github/ISSUE_TEMPLATE/config.yml
+          blank_issues_enabled: true
+          contact_links:
+            - name: Documentação SmartLanche
+              url: https://github.com/SEU_USUARIO/SEU_REPO/docs
+              about: Consulte a documentação antes de abrir uma issue
+          EOF
+
+      - name: Create base documentation if missing
         run: |
-          echo "# SmartLanche" > README.md
+          if [ ! -f README.md ]; then
+            echo "# SmartLanche" > README.md
+          fi
           echo "# Documentação do Sistema SmartLanche" > docs/documentacao.md
 
-      - name: Push changes
+      - name: Commit changes
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Setup inicial do projeto SmartLanche"
-          git push
+          git commit -m "Setup inicial do projeto SmartLanche" || echo "Nenhuma mudança para commitar"
+          git push || echo "Nada para enviar"
