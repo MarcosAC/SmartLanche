@@ -14,80 +14,89 @@ jobs:
       projects: write
 
     steps:
-      - name: Criar Labels
-        uses: peter-evans/create-or-update-labels@v1
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      #
+      # -------------------------- LABELS --------------------------
+      #
+      - name: Criar labels
+        uses: EndBug/labeler@v2
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
-            - name: bug
-              color: CC0000
-              description: Problemas e falhas do sistema
-            - name: enhancement
-              color: 00CC66
-              description: Novas funcionalidades
-            - name: documentation
-              color: 3366FF
-              description: Melhorias na documentação
-            - name: backlog
-              color: 999999
-              description: Itens planejados
-            - name: prioridade-alta
-              color: FF6600
-              description: Tarefas urgentes
+            bug: Problemas e falhas do sistema
+            enhancement: Novas funcionalidades
+            documentation: Melhorias na documentação
+            backlog: Itens planejados
+            prioridade-alta: Tarefas urgentes
 
-      - name: Criar milestones (Sprints)
+      #
+      # -------------------------- MILESTONES --------------------------
+      #
+      - name: Criar Milestone Sprint 1
         uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{ github.repository }}/milestones
-          title: "Sprint 1 - Setup e Arquitetura"
+          title: Sprint 1 - Setup e Arquitetura
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Criar Sprint 2
+      - name: Criar Milestone Sprint 2
         uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{ github.repository }}/milestones
-          title: "Sprint 2 - Módulo de Produtos e Estoque"
+          title: Sprint 2 - Produtos e Estoque
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Criar Sprint 3
+      - name: Criar Milestone Sprint 3
         uses: octokit/request-action@v2.x
         with:
           route: POST /repos/${{ github.repository }}/milestones
-          title: "Sprint 3 - Pedidos e Caixa"
+          title: Sprint 3 - Pedidos e Caixa
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      #
+      # -------------------------- PROJETO KANBAN --------------------------
+      #
       - name: Criar Projeto Kanban
-        id: criar_projeto
+        id: create_project
         uses: octokit/request-action@v2.x
         with:
-          route: POST /user/projects
-          name: "SmartLanche - Kanban"
-          body: "Projeto de acompanhamento do desenvolvimento"
+          route: POST /repos/${{ github.repository }}/projects
+          name: SmartLanche - Kanban
+          body: Projeto de acompanhamento de desenvolvimento
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Criar Colunas no Projeto
+      - name: Log do ID do projeto
+        run: echo "Projeto criado com ID: ${{ steps.create_project.outputs.data.id }}"
+
+      #
+      # -------------------------- COLUNAS --------------------------
+      #
+      - name: Criar Coluna To Do
         uses: octokit/request-action@v2.x
         with:
-          route: POST /projects/${{ steps.criar_projeto.outputs.id }}/columns
-          name: "To Do"
+          route: POST /projects/${{ steps.create_project.outputs.data.id }}/columns
+          name: To Do
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Criar coluna Doing
+      - name: Criar Coluna Doing
         uses: octokit/request-action@v2.x
         with:
-          route: POST /projects/${{ steps.criar_projeto.outputs.id }}/columns
-          name: "Doing"
+          route: POST /projects/${{ steps.create_project.outputs.data.id }}/columns
+          name: Doing
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Criar coluna Done
+      - name: Criar Coluna Done
         uses: octokit/request-action@v2.x
         with:
-          route: POST /projects/${{ steps.criar_projeto.outputs.id }}/columns
-          name: "Done"
+          route: POST /projects/${{ steps.create_project.outputs.data.id }}/columns
+          name: Done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
