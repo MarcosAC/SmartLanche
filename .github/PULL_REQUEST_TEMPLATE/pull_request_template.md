@@ -1,20 +1,23 @@
 # 📦 Pull Request – SmartLanche
 
 ## 📝 Resumo
-Descreva brevemente o que foi feito.
+Descreva brevemente o que foi implementado / alterado.
 
-## 🔧 Tipo de mudança
+## Tipo de Mudança
 - [ ] Bug fix
 - [ ] Nova funcionalidade
 - [ ] Refatoração
 - [ ] Documentação
-- [ ] Outro
+- [ ] Scripts / CI
 
-## ✔️ O que foi alterado?
-Explique o que mudou no código.
+## Detalhes
+Explique o que foi alterado, módulos afetados e por que.
 
-## 🧪 Como testar?
-Inclua instruções claras para QA.
+## Como testar
+Passos para QA validar a alteração localmente.
 
-## 📎 Evidências
-Inclua prints, vídeos ou logs se necessário.
+## Checklist
+- [ ] Código compila sem erros
+- [ ] Testes unitários passam
+- [ ] Documentação atualizada
+- [ ] PR linkado à Issue (se aplicável)
