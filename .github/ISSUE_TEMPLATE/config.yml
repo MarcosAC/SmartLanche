@@ -1,5 +1,5 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: Contato direto
-    url: https://github.com/
-    about: "Use este link se sua solicitação não se encaixar em nenhum template."
+  - name: Documentação Oficial
+    url: https://github.com/MarcosAC/SmartLanche/tree/main/docs
+    about: Consulte a documentação antes de abrir uma issue.
