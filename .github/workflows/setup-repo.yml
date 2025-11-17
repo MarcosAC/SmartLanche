@@ -1,0 +1,77 @@
+name: Setup SmartLanche Repository
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create labels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          api="https://api.github.com/repos/${REPO}/labels"
+          create_label() {
+            name="$1"; color="$2"; desc="$3"
+            payload=$(jq -n --arg name "$name" --arg color "$color" --arg desc "$desc" '{name:$name, color:$color, description:$desc}')
+            curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" "$api" -d "$payload" || true
+          }
+          create_label "backend" "FF5733" "Backend e banco de dados"
+          create_label "frontend" "33C3FF" "UI - WPF"
+          create_label "infra" "33FF57" "Infraestrutura / Deploy"
+          create_label "bug" "d73a4a" "Bug"
+          create_label "enhancement" "a2eeef" "Melhoria"
+          create_label "documentation" "0075ca" "Docs"
+          create_label "report" "800080" "Relatórios"
+          create_label "email" "ff9800" "SMTP / Email"
+          create_label "estoque" "10B981" "Estoque"
+          create_label "vendas" "6366F1" "Vendas / Pedidos"
+          create_label "customizacao" "F59E0B" "Branding"
+          create_label "sprint" "7C3AED" "Sprint"
+
+      - name: Create milestones
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          api="https://api.github.com/repos/${REPO}/milestones"
+          create_milestone() {
+            title="$1"; desc="$2"
+            payload=$(jq -n --arg title "$title" --arg desc "$desc" '{title:$title, description:$desc}')
+            curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" "$api" -d "$payload" || true
+          }
+          create_milestone "MVP - Fundação SmartLanche" "Base do sistema: estrutura, DB, MVVM"
+          create_milestone "Vendas + Carrinho" "Tela de vendas e fluxo de checkout"
+          create_milestone "Estoque + Notificações" "Controle e alertas de estoque"
+          create_milestone "Relatórios + Email" "Export e envio diário"
+          create_milestone "Customização" "Nome e logo por cliente"
+
+      - name: Create initial issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          api="https://api.github.com/repos/${REPO}/issues"
+          post_issue() {
+            title="$1"; body="$2"; labels="$3"
+            labels_json=$(jq -n --arg l "$labels" '$l | split(";")')
+            payload=$(jq -n --arg title "$title" --arg body "$body" --argjson labels "$labels_json" '{title:$title, body:$body, labels:$labels}')
+            curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" "$api" -d "$payload" || true
+          }
+
+          post_issue "Configurar banco LocalDB" "Criar instância LocalDB e validar conexão." "backend"
+          post_issue "Implementar MVVM base" "Criar estrutura de ViewModels, Views e Models." "frontend"
+          post_issue "CRUD Produtos" "Tela e endpoints locais para criar/editar/excluir produtos." "backend;frontend"
+          post_issue "Tela de Menu e Carrinho" "Listagem de produtos, adicionar ao carrinho e total." "frontend;vendas"
+          post_issue "Baixa automática de estoque" "Ao finalizar pedido, decrementar estoque." "estoque;backend"
+          post_issue "Gerar relatório diário CSV" "Exportar relatório diário de vendas." "report"
+          post_issue "Implementar envio SMTP configurável" "Configurar SMTP, testes e envio de relatórios." "email"
