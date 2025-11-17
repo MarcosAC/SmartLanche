@@ -1,33 +1,36 @@
-name: "🐞 Reportar Bug"
-description: "Use este template para reportar um problema no SmartLanche"
+name: "🐞 Bug Report"
+description: "Reporte um problema encontrado no sistema SmartLanche"
 title: "[BUG] Descreva o problema"
 labels: ["bug"]
+assignees: []
+
 body:
+  - type: markdown
+    attributes:
+      value: "## ⚠️ Descrição do problema"
+
   - type: textarea
     id: descricao
     attributes:
-      label: "Descrição do bug"
+      label: "Descreva o bug"
       placeholder: "Explique o que aconteceu..."
     validations:
       required: true
 
   - type: textarea
-    id: passos
+    id: steps
     attributes:
       label: "Passos para reproduzir"
-      placeholder: "1. Vá para...\n2. Clique em...\n3. Observe..."
+      placeholder: "1. Vá até...\n2. Clique em...\n3. Observe o erro"
     validations:
       required: true
 
   - type: textarea
-    id: esperado
+    id: comportamento_esperado
     attributes:
       label: "Comportamento esperado"
-      placeholder: "O que você esperava que acontecesse?"
 
   - type: textarea
     id: evidencias
     attributes:
-      label: "Evidências"
-      description: "Logs, prints, vídeos..."
-
+      label: "Evidências (prints, vídeo, logs)"
