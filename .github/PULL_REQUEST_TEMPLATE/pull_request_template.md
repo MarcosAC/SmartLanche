@@ -3,21 +3,24 @@
 ## 📝 Resumo
 Descreva brevemente o que foi implementado / alterado.
 
-## Tipo de Mudança
+## 🔧 Tipo de mudança
 - [ ] Bug fix
 - [ ] Nova funcionalidade
 - [ ] Refatoração
 - [ ] Documentação
 - [ ] Scripts / CI
 
-## Detalhes
+## 📝 Detalhes
 Explique o que foi alterado, módulos afetados e por que.
 
-## Como testar
+## 🧪 Como testar?
 Passos para QA validar a alteração localmente.
 
-## Checklist
+## ✅ Checklist
 - [ ] Código compila sem erros
 - [ ] Testes unitários passam
 - [ ] Documentação atualizada
 - [ ] PR linkado à Issue (se aplicável)
+
+## 📎 Evidências
+Inclua prints, vídeos ou logs se necessário.
