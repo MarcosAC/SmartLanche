@@ -1,42 +1,8 @@
-name: Setup SmartLanche Project Structure
-
-on:
-  workflow_dispatch:
-
 jobs:
   setup:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
       issues: write
       actions: write
       pull-requests: write
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Create base folders
-        run: |
-          mkdir -p .github/ISSUE_TEMPLATE
-          mkdir -p docs
-          mkdir -p scripts
-
-      - name: Create issue templates
-        run: |
-          echo "## Descrição da funcionalidade" > .github/ISSUE_TEMPLATE/feature.md
-          echo "## Descrição do bug" > .github/ISSUE_TEMPLATE/bug.md
-
-      - name: Create base documentation
-        run: |
-          echo "# SmartLanche" > README.md
-          echo "# Documentação do Sistema SmartLanche" > docs/documentacao.md
-
-      - name: Push changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Setup inicial do projeto SmartLanche"
-          git push
