@@ -1,76 +1,98 @@
-name: Setup SmartLanche Project Structure
+name: Setup Project Structure
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-
 jobs:
-  setup:
+  setup-project:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create base folders
+      - name: Create folder structure
         run: |
           mkdir -p .github/ISSUE_TEMPLATE
           mkdir -p docs
           mkdir -p scripts
 
-      - name: Create modern YAML issue templates
+      - name: Create README.md
         run: |
-          cat << 'EOF' > .github/ISSUE_TEMPLATE/bug_report.yml
-          name: "🐞 Bug Report"
-          description: "Reporte um problema encontrado no SmartLanche"
-          title: "[BUG] Descreva o problema"
+          cat << 'EOF' > README.md
+          # SmartLanche
+          Sistema de gerenciamento de vendas, estoque e pedidos para lanchonetes.
+          EOF
+
+      - name: Create docs/documentacao.md
+        run: |
+          cat << 'EOF' > docs/documentacao.md
+          # Documentação do SmartLanche
+          Arquitetura, requisitos e guias de desenvolvimento.
+          EOF
+
+      - name: Create Issue Template (Feature Request)
+        run: |
+          cat << 'EOF' > .github/ISSUE_TEMPLATE/feature-request.yml
+          name: "Solicitar Nova Funcionalidade"
+          description: "Use este template para sugerir novas funcionalidades."
+          labels: ["enhancement"]
+          body:
+            - type: input
+              id: feature
+              attributes:
+                label: "Descrição da funcionalidade"
+                placeholder: "Explique a feature desejada..."
+              validations:
+                required: true
+            - type: textarea
+              id: motivation
+              attributes:
+                label: "Motivação"
+                placeholder: "Por que isso é útil?"
+            - type: textarea
+              id: alternatives
+              attributes:
+                label: "Alternativas Consideradas"
+          EOF
+
+      - name: Create Issue Template (Bug Report)
+        run: |
+          cat << 'EOF' > .github/ISSUE_TEMPLATE/bug-report.yml
+          name: "Reportar Bug"
+          description: "Use este template para relatar erros."
           labels: ["bug"]
           body:
             - type: textarea
-              id: descricao
+              id: description
               attributes:
-                label: "Descrição"
+                label: "Descrição do problema"
+                placeholder: "O que está acontecendo?"
               validations:
                 required: true
+            - type: textarea
+              id: steps
+              attributes:
+                label: "Como reproduzir"
+                placeholder: "Passos para o bug acontecer..."
+            - type: textarea
+              id: expected
+              attributes:
+                label: "Comportamento esperado"
+            - type: textarea
+              id: evidence
+              attributes:
+                label: "Evidências"
+                placeholder: "Logs, imagens, vídeos..."
           EOF
-
-          cat << 'EOF' > .github/ISSUE_TEMPLATE/feature_request.yml
-          name: "🚀 Feature Request"
-          description: "Sugira uma nova funcionalidade"
-          title: "[FEATURE] Descreva a funcionalidade"
-          labels: ["enhancement"]
-          EOF
-
-          cat << 'EOF' > .github/ISSUE_TEMPLATE/task.yml
-          name: "📝 Task"
-          description: "Tarefa técnica"
-          title: "[TASK] Nova tarefa"
-          labels: ["task"]
-          EOF
-
-          cat << 'EOF' > .github/ISSUE_TEMPLATE/config.yml
-          blank_issues_enabled: true
-          contact_links:
-            - name: Documentação SmartLanche
-              url: https://github.com/MarcosAC/SmartLanche/tree/main/docs
-              about: Consulte a documentação antes de abrir uma issue
-          EOF
-
-      - name: Create base documentation if missing
-        run: |
-          if [ ! -f README.md ]; then
-            echo "# SmartLanche" > README.md
-          fi
-          echo "# Documentação do Sistema SmartLanche" > docs/documentacao.md
 
       - name: Commit changes
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Setup inicial do projeto SmartLanche" || echo "Nenhuma mudança para commitar"
-          git push || echo "Nada para enviar"
+          git commit -m "Setup inicial: estrutura do projeto e templates"
+          git push || echo "Nenhuma mudança para enviar."
