@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contato direto
+    url: https://github.com/
+    about: "Use este link se sua solicitação não se encaixar em nenhum template."
