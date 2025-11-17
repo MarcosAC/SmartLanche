@@ -1,0 +1,31 @@
+name: Validate Project Structure
+on:
+  push:
+    paths:
+      - '**'
+  pull_request:
+    paths:
+      - '**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check src folder present
+        run: |
+          if [ ! -d "src" ]; then
+            echo "src/ folder missing";
+            exit 1;
+          fi
+          echo "src/ present"
+
+      - name: Check .github templates
+        run: |
+          if [ ! -d ".github/ISSUE_TEMPLATE" ]; then
+            echo ".github/ISSUE_TEMPLATE missing";
+            exit 1;
+          fi
+          echo "ISSUE_TEMPLATE exists"
