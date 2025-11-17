@@ -56,7 +56,7 @@ jobs:
           blank_issues_enabled: true
           contact_links:
             - name: Documentação SmartLanche
-              url: https://github.com/SEU_USUARIO/SEU_REPO/docs
+              url: https://github.com/MarcosAC/SmartLanche/tree/main/docs
               about: Consulte a documentação antes de abrir uma issue
           EOF
 
