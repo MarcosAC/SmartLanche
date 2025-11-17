@@ -1,0 +1,22 @@
+name: "📝 Task"
+description: "Criação de tarefas internas do time"
+title: "[TASK] Nome da tarefa"
+labels: ["task"]
+
+body:
+  - type: textarea
+    id: descricao
+    attributes:
+      label: "Descrição da tarefa"
+      placeholder: "Explique o que deve ser feito."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: criterios
+    attributes:
+      label: "Critérios de aceite"
+      options:
+        - label: "Implementação concluída"
+        - label: "Testes realizados"
+        - label: "Código revisado"
