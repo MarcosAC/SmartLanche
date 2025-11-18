@@ -1,0 +1,33 @@
+name: Move Kanban Cards Automatically
+
+on:
+  issues:
+    types: [labeled, closed]
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  move-card:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: alex-page/github-project-automation-plus@v0.9.0
+        with:
+          project: SmartLanche – Kanban
+          column: Doing
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          label: doing
+
+      - uses: alex-page/github-project-automation-plus@v0.9.0
+        with:
+          project: SmartLanche – Kanban
+          column: Review
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          label: review
+
+      - uses: alex-page/github-project-automation-plus@v0.9.0
+        with:
+          project: SmartLanche – Kanban
+          column: Done
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          labels: done
