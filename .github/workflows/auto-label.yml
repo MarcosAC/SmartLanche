@@ -2,6 +2,10 @@ name: Create Scrum Labels
 on:
   workflow_dispatch:
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   create-labels:
     runs-on: ubuntu-latest
