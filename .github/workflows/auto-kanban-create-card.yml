@@ -11,5 +11,5 @@ jobs:
       - name: Add issue to Kanban
         uses: actions/add-to-project@v1.1.0
         with:
-          project-url: https://github.com/users/<SEU_USUARIO>/projects/<PROJECT_ID>
+          project-url: https://github.com/users/MarcosAC/projects/7/views/1
           github-token: ${{ secrets.GITHUB_TOKEN }}
