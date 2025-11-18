@@ -1,0 +1,15 @@
+name: Add issues to Kanban
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add issue to Kanban
+        uses: actions/add-to-project@v1.1.0
+        with:
+          project-url: https://github.com/users/<SEU_USUARIO>/projects/<PROJECT_ID>
+          github-token: ${{ secrets.GITHUB_TOKEN }}
