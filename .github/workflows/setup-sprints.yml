@@ -1,6 +1,11 @@
 name: Create Scrum Sprints
+
 on:
   workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
 
 jobs:
   create-sprints:
@@ -13,7 +18,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const today = new Date();
-            const sprintLength = 14; // dias
+            const sprintLength = 14;
             const totalSprints = 6;
 
             for (let i = 1; i <= totalSprints; i++) {
@@ -31,6 +36,6 @@ jobs:
                   due_on: end.toISOString()
                 });
               } catch (e) {
-                if (e.status !== 422) throw e;
+                if (e.status != 422) throw e;
               }
             }
