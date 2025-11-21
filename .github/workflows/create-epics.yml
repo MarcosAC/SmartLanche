@@ -1,0 +1,233 @@
+name: Create Epics and Features
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+  
+jobs:
+  create-epics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create EPIC 1 - Sistema de Pedidos
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "ÉPICO 1 — Sistema de Pedidos"
+          body: |
+            Conjunto de funcionalidades relacionadas ao fluxo de pedidos.
+          labels: epic
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Features and Stories for EPIC 1
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 1.1 — Criar Pedido"
+          body: |
+            Histórias:
+            - US-001 – Criar pedido manualmente  
+            - US-002 – Adicionar itens ao pedido  
+            - US-003 – Excluir/alterar itens  
+
+            Tarefas:
+            - Criar tela de novo pedido  
+            - Criar model Pedido  
+            - Criar model ItemPedido  
+            - Persistência local (SQLite ou EF)  
+            - Calcular total automaticamente  
+            - Validações
+          labels: feature
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 1.2 — Acompanhar Pedido"
+          body: |
+            Histórias:
+            - US-004 – Visualizar pedidos em aberto  
+            - US-005 – Atualizar status  
+
+            Tarefas:
+            - Tela: Lista de pedidos  
+            - Integração com fluxo da cozinha  
+            - Atualizar status  
+            - Notificações visuais
+          labels: feature
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: EPIC 2
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "ÉPICO 2 — Sistema da Cozinha"
+          body: "Fluxo operacional da cozinha."
+          labels: epic
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 2.1 — Visualização dos Pedidos"
+          body: |
+            Histórias:
+            - US-006 – Tela da cozinha atualizando em tempo real  
+            - US-007 – Ordenar por ordem de chegada
+          labels: feature
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 2.2 — Conclusão de Pedido"
+          body: |
+            Histórias:
+            - US-008 – Marcar pedido como pronto  
+            Tarefas:
+            - Conectar com o banco  
+            - Atualização automática  
+            - Filtrar pedidos prontos
+          labels: feature
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: EPIC 3
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "ÉPICO 3 — Catálogo de Produtos"
+          labels: epic
+          body: "Gestão completa de produtos."
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 3.1 — CRUD de Produtos"
+          labels: feature
+          body: |
+            Histórias:
+            - US-009 – Cadastrar produtos  
+            - US-010 – Editar produtos  
+            - US-011 – Excluir produtos  
+
+            Tarefas:
+            - Tela de cadastro  
+            - Persistência  
+            - Upload de imagens  
+            - Preço e descrição  
+            - Logotipo customizado
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: EPIC 4
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "ÉPICO 4 — Multi-Lanchonete"
+          labels: epic
+          body: "Configuração multi-tenant."
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 4.1 — Identidade Visual"
+          labels: feature
+          body: |
+            História:
+            - US-012 — Configuração de nome, logo e cores
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 4.2 — SMTP configurável"
+          labels: feature
+          body: |
+            Histórias:
+            - US-013 — Cadastrar credenciais SMTP  
+            - US-014 — Teste de envio  
+            - US-015 — Envio automático
+
+            Tarefas:
+            - Tela de configurações  
+            - Criptografia  
+            - Implementação TLS/SSL
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: EPIC 5
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "ÉPICO 5 — Relatórios"
+          labels: epic
+          body: "Relatórios operacionais."
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Feature 5.1 — Relatório Diário"
+          labels: feature
+          body: |
+            Histórias:
+            - US-016 — Ver total do dia  
+            - US-017 — Itens mais vendidos  
+
+            Tarefas:
+            - Tela + filtros  
+            - Exportar PDF  
+            - Exportar CSV
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: EPIC 6
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "ÉPICO 6 — Administração"
+          labels: epic
+          body: "Controle de usuários e permissões."
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: imjohnbo/issue-bot@v3
+        with:
+          title: "Stories administrativas"
+          labels: story
+          body: |
+            - US-018 — Gerenciar usuários  
+            - US-019 — Restringir acessos
+          project: "SmartLanche – Kanban"
+          column: "Backlog"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
