@@ -1,4 +1,4 @@
-name: Create Epicss
+name: Create Epics
 on:
   workflow_dispatch:
 
@@ -11,122 +11,122 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create Epics
+      - name: Create Epics Issues
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const epics = [
               {
-                title: "ÉPICO 1 — Sistema de Pedidos",
+                title: "EPICO 1 - Sistema de Pedidos",
                 body: `
-### Feature 1.1 — Criar Pedido
-
-#### Histórias
-- US-001 – Criar pedido manualmente  
-- US-002 – Adicionar itens ao pedido  
-- US-003 – Excluir/alterar itens  
-
-#### Tarefas
-- Criar tela de novo pedido  
-- Criar model Pedido  
-- Criar model ItemPedido  
-- Persistência local (EF Core / SQL Server LocalDB)  
-- Calcular total automaticamente  
-- Validações  
-
----
-
-### Feature 1.2 — Acompanhar Pedido
-
-#### Histórias
-- US-004 – Visualizar pedidos em aberto  
-- US-005 – Atualizar status (A Fazer, Em Preparo, Pronto)
-
-#### Tarefas
-- Tela: Lista de pedidos  
-- Integração com fluxo da cozinha  
-- Atualizar status  
-- Notificações visuais  
-`
-              },
-
-              {
-                title: "ÉPICO 2 — Sistema da Cozinha",
-                body: `
-### Feature 2.1 — Visualização dos Pedidos
-- US-006 – Tela da cozinha atualizando em tempo real  
-- US-007 – Ordenar por ordem de chegada  
-
-### Feature 2.2 — Conclusão de Pedido
-- US-008 – Marcar pedido como pronto  
-
-#### Tarefas
-- Conectar com o banco  
-- Atualização automática  
-- Filtrar pedidos prontos  
-`
-              },
-
-              {
-                title: "ÉPICO 3 — Catálogo de Produtos",
-                body: `
-### Feature 3.1 — CRUD de Produtos
-
-#### Histórias
-- US-009 – Cadastrar produtos  
-- US-010 – Editar produtos  
-- US-011 – Excluir produtos  
-
-#### Tarefas
-- Tela de cadastro  
-- Persistência  
-- Upload de imagens  
-- Preço e descrição  
-- Logotipo customizado por lanchonete  
-`
-              },
-
-              {
-                title: "ÉPICO 4 — Multi-Lanchonete (Multi-Tenant)",
-                body: `
-### Feature 4.1 — Identidade Visual
-- US-012 – Cada lanchonete define nome, logo e cores  
-
-### Feature 4.2 — SMTP configurável
-- US-013 – Usuário cadastra credenciais SMTP  
-- US-014 – Teste de envio  
-- US-015 – Envio automático no final do pedido  
-
-#### Tarefas
-- Tela de configurações  
-- Criptografar credenciais  
-- Envio via SMTP (SSL/TLS)  
-`
-              },
-
-              {
-                title: "ÉPICO 5 — Relatórios",
-                body: `
-### Feature 5.1 — Relatório Diário
-
-#### Histórias
-- US-016 – Ver total do dia  
-- US-017 – Ver itens mais vendidos  
-
-#### Tarefas
-- Tela + filtros  
-- Exportar PDF  
-- Exportar CSV  
-`
-              },
-
-              {
-                title: "ÉPICO 6 — Administração",
-                body: `
-### Histórias
-- US-018 – Gerenciar usuários (admin, atendente, cozinha)  
-- US-019 – Restringir acessos  
+                  ### Feature 1.1 - Criar Pedido
+                  
+                  #### Historias
+                  - US-001 - Criar pedido manualmente
+                  - US-002 - Adicionar itens ao pedido
+                  - US-003 - Excluir ou alterar itens
+                  
+                  #### Tarefas
+                  - Criar tela de novo pedido
+                  - Criar model Pedido
+                  - Criar model ItemPedido
+                  - Persistencia local (EF Core / SQL Server LocalDB)
+                  - Calcular total automaticamente
+                  - Validacoes
+                  
+                  ---
+                  
+                  ### Feature 1.2 - Acompanhar Pedido
+                  
+                  #### Historias
+                  - US-004 - Visualizar pedidos em aberto
+                  - US-005 - Atualizar status (A Fazer, Em Preparo, Pronto)
+                  
+                  #### Tarefas
+                  - Tela: Lista de pedidos
+                  - Integracao com fluxo da cozinha
+                  - Atualizar status
+                  - Notificacoes visuais
+                  `
+                                },
+                  
+                                {
+                                  title: "EPICO 2 - Sistema da Cozinha",
+                                  body: `
+                  ### Feature 2.1 - Visualizacao dos Pedidos
+                  - US-006 - Tela da cozinha atualizando em tempo real
+                  - US-007 - Ordenar por ordem de chegada
+                  
+                  ### Feature 2.2 - Conclusao do Pedido
+                  - US-008 - Marcar pedido como pronto
+                  
+                  #### Tarefas
+                  - Conectar com o banco
+                  - Atualizacao automatica
+                  - Filtrar pedidos prontos
+                  `
+                                },
+                  
+                                {
+                                  title: "EPICO 3 - Catalogo de Produtos",
+                                  body: `
+                  ### Feature 3.1 - CRUD de Produtos
+                  
+                  #### Historias
+                  - US-009 - Cadastrar produtos
+                  - US-010 - Editar produtos
+                  - US-011 - Excluir produtos
+                  
+                  #### Tarefas
+                  - Tela de cadastro
+                  - Persistencia
+                  - Upload de imagens
+                  - Preco e descricao
+                  - Logotipo customizado por lanchonete
+                  `
+                                },
+                  
+                                {
+                                  title: "EPICO 4 - Multi-Lanchonete (Multi-Tenant)",
+                                  body: `
+                  ### Feature 4.1 - Identidade Visual
+                  - US-012 - Cada lanchonete define nome, logo e cores
+                  
+                  ### Feature 4.2 - SMTP configuravel
+                  - US-013 - Usuario cadastra credenciais SMTP
+                  - US-014 - Teste de envio
+                  - US-015 - Envio automatico no final do pedido
+                  
+                  #### Tarefas
+                  - Criar tela de configuracoes
+                  - Criptografar credenciais localmente
+                  - Implementar envio via SMTP (SSL/TLS)
+                  `
+                                },
+                  
+                                {
+                                  title: "EPICO 5 - Relatorios",
+                                  body: `
+                  ### Feature 5.1 - Relatorio Diario
+                  
+                  #### Historias
+                  - US-016 - Ver total do dia
+                  - US-017 - Ver itens mais vendidos
+                  
+                  #### Tarefas
+                  - Tela e filtros
+                  - Exportar PDF
+                  - Exportar CSV
+                  `
+                                },
+                  
+                                {
+                                  title: "EPICO 6 - Administracao",
+                                  body: `
+                  ### Historias
+                  - US-018 - Gerenciar usuarios (admin, atendente, cozinha)
+                  - US-019 - Restringir acessos
 `
               }
             ];
@@ -141,4 +141,4 @@ jobs:
               });
             }
 
-            console.log("Épicos criados com sucesso!");
+            console.log("Epicos criados com sucesso!");
