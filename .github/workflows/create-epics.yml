@@ -127,7 +127,7 @@ jobs:
                   ### Historias
                   - US-018 - Gerenciar usuarios (admin, atendente, cozinha)
                   - US-019 - Restringir acessos
-`
+                  `
               }
             ];
 
