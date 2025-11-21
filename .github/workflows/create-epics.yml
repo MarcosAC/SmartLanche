@@ -1,5 +1,4 @@
-name: Create Epics in Classic Kanban
-
+name: Create Epics
 on:
   workflow_dispatch:
 
@@ -12,127 +11,134 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create Epic 1 - Sistema de Pedidos
-        uses: imjohnbo/issue-bot@v3
+      - name: Create Epics
+        uses: actions/github-script@v7
         with:
-          title: "ÉPICO 1 — Sistema de Pedidos"
-          body: |
-            ## Features
-            ### 1.1 Criar Pedido
-            - US-001 – Criar pedido manualmente
-            - US-002 – Adicionar itens ao pedido
-            - US-003 – Excluir/alterar itens
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const epics = [
+              {
+                title: "ÉPICO 1 — Sistema de Pedidos",
+                body: `
+### Feature 1.1 — Criar Pedido
 
-            Tarefas:
-            - Criar tela de novo pedido
-            - Criar model Pedido
-            - Criar model ItemPedido
-            - Persistência local (LocalDB)
-            - Calcular total automaticamente
-            - Validações
+#### Histórias
+- US-001 – Criar pedido manualmente  
+- US-002 – Adicionar itens ao pedido  
+- US-003 – Excluir/alterar itens  
 
-            ### 1.2 Acompanhar Pedido
-            - US-004 – Visualizar pedidos em aberto
-            - US-005 – Atualizar status
+#### Tarefas
+- Criar tela de novo pedido  
+- Criar model Pedido  
+- Criar model ItemPedido  
+- Persistência local (EF Core / SQL Server LocalDB)  
+- Calcular total automaticamente  
+- Validações  
 
-            Tarefas:
-            - Tela: Lista de pedidos
-            - Integração com cozinha
-            - Notificações
-          labels: épico
-          project: "SmartLanche – Kanban"
-          column: Épicos
-          token: ${{ secrets.GITHUB_TOKEN }}
+---
 
-      - name: Create Epic 2 - Sistema da Cozinha
-        uses: imjohnbo/issue-bot@v3
-        with:
-          title: "ÉPICO 2 — Sistema da Cozinha"
-          body: |
-            ## Features
-            ### 2.1 Visualização dos Pedidos
-            - US-006 – Atualização em tempo real
-            - US-007 – Ordenar por chegada
+### Feature 1.2 — Acompanhar Pedido
 
-            ### 2.2 Conclusão
-            - US-008 – Marcar pronto
+#### Histórias
+- US-004 – Visualizar pedidos em aberto  
+- US-005 – Atualizar status (A Fazer, Em Preparo, Pronto)
 
-            Tarefas:
-            - Banco de dados
-            - Filtrar pedidos prontos
-            - Atualização automática
-          labels: épico
-          project: "SmartLanche – Kanban"
-          column: Épicos
-          token: ${{ secrets.GITHUB_TOKEN }}
+#### Tarefas
+- Tela: Lista de pedidos  
+- Integração com fluxo da cozinha  
+- Atualizar status  
+- Notificações visuais  
+`
+              },
 
-      - name: Create Epic 3 - Catálogo de Produtos
-        uses: imjohnbo/issue-bot@v3
-        with:
-          title: "ÉPICO 3 — Catálogo de Produtos"
-          body: |
-            ## Feature 3.1 CRUD
-            - US-009 – Cadastrar produtos
-            - US-010 – Editar produtos
-            - US-011 – Excluir produtos
+              {
+                title: "ÉPICO 2 — Sistema da Cozinha",
+                body: `
+### Feature 2.1 — Visualização dos Pedidos
+- US-006 – Tela da cozinha atualizando em tempo real  
+- US-007 – Ordenar por ordem de chegada  
 
-            Tarefas:
-            - Tela CRUD
-            - Persistência
-            - Upload de imagens
-            - Customização por lanchonete
-          labels: épico
-          project: "SmartLanche – Kanban"
-          column: Épicos
-          token: ${{ secrets.GITHUB_TOKEN }}
+### Feature 2.2 — Conclusão de Pedido
+- US-008 – Marcar pedido como pronto  
 
-      - name: Create Epic 4 - Multi-Lanchonete
-        uses: imjohnbo/issue-bot@v3
-        with:
-          title: "ÉPICO 4 — Multi-Lanchonete"
-          body: |
-            ## Features
-            - US-012 – Identidade visual
-            - US-013 – SMTP configurável
-            - US-014 – Teste de envio
-            - US-015 – Envio automático
+#### Tarefas
+- Conectar com o banco  
+- Atualização automática  
+- Filtrar pedidos prontos  
+`
+              },
 
-            Tarefas:
-            - Tela de configurações
-            - Criptografia local
-            - SMTP (SSL/TLS)
-          labels: épico
-          project: "SmartLanche – Kanban"
-          column: Épicos
-          token: ${{ secrets.GITHUB_TOKEN }}
+              {
+                title: "ÉPICO 3 — Catálogo de Produtos",
+                body: `
+### Feature 3.1 — CRUD de Produtos
 
-      - name: Create Epic 5 - Relatórios
-        uses: imjohnbo/issue-bot@v3
-        with:
-          title: "ÉPICO 5 — Relatórios"
-          body: |
-            Features:
-            - US-016 – Total diário
-            - US-017 – Itens mais vendidos
+#### Histórias
+- US-009 – Cadastrar produtos  
+- US-010 – Editar produtos  
+- US-011 – Excluir produtos  
 
-            Tarefas:
-            - Tela com filtros
-            - Exportar PDF
-            - Exportar CSV
-          labels: épico
-          project: "SmartLanche – Kanban"
-          column: Épicos
-          token: ${{ secrets.GITHUB_TOKEN }}
+#### Tarefas
+- Tela de cadastro  
+- Persistência  
+- Upload de imagens  
+- Preço e descrição  
+- Logotipo customizado por lanchonete  
+`
+              },
 
-      - name: Create Epic 6 - Administração
-        uses: imjohnbo/issue-bot@v3
-        with:
-          title: "ÉPICO 6 — Administração"
-          body: |
-            Stories:
-            - US-018 – Gerenciar usuários
-            - US-019 – Restringir acessos
-          labels: épico
-          project: "SmartLanche – Kanban"
-          column: Épicos
-          token: ${{ secrets.GITHUB_TOKEN }}
+              {
+                title: "ÉPICO 4 — Multi-Lanchonete (Multi-Tenant)",
+                body: `
+### Feature 4.1 — Identidade Visual
+- US-012 – Cada lanchonete define nome, logo e cores  
+
+### Feature 4.2 — SMTP configurável
+- US-013 – Usuário cadastra credenciais SMTP  
+- US-014 – Teste de envio  
+- US-015 – Envio automático no final do pedido  
+
+#### Tarefas
+- Tela de configurações  
+- Criptografar credenciais  
+- Envio via SMTP (SSL/TLS)  
+`
+              },
+
+              {
+                title: "ÉPICO 5 — Relatórios",
+                body: `
+### Feature 5.1 — Relatório Diário
+
+#### Histórias
+- US-016 – Ver total do dia  
+- US-017 – Ver itens mais vendidos  
+
+#### Tarefas
+- Tela + filtros  
+- Exportar PDF  
+- Exportar CSV  
+`
+              },
+
+              {
+                title: "ÉPICO 6 — Administração",
+                body: `
+### Histórias
+- US-018 – Gerenciar usuários (admin, atendente, cozinha)  
+- US-019 – Restringir acessos  
+`
+              }
+            ];
+
+            for (const epic of epics) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: epic.title,
+                body: epic.body,
+                labels: ["epic"]
+              });
+            }
+
+            console.log("Épicos criados com sucesso!");
