@@ -1,0 +1,25 @@
+name: List Classic Projects
+on:
+  workflow_dispatch:
+
+permissions:
+  projects: read
+
+jobs:
+  list-projects:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List projects
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const projects = await github.rest.projects.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            console.log("PROJECTS FOUND:");
+            for (const p of projects.data) {
+              console.log(`Name: ${p.name} | ID: ${p.id}`);
+            }
