@@ -1,4 +1,4 @@
-name: Create Epics
+name: Create Epicss
 on:
   workflow_dispatch:
 
