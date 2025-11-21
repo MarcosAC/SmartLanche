@@ -2,9 +2,6 @@ name: List Classic Projects
 on:
   workflow_dispatch:
 
-permissions:
-  projects: read
-
 jobs:
   list-projects:
     runs-on: ubuntu-latest
