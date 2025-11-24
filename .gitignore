@@ -1,0 +1,77 @@
+#####################################
+# Visual Studio / .NET Core .NET Framework
+#####################################
+
+# 1. Pastas de Build e Cache
+###########################
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# 2. Pastas de Cache de Pacotes e Restauração
+###########################################
+# Exclui a pasta de packages (para o antigo .NET Framework)
+[Pp]ackages/
+# Exclui o cache global de pacotes Nuget
+.nuget/
+# Exclui o arquivo de "lock" de pacotes
+project.assets.json
+project.nuget.cache
+
+# 3. Arquivos e Pastas do Visual Studio e IDEs
+#############################################
+# Arquivos de solução do usuário
+*.suo
+*.user
+*.useros
+*.userprefs
+
+# Pasta de cache de solução do VS (Causa o erro de permissão que você teve)
+# IMPORTANTE: Garante que o .vs/ seja ignorado em qualquer lugar do repo.
+**/.vs/
+
+# Arquivos temporários e de log
+*.log
+*.bak
+*.tmp
+*.vspscc
+*.vssscc
+*.userc
+
+# Arquivos de publicação
+Publish/
+
+# Exclui arquivos de configuração de usuário do editor/depurador
+*.pdb
+*.intellisense.xml
+*.build.log
+
+# 4. Arquivos do Visual Studio Code (se usar)
+###########################################
+.vscode/
+
+# 5. Configurações de Deploy/Instalador
+#####################################
+*.publish.xml
+*.wax
+*.wix
+*.pfx
+*.snk
+
+# 6. Arquivos de Testes
+#######################
+TestResults/
+*.trx
+
+# 7. Arquivos do Rider (Outra IDE .NET)
+#####################################
+.idea/
+
+# 8. Arquivos Específicos do Windows/macOS/Linux
+##############################################
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
