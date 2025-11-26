@@ -47,10 +47,10 @@ namespace SmartLanche.ViewModels
         {
             Products.Clear();
 
-            var lista = await _repository.GetAllAsync();
+            var list = await _repository.GetAllAsync();
 
-            foreach (var p in lista)
-                Products.Add(p);
+            foreach (var product in list)
+                Products.Add(product);
         }
         
         partial void OnSelectedProductChanged(Product? value)
