@@ -11,11 +11,8 @@
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Resources\" />
     <Folder Include="Views\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Services\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
 
