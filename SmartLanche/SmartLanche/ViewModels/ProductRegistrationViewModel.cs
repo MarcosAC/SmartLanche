@@ -8,11 +8,11 @@ namespace SmartLanche.ViewModels
 {
     public partial class ProductRegistrationViewModel : ObservableObject
     {
-        private readonly IRepository<Product> _repository;
+        private readonly IRepository<Product> _repositoryProduct;
 
         public ProductRegistrationViewModel(IRepository<Product> repository)
         {
-            _repository = repository;
+            _repositoryProduct = repository;
 
             Products = new ObservableCollection<Product>();
 
@@ -45,9 +45,9 @@ namespace SmartLanche.ViewModels
         {
             Products.Clear();
 
-            var list = await _repository.GetAllAsync();
+            var listProducts = await _repositoryProduct.GetAllAsync();
 
-            foreach (var product in list)
+            foreach (var product in listProducts)
                 Products.Add(product);
         }
         
@@ -77,11 +77,11 @@ namespace SmartLanche.ViewModels
                     Description = Description
                 };
 
-                await _repository.AddAsync(product);
+                await _repositoryProduct.AddAsync(product);
             }
             else
             {
-                var product = await _repository.GetByIdAsync(Id);
+                var product = await _repositoryProduct.GetByIdAsync(Id);
                 if (product == null) return;
 
                 product.Name = Name;
@@ -89,7 +89,7 @@ namespace SmartLanche.ViewModels
                 product.Price = Price;
                 product.Description = Description;
 
-                await _repository.UpdateAsync(product);
+                await _repositoryProduct.UpdateAsync(product);
             }
 
             await LoadProductsAsync();
@@ -101,7 +101,7 @@ namespace SmartLanche.ViewModels
             if (SelectedProduct == null)
                 return;
 
-            await _repository.DeleteAsync(SelectedProduct.Id);
+            await _repositoryProduct.DeleteAsync(SelectedProduct.Id);
             await LoadProductsAsync();
             NewProduct();
         }
