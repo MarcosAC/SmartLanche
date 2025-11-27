@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using SmartLanche.Models;
 using SmartLanche.Services;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace SmartLanche.ViewModels
 {
