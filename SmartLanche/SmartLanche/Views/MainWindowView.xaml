@@ -31,7 +31,48 @@
 
         <TabControl Margin="8">
             <TabItem Header="Pedidos">
+                <!-- Conteúdo: Listagem de produtos, carrinho e total -->
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock 
+                            Text="Menu"
+                            FontSize="18"
+                            FontWeight="Bold" />
+                        
+                        <ListBox
+                            ItemsSource="{Binding Products}"
+                            DisplayMemberPath="Name"
+                            Height="500" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Carrinho" FontSize="18" FontWeight="Bold" />
+                        <!-- Implementar carrinho em próximas etapas -->
+                        <Button Content="Adicionar Pedido" Command="{Binding AddProductCommand}" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            
+            <!--<TabItem Header="Pedidos">
                 
+            </TabItem>-->
+
+            <TabItem Header="Promoções">
+                <TextBlock Text="Promoções / Combos" Margin="8" />
+            </TabItem>
+
+            <TabItem Header="Pendências">
+                <TextBlock Text="Contas a Receber (Fiado)" Margin="8" />
+            </TabItem>
+
+            <TabItem Header="Pedidos em Preparação">
+                <TextBlock Text="Pedidos em Preparação (alterar status)" Margin="8" />
             </TabItem>
 
             <TabItem Header="Carrinho">
@@ -39,11 +80,11 @@
             </TabItem>
 
             <TabItem Header="Estoque">
-
+                <TextBlock Text="Controle de Estoque" Margin="8" />
             </TabItem>
 
             <TabItem Header="Resumo/Vendas">
-
+                <TextBlock Text="Resumo diário de vendas" Margin="8" />
             </TabItem>
 
             <TabItem Header="Configurações">
