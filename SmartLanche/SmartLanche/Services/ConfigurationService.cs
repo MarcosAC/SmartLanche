@@ -2,7 +2,7 @@
 
 namespace SmartLanche.Services
 {
-    public class ConfigurationService
+    public class ConfigurationService : IConfigurationService
     {
         private readonly IConfiguration _configuration;
         public ConfigurationService(IConfiguration configuration)
@@ -10,8 +10,9 @@ namespace SmartLanche.Services
             _configuration = configuration;
         }
 
-        public string AppName => _configuration.GetSection("SmartLanche")["Name"] ?? "SmartLanche";        
-        public string LogoPath => _configuration.GetSection("SmartLanche")["Logo"] ?? "SmartLanche";
-        public string Theme => _configuration.GetSection("SmartLanche")["Theme"] ?? "SmartLanche";
+        string IConfigurationService.GetlogoPath() => _configuration.GetSection("SmartLanche")["Name"] ?? "SmartLanche";
+        string IConfigurationService.GetNameApp() => _configuration.GetSection("SmartLanche")["Logo"] ?? "SmartLanche";
+
+        string IConfigurationService.GetTheme() => _configuration.GetSection("SmartLanche")["Theme"] ?? "SmartLanche";
     }
 }

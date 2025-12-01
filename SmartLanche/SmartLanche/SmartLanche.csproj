@@ -10,9 +10,7 @@
 
   <ItemGroup>
     <Folder Include="Config\" />
-    <Folder Include="Data\" />
     <Folder Include="Resources\" />
-    <Folder Include="Views\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
 

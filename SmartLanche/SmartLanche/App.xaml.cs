@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SmartLanche.Data;
 using SmartLanche.Services;
 using SmartLanche.ViewModels;
 using System;
