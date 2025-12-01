@@ -4,15 +4,16 @@ namespace SmartLanche.ViewModels
 {
     public partial class MainViewModel : BaseViewModel
     {
-        private readonly ConfigurationService _configuration;
         public ProductRegistrationViewModel? ProductRegistrationViewModel { get; }
 
-        public string AppName => _configuration.AppName;
-        public string LogoPath => _configuration.LogoPath;
+        public string AppName {  get; }
+        public string LogoPath { get; }
 
-        public MainViewModel(ConfigurationService configuration, ProductRegistrationViewModel product)
+        public MainViewModel(IConfigurationService configuration, ProductRegistrationViewModel product)
         {
-            _configuration = configuration;
+            AppName = configuration.GetNameApp();
+            LogoPath = configuration.GetLogoPath();
+
             ProductRegistrationViewModel = product;
         }
     }

@@ -2,8 +2,8 @@
 {
     public interface IConfigurationService
     {
-        string GetNameApp();
-        string GetlogoPath();
-        string GetTheme();
+        public string GetNameApp();
+        public string GetLogoPath();
+        public string GetTheme();
     }
 }
