@@ -4,9 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartLanche.Data;
 using SmartLanche.Services;
 using SmartLanche.ViewModels;
-using System;
-using System.Configuration;
-using System.Data;
+using SmartLanche.Views;
 using System.IO;
 using System.Windows;
 
@@ -27,16 +25,25 @@ namespace SmartLanche
 
             var services = new ServiceCollection();
 
+            services.AddSingleton<IConfiguration>(Configuration);
+
             var connection = Configuration.GetSection("Database")["ConnectionString"]
                              ?? @"Server=(localdb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Data\SmartLanche.mdf;Integrated Security=True;";
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
 
             services.AddSingleton<IConfigurationService, ConfigurationService>();
-            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));            
 
-            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<MainWindowView>();
+            services.AddSingleton<MainWindowViewModel>();
+
             services.AddScoped<ProductRegistrationViewModel>();
+
+            ServiceProvider = services.BuildServiceProvider();
+
+            var mainWindow = ServiceProvider?.GetRequiredService<MainWindowView>();
+            mainWindow?.Show();
         }
     }
 }
