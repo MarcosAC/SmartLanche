@@ -33,16 +33,17 @@ namespace SmartLanche
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
 
             services.AddSingleton<IConfigurationService, ConfigurationService>();
-            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));            
-
-            services.AddSingleton<MainWindowView>();
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            
             services.AddSingleton<MainWindowViewModel>();
+            services.AddTransient<ProductRegistrationViewModel>();
 
-            services.AddScoped<ProductRegistrationViewModel>();
+            services.AddTransient<MainWindowView>();
+            services.AddTransient<ProductRegistrationView>();
 
             ServiceProvider = services.BuildServiceProvider();
 
-            var mainWindow = ServiceProvider?.GetRequiredService<MainWindowView>();
+            var mainWindow = ServiceProvider.GetRequiredService<MainWindowView>();
             mainWindow?.Show();
         }
     }
