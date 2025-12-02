@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace SmartLanche.ViewModels
 {
-    public partial class ProductRegistrationViewModel : ObservableObject
+    public partial class ProductRegistrationViewModel : BaseViewModel
     {
         private readonly IRepository<Product> _repositoryProduct;
 
