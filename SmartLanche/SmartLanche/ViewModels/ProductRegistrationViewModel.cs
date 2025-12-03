@@ -17,9 +17,10 @@ namespace SmartLanche.ViewModels
             Products = new ObservableCollection<Product>();
 
             LoadProductsCommand = new AsyncRelayCommand(LoadProductsAsync);
-            SaveProductCommand = new AsyncRelayCommand(SaveProductAsync);
-            DeleteProductCommand = new AsyncRelayCommand(DeleteProductAsync);
-            NewProductCommand = new RelayCommand(NewProduct);
+            SaveProductCommand = new AsyncRelayCommand(SaveProductAsync, () => IsEditing);
+            DeleteProductCommand = new AsyncRelayCommand(DeleteProductAsync, () => !IsEditing && SelectedProduct != null);
+            NewProductCommand = new RelayCommand(NewProduct, () => !IsEditing);
+            CancelCommand = new RelayCommand(CancelEditing, () => IsEditing);
 
             _ = LoadProductsAsync();
         }
@@ -35,7 +36,12 @@ namespace SmartLanche.ViewModels
         [ObservableProperty] private string category = "";
         [ObservableProperty] private decimal price;
         [ObservableProperty] private string? description;
-        
+
+        [ObservableProperty] private bool isEditing = false;
+
+        public bool DataGridReadOnly => !IsEditing;
+
+        public IRelayCommand CancelCommand { get; }
         public IAsyncRelayCommand LoadProductsCommand { get; }
         public IAsyncRelayCommand SaveProductCommand { get; }
         public IAsyncRelayCommand DeleteProductCommand { get; }
@@ -60,6 +66,22 @@ namespace SmartLanche.ViewModels
             Category = value.Category;
             Price = value.Price;
             Description = value.Description;
+        }
+
+        partial void OnIsEditingChanged(bool value)
+        {
+            SaveProductCommand.NotifyCanExecuteChanged();
+            DeleteProductCommand.NotifyCanExecuteChanged();
+            NewProductCommand.NotifyCanExecuteChanged();
+            CancelCommand.NotifyCanExecuteChanged();
+
+            OnPropertyChanged(nameof(DataGridReadOnly));
+        }
+   
+        private void CancelEditing()
+        {            
+            NewProduct();
+            IsEditing = false;
         }
 
         private async Task SaveProductAsync()
@@ -94,6 +116,7 @@ namespace SmartLanche.ViewModels
 
             await LoadProductsAsync();
             NewProduct();
+            IsEditing = false;
         }
 
         private async Task DeleteProductAsync()
@@ -113,7 +136,10 @@ namespace SmartLanche.ViewModels
             Category = "";
             Price = 0;
             Description = "";
+            //IsCombo = false;
+
             SelectedProduct = null;
+            IsEditing = true;
         }
     }
 }
