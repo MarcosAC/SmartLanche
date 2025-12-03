@@ -19,32 +19,45 @@ namespace SmartLanche
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile(Path.Combine("Config", "appsettings.json"), optional: false, reloadOnChange: true);
+                .AddJsonFile(Path.Combine("Config", "appsettings.json"), optional: false);
 
             Configuration = builder.Build();
 
+            //--- Confgirações Banco de Dados
+            var dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+            Directory.CreateDirectory(dataDir);
+            AppDomain.CurrentDomain.SetData("DataDirectory", dataDir);
+            
             var services = new ServiceCollection();
 
             services.AddSingleton<IConfiguration>(Configuration);
 
-            var connection = Configuration.GetSection("Database")["ConnectionString"]
-                             ?? @"Server=(localdb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Data\SmartLanche.mdf;Integrated Security=True;";
+            var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Configuration["Database:ConnectionString"];
 
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-            services.AddSingleton<IConfigurationService, ConfigurationService>();
+            // Services e Repository
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            services.AddSingleton<IConfigurationService, ConfigurationService>();            
             
+            // ViewModels
             services.AddSingleton<MainWindowViewModel>();
             services.AddTransient<ProductRegistrationViewModel>();
 
+            // Views
             services.AddTransient<MainWindowView>();
             services.AddTransient<ProductRegistrationView>();
 
             ServiceProvider = services.BuildServiceProvider();
 
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                db.Database.EnsureCreated();
+            }
+
             var mainWindow = ServiceProvider.GetRequiredService<MainWindowView>();
-            mainWindow?.Show();
+            mainWindow.Show();
         }
     }
 }
