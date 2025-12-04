@@ -18,9 +18,10 @@ namespace SmartLanche.ViewModels
 
             LoadProductsCommand = new AsyncRelayCommand(LoadProductsAsync);
             SaveProductCommand = new AsyncRelayCommand(SaveProductAsync, () => IsEditing);
-            DeleteProductCommand = new AsyncRelayCommand(DeleteProductAsync, () => !IsEditing && SelectedProduct != null);
-            NewProductCommand = new RelayCommand(NewProduct, () => !IsEditing);
-            CancelCommand = new RelayCommand(CancelEditing, () => IsEditing);
+            DeleteProductCommand = new AsyncRelayCommand(DeleteProductAsync, () => IsViewing && !IsEditing);
+            NewProductCommand = new RelayCommand(NewProduct, () => !IsEditing && !IsViewing);
+            CancelCommand = new RelayCommand(CancelAction, () => IsViewing || IsEditing);
+            EditProductCommand = new RelayCommand(EditProduct, () => IsViewing);
 
             _ = LoadProductsAsync();
         }
@@ -36,16 +37,20 @@ namespace SmartLanche.ViewModels
         [ObservableProperty] private string category = "";
         [ObservableProperty] private decimal price;
         [ObservableProperty] private string? description;
+        [ObservableProperty] private bool isCombo;
 
         [ObservableProperty] private bool isEditing = false;
+        [ObservableProperty] private bool isViewing = false;
 
-        public bool DataGridReadOnly => !IsEditing;
+        public bool IsFormEnabled => IsEditing;
+        public bool DataGridReadOnly => IsEditing;
 
         public IRelayCommand CancelCommand { get; }
         public IAsyncRelayCommand LoadProductsCommand { get; }
         public IAsyncRelayCommand SaveProductCommand { get; }
         public IAsyncRelayCommand DeleteProductCommand { get; }
         public IRelayCommand NewProductCommand { get; }
+        public IRelayCommand EditProductCommand { get; }
 
         private async Task LoadProductsAsync()
         {
@@ -59,29 +64,41 @@ namespace SmartLanche.ViewModels
         
         partial void OnSelectedProductChanged(Product? value)
         {
-            if (value == null) return;
+            if (value != null)
+            {
+                id = value.Id;
+                Name = value.Name;
+                Category = value.Category;
+                Price = value.Price;
+                Description = value.Description;
+                IsCombo = value.IsCombo;
 
-            id = value.Id;
-            Name = value.Name;
-            Category = value.Category;
-            Price = value.Price;
-            Description = value.Description;
+                IsEditing = false;
+                IsViewing = true;
+            }
+            else
+            {
+                CancelAction();
+            }
+
+            NewProductCommand.NotifyCanExecuteChanged();
+            SaveProductCommand.NotifyCanExecuteChanged();
+            CancelCommand.NotifyCanExecuteChanged();
+            EditProductCommand.NotifyCanExecuteChanged();
+            DeleteProductCommand.NotifyCanExecuteChanged();
+
+            OnPropertyChanged(nameof(DataGridReadOnly));
+            OnPropertyChanged(nameof(IsFormEnabled));
         }
 
         partial void OnIsEditingChanged(bool value)
         {
             SaveProductCommand.NotifyCanExecuteChanged();
-            DeleteProductCommand.NotifyCanExecuteChanged();
             NewProductCommand.NotifyCanExecuteChanged();
             CancelCommand.NotifyCanExecuteChanged();
 
             OnPropertyChanged(nameof(DataGridReadOnly));
-        }
-   
-        private void CancelEditing()
-        {            
-            NewProduct();
-            IsEditing = false;
+            OnPropertyChanged(nameof(IsFormEnabled));
         }
 
         private async Task SaveProductAsync()
@@ -96,7 +113,8 @@ namespace SmartLanche.ViewModels
                     Name = Name,
                     Category = Category,
                     Price = Price,
-                    Description = Description
+                    Description = Description,
+                    IsCombo = IsCombo
                 };
 
                 await _repositoryProduct.AddAsync(product);
@@ -110,13 +128,13 @@ namespace SmartLanche.ViewModels
                 product.Category = Category;
                 product.Price = Price;
                 product.Description = Description;
+                product.IsCombo = IsCombo;
 
                 await _repositoryProduct.UpdateAsync(product);
             }
 
             await LoadProductsAsync();
-            NewProduct();
-            IsEditing = false;
+            CancelAction();          
         }
 
         private async Task DeleteProductAsync()
@@ -126,7 +144,7 @@ namespace SmartLanche.ViewModels
 
             await _repositoryProduct.DeleteAsync(SelectedProduct.Id);
             await LoadProductsAsync();
-            NewProduct();
+            CancelAction();          
         }
 
         private void NewProduct()
@@ -136,10 +154,54 @@ namespace SmartLanche.ViewModels
             Category = "";
             Price = 0;
             Description = "";
-            //IsCombo = false;
+            IsCombo = false;
 
             SelectedProduct = null;
             IsEditing = true;
+            IsViewing = true;
+
+            NewProductCommand.NotifyCanExecuteChanged();
+            SaveProductCommand.NotifyCanExecuteChanged();
+            CancelCommand.NotifyCanExecuteChanged();          
+
+            OnPropertyChanged(nameof(IsFormEnabled));
+            OnPropertyChanged(nameof(DataGridReadOnly));
+        }
+
+        private void EditProduct()
+        {
+            IsEditing = true;
+
+            SaveProductCommand.NotifyCanExecuteChanged();
+            NewProductCommand.NotifyCanExecuteChanged();
+            DeleteProductCommand.NotifyCanExecuteChanged();
+            CancelCommand.NotifyCanExecuteChanged();
+
+            OnPropertyChanged(nameof(IsFormEnabled));
+            OnPropertyChanged(nameof(DataGridReadOnly));
+        }
+
+        private void CancelAction()
+        {
+            Id = 0;
+            Name = "";
+            Category = "";
+            Price = 0;
+            Description = "";
+            IsCombo = false;
+
+            SelectedProduct = null;
+            IsEditing = false;
+            IsViewing = false;
+
+            NewProductCommand.NotifyCanExecuteChanged();
+            SaveProductCommand.NotifyCanExecuteChanged();
+            CancelCommand.NotifyCanExecuteChanged();
+            EditProductCommand.NotifyCanExecuteChanged();
+            DeleteProductCommand.NotifyCanExecuteChanged();
+
+            OnPropertyChanged(nameof(DataGridReadOnly));
+            OnPropertyChanged(nameof(IsFormEnabled));
         }
     }
 }

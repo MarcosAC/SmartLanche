@@ -20,7 +20,7 @@
             Grid.Row="0"
             Margin="0,0,0,16"> 
             
-            <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock 
                     Text="Cadastro de Produtos"
                     FontSize="24"
@@ -54,7 +54,8 @@
                         Grid.Row="0" 
                         Grid.Column="1" 
                         Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Margin="0,5" />
+                        Margin="0,5"
+                        IsEnabled="{Binding IsFormEnabled}" />
 
                     <TextBlock
                         Grid.Row="0"
@@ -67,7 +68,8 @@
                         Grid.Row="0"
                         Grid.Column="3" 
                         Text="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Margin="0,5" />
+                        Margin="0,5"
+                        IsEnabled="{Binding IsFormEnabled}" />
 
                     <TextBlock 
                         Grid.Row="0"
@@ -80,7 +82,8 @@
                         Grid.Row="0"
                         Grid.Column="5" 
                         Text="{Binding Price, Mode=TwoWay, StringFormat={}{0:N2}}" 
-                        Margin="0,5" />
+                        Margin="0,5"
+                        IsEnabled="{Binding IsFormEnabled}" />
 
                     <TextBlock
                         Grid.Row="1" 
@@ -97,14 +100,16 @@
                         Height="50" 
                         TextWrapping="Wrap"
                         AcceptsReturn="True"
-                        Margin="0,5,0,16" />
+                        Margin="0,5,0,16"
+                        IsEnabled="{Binding IsFormEnabled}" />
 
                     <CheckBox 
                         Grid.Row="1" Grid.Column="5" 
                         Content="É Combo/Promoção"
                         IsChecked="{Binding IsCombo, Mode=TwoWay}"
                         VerticalAlignment="Center"
-                        Margin="16,0,0,0" />                    
+                        Margin="16,0,0,0"
+                        IsEnabled="{Binding IsFormEnabled}" />                    
                 </Grid>
             </StackPanel>
 
@@ -120,12 +125,22 @@
                     Margin="0,0,8,0" />
 
                 <Button 
+                    Content="Editar"
+                    Command="{Binding EditProductCommand}"
+                    Width="80"
+                    Margin="0,0,8,0"
+                    Background="#FF007ACC"
+                    Foreground="White"
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button 
                     Content="Salvar" 
                     Command="{Binding SaveProductCommand}" 
                     Width="80" 
                     Margin="0,0,8,0" 
                     Background="#FF007ACC" 
-                    Foreground="White"/>
+                    Foreground="White" 
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <Button
                     Content="Cancelar" 
@@ -133,14 +148,16 @@
                     Width="80" 
                     Margin="0,0,8,0" 
                     Background="#FF6C757D" 
-                    Foreground="White"/>
+                    Foreground="White" 
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <Button
                     Content="Excluir" 
                     Command="{Binding DeleteProductCommand}" 
                     Width="80" 
                     Background="#FFDC3545" 
-                    Foreground="White" />                
+                    Foreground="White"
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />                
             </StackPanel>
         </StackPanel>
 

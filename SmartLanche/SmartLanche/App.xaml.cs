@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmartLanche.Data;
@@ -38,7 +39,8 @@ namespace SmartLanche
 
             // Services e Repository
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-            services.AddSingleton<IConfigurationService, ConfigurationService>();            
+            services.AddSingleton<IConfigurationService, ConfigurationService>();
+            services.AddSingleton<IMessenger, WeakReferenceMessenger>();
             
             // ViewModels
             services.AddSingleton<MainWindowViewModel>();
