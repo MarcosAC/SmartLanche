@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace SmartLanche.Services
 {
@@ -11,8 +12,16 @@ namespace SmartLanche.Services
             _configuration = configuration;
         }
 
-        string IConfigurationService.GetLogoPath() => _configuration.GetSection("SmartLanche")["Name"] ?? "SmartLanche";
-        string IConfigurationService.GetNameApp() => _configuration.GetSection("SmartLanche")["Logo"] ?? "SmartLanche";
-        string IConfigurationService.GetTheme() => _configuration.GetSection("SmartLanche")["Theme"] ?? "SmartLanche";
+        public string GetLogoPath()
+        {
+            string relativePath = _configuration.GetSection("SmartLanche")["Logo"] ?? "Resource/logo.jpg";
+            string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+
+            return fullPath;
+        }
+
+        public string GetNameApp() => _configuration.GetSection("SmartLanche")["Name"] ?? "SmartLanche";
+
+        public string GetTheme() => _configuration.GetSection("SmartLanche")["Theme"] ?? "Orange";
     }
 }
