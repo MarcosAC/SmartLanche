@@ -157,7 +157,7 @@
                     Width="80" 
                     Background="#FFDC3545" 
                     Foreground="White"
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />                
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}"/>                
             </StackPanel>
         </StackPanel>
 

@@ -1,18 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using SmartLanche.Messages;
 using SmartLanche.Models;
 using SmartLanche.Services;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartLanche.ViewModels
 {
     public partial class ProductRegistrationViewModel : BaseViewModel
     {
-        private readonly IRepository<Product> _repositoryProduct;
+        private readonly IRepository<Product> _repositoryProduct;        
 
-        public ProductRegistrationViewModel(IRepository<Product> repository)
+        public ProductRegistrationViewModel(IRepository<Product> repository, IMessenger messenger) : base(messenger)
         {
-            _repositoryProduct = repository;
+            _repositoryProduct = repository;            
 
             Products = new ObservableCollection<Product>();
 
@@ -33,10 +36,19 @@ namespace SmartLanche.ViewModels
         private Product? selectedProduct;
         
         [ObservableProperty] private int id;
+
+        [Required(ErrorMessage = "O Nome é obrigatório.")]
         [ObservableProperty] private string name = "";
+
+        [Required(ErrorMessage = "A Categopria é obrigatória.")]
         [ObservableProperty] private string category = "";
+
+        [Required(ErrorMessage = "O Preço é obrigatório.")]
         [ObservableProperty] private decimal price;
+
+        [Required(ErrorMessage = "A Descrição é obrigatória")]
         [ObservableProperty] private string? description;
+
         [ObservableProperty] private bool isCombo;
 
         [ObservableProperty] private bool isEditing = false;
@@ -103,8 +115,15 @@ namespace SmartLanche.ViewModels
 
         private async Task SaveProductAsync()
         {
-            if (string.IsNullOrWhiteSpace(Name))
+           ValidateAllProperties();
+
+            if (HasErrors)
+            {
+                var firstError = GetErrors().FirstOrDefault()?.ErrorMessage;
+
+                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", isSuccess: false));
                 return;
+            }
 
             if (Id == 0)
             {
@@ -134,6 +153,10 @@ namespace SmartLanche.ViewModels
             }
 
             await LoadProductsAsync();
+
+            string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
+            Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
+
             CancelAction();          
         }
 
