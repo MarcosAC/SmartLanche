@@ -24,7 +24,7 @@ namespace SmartLanche.ViewModels
             DeleteProductCommand = new AsyncRelayCommand(DeleteProductAsync, () => IsViewing && !IsEditing);
             NewProductCommand = new RelayCommand(NewProduct, () => !IsEditing && !IsViewing);
             CancelCommand = new RelayCommand(CancelAction, () => IsViewing || IsEditing);
-            EditProductCommand = new RelayCommand(EditProduct, () => IsViewing);
+            EditProductCommand = new RelayCommand(EditProduct, () => IsViewing && !IsEditing);
 
             _ = LoadProductsAsync();
         }
@@ -150,12 +150,12 @@ namespace SmartLanche.ViewModels
                 product.IsCombo = IsCombo;
 
                 await _repositoryProduct.UpdateAsync(product);
-            }
-
-            await LoadProductsAsync();
+            }            
 
             string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
             Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
+
+            await LoadProductsAsync();
 
             CancelAction();          
         }
@@ -167,6 +167,10 @@ namespace SmartLanche.ViewModels
 
             await _repositoryProduct.DeleteAsync(SelectedProduct.Id);
             await LoadProductsAsync();
+
+            string sucecessMessage = "Produto excluido com sucesso!";
+            Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
+
             CancelAction();          
         }
 
@@ -199,6 +203,7 @@ namespace SmartLanche.ViewModels
             NewProductCommand.NotifyCanExecuteChanged();
             DeleteProductCommand.NotifyCanExecuteChanged();
             CancelCommand.NotifyCanExecuteChanged();
+            EditProductCommand.NotifyCanExecuteChanged();
 
             OnPropertyChanged(nameof(IsFormEnabled));
             OnPropertyChanged(nameof(DataGridReadOnly));
