@@ -1,0 +1,101 @@
+﻿<Window x:Class="SmartLanche.Views.MainWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:SmartLanche.ViewModels"
+        xmlns:views="clr-namespace:SmartLanche.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="SmartLanche" Height="760" Width="1200">
+    
+    <Window.Resources>        
+        <DataTemplate DataType="{x:Type vm:ProductRegistrationViewModel}">
+            <views:ProductRegistrationView />           
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel>
+        <Border
+            DockPanel.Dock="Top"
+            Background="#FFF7F1E0"
+            Padding="10">
+
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    Source="{Binding LogoPath}"
+                    Height="56"
+                    Width="56"
+                    Margin="0,0,12,0" />
+
+                <TextBlock
+                    Text="{Binding AppName}"
+                    FontSize="24"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold" />
+            </StackPanel>
+        </Border>       
+
+        <TabControl Margin="8">
+            <TabItem Header="Pedidos">                
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock 
+                            Text="Menu"
+                            FontSize="18"
+                            FontWeight="Bold" />
+                        
+                        <ListBox
+                            ItemsSource="{Binding Products}"
+                            DisplayMemberPath="Name"
+                            Height="500" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Carrinho" FontSize="18" FontWeight="Bold" />                        
+                        <Button Content="Adicionar Pedido" Command="{Binding AddProductCommand}" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Cardápio">
+                <ContentControl Content="{Binding ProductRegistrationViewModel}" />
+            </TabItem>
+
+            <TabItem Header="Promoções">
+                <TextBlock Text="Promoções / Combos" Margin="8" />
+            </TabItem>
+
+            <TabItem Header="Pendências">
+                <TextBlock Text="Contas a Receber (Fiado)" Margin="8" />
+            </TabItem>
+
+            <TabItem Header="Pedidos em Preparação">
+                <TextBlock Text="Pedidos em Preparação (alterar status)" Margin="8" />
+            </TabItem>
+
+            <TabItem Header="Carrinho">
+
+            </TabItem>
+
+            <TabItem Header="Estoque">
+                <TextBlock Text="Controle de Estoque" Margin="8" />
+            </TabItem>
+
+            <TabItem Header="Resumo/Vendas">
+                <TextBlock Text="Resumo diário de vendas" Margin="8" />
+            </TabItem>
+
+            <TabItem Header="Configurações">
+                <TextBlock
+                    Text="Personalize em Config/appsettings.json"
+                    Margin="8" />
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
