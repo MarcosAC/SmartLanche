@@ -24,7 +24,7 @@ namespace SmartLanche
 
             Configuration = builder.Build();
 
-            //--- Confgirações Banco de Dados
+            // Confgirações Banco de Dados
             var dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             Directory.CreateDirectory(dataDir);
             AppDomain.CurrentDomain.SetData("DataDirectory", dataDir);
@@ -45,10 +45,12 @@ namespace SmartLanche
             // ViewModels
             services.AddSingleton<MainWindowViewModel>();
             services.AddTransient<ProductRegistrationViewModel>();
+            services.AddTransient<ClientRegistrationViewModel>();
 
             // Views
             services.AddTransient<MainWindowView>();
             services.AddTransient<ProductRegistrationView>();
+            services.AddTransient<ClientRegistrationView>();
 
             ServiceProvider = services.BuildServiceProvider();
 

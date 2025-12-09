@@ -13,6 +13,10 @@
         <DataTemplate DataType="{x:Type vm:ProductRegistrationViewModel}">
             <views:ProductRegistrationView />           
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ClientRegistrationViewModel}">
+            <views:ClientRegistrationView />
+        </DataTemplate>
     </Window.Resources>
 
     <DockPanel>
@@ -65,6 +69,10 @@
             
             <TabItem Header="Cardápio">
                 <ContentControl Content="{Binding ProductRegistrationViewModel}" />
+            </TabItem>
+
+            <TabItem Header="Clientes">
+                <ContentControl Content="{Binding ClientRegistrationViewModel}" />
             </TabItem>
 
             <TabItem Header="Promoções">

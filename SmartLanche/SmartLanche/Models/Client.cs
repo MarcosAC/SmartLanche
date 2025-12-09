@@ -15,7 +15,7 @@ namespace SmartLanche.Models
         public string? Phone { get; set; }
 
         [StringLength(500)]
-        public string? Observation { get; set; }
+        public string? Observations { get; set; }
 
         [Required]
         public decimal OutstangingBalance { get; set; } = 0.00m;
