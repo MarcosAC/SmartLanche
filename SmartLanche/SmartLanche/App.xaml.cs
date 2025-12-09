@@ -35,7 +35,7 @@ namespace SmartLanche
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Configuration["Database:ConnectionString"];
 
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
             // Services e Repository
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));

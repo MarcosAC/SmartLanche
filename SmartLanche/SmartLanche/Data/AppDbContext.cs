@@ -29,7 +29,7 @@ namespace SmartLanche.Data
 
             modelBuilder.Entity<Client>(entity =>
             {
-                entity.Property(client => client.OutstangingBalance).HasColumnType("decimal(10,2)");
+                entity.Property(client => client.OutstandingBalance).HasColumnType("decimal(10,2)");
                 entity.Property(client => client.Name).IsRequired().HasMaxLength(150);
             });                
         }

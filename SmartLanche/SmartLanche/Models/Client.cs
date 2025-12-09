@@ -18,6 +18,6 @@ namespace SmartLanche.Models
         public string? Observations { get; set; }
 
         [Required]
-        public decimal OutstangingBalance { get; set; } = 0.00m;
+        public decimal OutstandingBalance { get; set; } = 0.00m;
     }
 }

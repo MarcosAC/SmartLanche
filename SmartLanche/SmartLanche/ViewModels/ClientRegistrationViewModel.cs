@@ -78,7 +78,7 @@ namespace SmartLanche.ViewModels
                 Name = value.Name;
                 Phone = value.Phone;
                 Observations = value.Observations;
-                OutstandingBalance = value.OutstangingBalance;
+                OutstandingBalance = value.OutstandingBalance;
 
                 IsEditing = false;
                 IsViewing = false;
@@ -115,7 +115,7 @@ namespace SmartLanche.ViewModels
                     Name = Name,
                     Phone = Phone,
                     Observations = Observations,
-                    OutstangingBalance = OutstandingBalance,
+                    OutstandingBalance = OutstandingBalance,
                 };
 
                 await _repositoryClient.AddAsync(client);
@@ -142,7 +142,7 @@ namespace SmartLanche.ViewModels
         {
             if (SelectedClient == null) return;
 
-            if (SelectedClient.OutstangingBalance > 0)
+            if (SelectedClient.OutstandingBalance > 0)
             {
                 Messenger.Send(new Messages.StatusMessage("Não é possível excluir o cliente: Saldo devedor pendente.", isSuccess: false));
                 return;
