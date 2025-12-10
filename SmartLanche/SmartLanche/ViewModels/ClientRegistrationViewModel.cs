@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SmartLanche.Messages;
 using SmartLanche.Models;
 using SmartLanche.Services;
 using System.Collections.ObjectModel;
@@ -39,6 +40,7 @@ namespace SmartLanche.ViewModels
         [Required(ErrorMessage = "O nome é obrigatório.")]        
         [ObservableProperty] private string name = "";
 
+        [Required(ErrorMessage = "O telefone é obrigatório.")]
         [ObservableProperty] private string? phone;
 
         [ObservableProperty] private string? observations;
@@ -112,9 +114,9 @@ namespace SmartLanche.ViewModels
 
             if (HasErrors)
             {
-                var errors = string.Join("\n", GetErrors().Select(e => e.ErrorMessage));
+                var firstError = GetErrors().FirstOrDefault()?.ErrorMessage;
 
-                Messenger.Send(new Messages.StatusMessage($"Erro ao salvar cliente:\n{errors}", isSuccess: false));
+                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", isSuccess: false));
 
                 return;
             }
@@ -130,8 +132,6 @@ namespace SmartLanche.ViewModels
                 };
 
                 await _repositoryClient.AddAsync(client);
-
-                Messenger.Send(new Messages.StatusMessage($"Cliente '{client.Name}' cadastro com sucesso!", isSuccess: true));
             }
             else
             {
@@ -142,11 +142,17 @@ namespace SmartLanche.ViewModels
                 client.Name = Name;
                 client.Phone = Phone;
                 client.Observations = Observations;
+                client.OutstandingBalance = OutstandingBalance;
 
                 await _repositoryClient.UpdateAsync(client);
-
-                Messenger.Send(new Messages.StatusMessage($"Cliente '{client.Name}' atualizado com sucesso!", isSuccess: true));
             }
+
+            string successMessage = Id == 0 ? "Cliente cadastrado com sucesso!" : "Cliente atualizado com sucesso!";
+            Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
+            
+            await LoadClientsAsync();
+
+            CancelAction();
         }
 
         private async Task DeleteClientAsync()
@@ -184,8 +190,6 @@ namespace SmartLanche.ViewModels
             NewClientCommand.NotifyCanExecuteChanged();
             SaveClientCommand.NotifyCanExecuteChanged();
             CancelCommand.NotifyCanExecuteChanged();
-            //DeleteClientCommand.NotifyCanExecuteChanged();
-            //EditClientCommand.NotifyCanExecuteChanged();
 
             OnPropertyChanged(nameof(IsFormEnabled));
             OnPropertyChanged(nameof(DataGridReadOnly));

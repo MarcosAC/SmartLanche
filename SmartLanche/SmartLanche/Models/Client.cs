@@ -7,17 +7,10 @@ namespace SmartLanche.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O nome do cliente é obrigatório.")]
-        [StringLength(150)]
-        public string Name { get; set; } = string.Empty;
-
-        [StringLength(20)]
+        [Required]        
+        public string Name { get; set; } = string.Empty;       
         public string? Phone { get; set; }
-
-        [StringLength(500)]
-        public string? Observations { get; set; }
-
-        [Required]
+        public string? Observations { get; set; }        
         public decimal OutstandingBalance { get; set; } = 0.00m;
     }
 }
