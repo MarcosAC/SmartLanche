@@ -109,37 +109,44 @@
                 HorizontalAlignment="Left">
 
                 <Button 
-                    Content="Novo"
-                    Width="80"
-                    Command="{Binding NewClientCommand}"
+                    Content="Novo" 
+                    Command="{Binding NewClientCommand}" 
+                    Width="80" 
                     Margin="0,0,8,0" />
 
                 <Button 
-                    Content="Salvar"
-                    Width="80"
-                    Command="{Binding SaveClientCommand}"
-                    Margin="0,0,8,0"
-                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <Button 
-                    Content="Excluir"
-                    Width="80"
-                    Command="{Binding DeleteClientCommand}"
-                    Margin="0,0,8,0"
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <Button 
                     Content="Editar"
-                    Width="80"
                     Command="{Binding EditClientCommand}"
+                    Width="80"
                     Margin="0,0,8,0"
+                    Background="#FF007ACC"
+                    Foreground="White"
                     Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <Button 
-                    Content="Cancelar"
-                    Width="80"
-                    Command="{Binding CancelCommand}"
-                    Margin="0,0,8,0"
+                    Content="Salvar" 
+                    Command="{Binding SaveClientCommand}" 
+                    Width="80" 
+                    Margin="0,0,8,0" 
+                    Background="#FF007ACC" 
+                    Foreground="White" 
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button
+                    Content="Cancelar" 
+                    Command="{Binding CancelCommand}" 
+                    Width="80" 
+                    Margin="0,0,8,0" 
+                    Background="#FF6C757D" 
+                    Foreground="White" 
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button
+                    Content="Excluir" 
+                    Command="{Binding DeleteClientCommand}" 
+                    Width="80" 
+                    Background="#FFDC3545" 
+                    Foreground="White" 
                     Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
         </StackPanel>

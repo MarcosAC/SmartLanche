@@ -22,8 +22,8 @@ namespace SmartLanche.ViewModels
             SaveClientCommand = new AsyncRelayCommand(SaveClientAsync, () => IsEditing);
             DeleteClientCommand = new AsyncRelayCommand(DeleteClientAsync, () => IsViewing && !IsEditing);
             NewClientCommand = new RelayCommand(NewClient, () => !IsEditing && !IsViewing);
-            CancelCommand = new RelayCommand(CancelAction, () => IsViewing && IsEditing);
-            EditClientCommand = new RelayCommand(EditClient, () => IsViewing && IsEditing);
+            CancelCommand = new RelayCommand(CancelAction, () => IsViewing || IsEditing);
+            EditClientCommand = new RelayCommand(EditClient, () => IsViewing && !IsEditing);
 
             _ = LoadClientsAsync();
         }       
@@ -48,7 +48,7 @@ namespace SmartLanche.ViewModels
         [ObservableProperty] private bool isEditing = false;        
         [ObservableProperty] private bool isViewing = false;
 
-        public bool IsFormEnable => IsEditing;
+        public bool IsFormEnabled => IsEditing;
         public bool DataGridReadOnly => IsEditing;      
 
         public IAsyncRelayCommand LoadClientsCommand { get; }
@@ -70,8 +70,6 @@ namespace SmartLanche.ViewModels
 
         partial void OnSelectedClientChanged(Client? value)
         {
-            ClearErrors();
-
             if (value != null)
             {
                 Id = value.Id;
@@ -81,7 +79,7 @@ namespace SmartLanche.ViewModels
                 OutstandingBalance = value.OutstandingBalance;
 
                 IsEditing = false;
-                IsViewing = false;
+                IsViewing = true;
             }
             else 
             {
@@ -93,6 +91,19 @@ namespace SmartLanche.ViewModels
             CancelCommand.NotifyCanExecuteChanged();
             EditClientCommand.NotifyCanExecuteChanged();
             DeleteClientCommand.NotifyCanExecuteChanged();
+
+            OnPropertyChanged(nameof(DataGridReadOnly));
+            OnPropertyChanged(nameof(IsFormEnabled));
+        }
+
+        partial void OnIsEditingChanged(bool value)
+        {
+            NewClientCommand.NotifyCanExecuteChanged();
+            SaveClientCommand.NotifyCanExecuteChanged();
+            CancelCommand.NotifyCanExecuteChanged();
+
+            OnPropertyChanged(nameof(DataGridReadOnly));
+            OnPropertyChanged(nameof(IsFormEnabled));
         }
 
         private async Task SaveClientAsync()
@@ -176,7 +187,7 @@ namespace SmartLanche.ViewModels
             //DeleteClientCommand.NotifyCanExecuteChanged();
             //EditClientCommand.NotifyCanExecuteChanged();
 
-            OnPropertyChanged(nameof(IsFormEnable));
+            OnPropertyChanged(nameof(IsFormEnabled));
             OnPropertyChanged(nameof(DataGridReadOnly));
         }
 
@@ -190,7 +201,7 @@ namespace SmartLanche.ViewModels
             DeleteClientCommand.NotifyCanExecuteChanged();
             EditClientCommand.NotifyCanExecuteChanged();
 
-            OnPropertyChanged(nameof(IsFormEnable));
+            OnPropertyChanged(nameof(IsFormEnabled));
             OnPropertyChanged(nameof(DataGridReadOnly));
         }
 
@@ -214,7 +225,7 @@ namespace SmartLanche.ViewModels
             DeleteClientCommand.NotifyCanExecuteChanged();
 
             OnPropertyChanged(nameof(DataGridReadOnly));
-            OnPropertyChanged(nameof(IsFormEnable));
+            OnPropertyChanged(nameof(IsFormEnabled));
         }
     }
 }
