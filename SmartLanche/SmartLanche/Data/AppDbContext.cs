@@ -9,8 +9,8 @@ namespace SmartLanche.Data
 
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Client> Clients => Set<Client>();
-        //public DbSet<Order> Orders => Set<Order>();
-        //public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         //public DbSet<StockItem> StockItems => Set<StockItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,7 +31,33 @@ namespace SmartLanche.Data
             {
                 entity.Property(client => client.OutstandingBalance).HasColumnType("decimal(10,2)");
                 entity.Property(client => client.Name).IsRequired().HasMaxLength(150);
-            });                
+            });
+
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.Property(order => order.TotalAmount).HasColumnType("decimal(10,2)");
+
+                entity.HasOne(order => order.Client)
+                      .WithMany()
+                      .HasForeignKey(order => order.ClientId)
+                      .IsRequired(false)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<OrderItem>(entity =>
+            {
+                entity.Property(orderItem => orderItem.UnitPrice).HasColumnType("decimal(10,2)");
+
+                entity.HasOne(orderItem => orderItem.Order)
+                      .WithMany(order => order.OrderItems)
+                      .HasForeignKey(orderItem => orderItem.OrderId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(orderItem => orderItem.Product)
+                          .WithMany()
+                          .HasForeignKey(orderItem => orderItem.ProductId)
+                          .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }
