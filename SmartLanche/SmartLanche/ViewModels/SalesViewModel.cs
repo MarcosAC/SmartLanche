@@ -51,7 +51,7 @@ namespace SmartLanche.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanBeCredit))]
-        private PaymentMethod selectedPaymentMethod = PaymentMethod.Dinheiro;
+        private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;
 
         public decimal TotalOrderAmount => CartItems.Sum(item => item.Subtotal);
 
@@ -117,7 +117,7 @@ namespace SmartLanche.ViewModels
         {
             if (!CartItems.Any()) return;
 
-            if (SelectedPaymentMethod == PaymentMethod.Fiado && SelectedClient == null)
+            if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient == null)
             {
                 Messenger.Send(new Messages.StatusMessage("Selecione um cliente para pedidos no Fiado.", isSuccess: false));
 
@@ -130,7 +130,7 @@ namespace SmartLanche.ViewModels
             {
                 TotalAmount = TotalOrderAmount,
                 OrderDate = DateTime.Now,
-                Status = OrderStatus.Pendente,
+                Status = OrderStatus.Pending,
                 PaymentMethod = SelectedPaymentMethod,
                 ClientId = SelectedClient?.Id,
                 OrderItems = CartItems.ToList()
@@ -138,7 +138,7 @@ namespace SmartLanche.ViewModels
 
             Client? clientToUpdate = null;
 
-            if (SelectedPaymentMethod == PaymentMethod.Fiado && SelectedClient != null)
+            if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient != null)
             {
                 clientToUpdate = SelectedClient;
                 clientToUpdate.OutstandingBalance += totalAmount;
@@ -163,7 +163,7 @@ namespace SmartLanche.ViewModels
 
                     CartItems.Clear();
                     SelectedClient = null;
-                    SelectedPaymentMethod = PaymentMethod.Dinheiro;
+                    SelectedPaymentMethod = PaymentMethod.Cash;
 
                     OnPropertyChanged(nameof(TotalOrderAmount));
                     FinalizeOrderCommand.NotifyCanExecuteChanged();

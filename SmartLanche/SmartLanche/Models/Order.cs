@@ -10,7 +10,7 @@ namespace SmartLanche.Models
         [Required]
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public decimal TotalAmount { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Pendente;
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public int? ClientId { get; set; }
         public Client? Client { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
@@ -19,18 +19,18 @@ namespace SmartLanche.Models
 
     public enum OrderStatus
     {
-        Pendente,
-        EmPreparo,
-        Pronto,
-        Finalizado,
-        Cancelado
+        Pending,
+        InPreparation,
+        Ready,
+        Completed,
+        Cancelled
     }
 
     public enum PaymentMethod
     {
-        Dinheiro,
-        Cartao,
+        Cash,
+        Card,
         Pix,
-        Fiado
+        Credit
     }
 }
