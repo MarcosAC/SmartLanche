@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SmartLanche.Data;
+using SmartLanche.Helpers;
 using SmartLanche.Messages;
 using SmartLanche.Models;
 using SmartLanche.Services;
@@ -55,7 +56,7 @@ namespace SmartLanche.ViewModels
 
         public decimal TotalOrderAmount => CartItems.Sum(item => item.Subtotal);
 
-        public bool CanBeCredit => SelectedClient != null && CartItems.Any();
+        public bool CanBeCredit => SelectedPaymentMethod == PaymentMethod.Credit && CartItems.Any();
 
         public IRelayCommand AddProductToCartCommand { get; }
         public IRelayCommand RemoveItemFromCartCommand { get; }
@@ -120,7 +121,6 @@ namespace SmartLanche.ViewModels
             if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient == null)
             {
                 Messenger.Send(new Messages.StatusMessage("Selecione um cliente para pedidos no Fiado.", isSuccess: false));
-
                 return;
             }
 
@@ -166,6 +166,7 @@ namespace SmartLanche.ViewModels
                     SelectedPaymentMethod = PaymentMethod.Cash;
 
                     OnPropertyChanged(nameof(TotalOrderAmount));
+                    OnPropertyChanged(nameof(CanBeCredit));
                     FinalizeOrderCommand.NotifyCanExecuteChanged();
 
                     Messenger.Send(new Messages.StatusMessage($"Pedido Nº{newOrder.Id} finalizado com sucesso! Total: {newOrder.TotalAmount:C}", isSuccess: true));

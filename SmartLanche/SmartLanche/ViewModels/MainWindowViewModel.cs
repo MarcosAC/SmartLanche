@@ -8,6 +8,7 @@ namespace SmartLanche.ViewModels
     {
         public ProductRegistrationViewModel ProductRegistrationViewModel { get; }
         public ClientRegistrationViewModel ClientRegistrationViewModel { get; }
+        public SalesViewModel SalesViewModel { get; }
 
         private readonly IMessenger _messenger;       
 
@@ -18,6 +19,7 @@ namespace SmartLanche.ViewModels
             IConfigurationService configuration,
             ProductRegistrationViewModel productRegistrationViewModel,
             ClientRegistrationViewModel clientRegistrationViewModel,
+            SalesViewModel salesViewModel,
             IMessenger messenger)
         {
             AppName = configuration.GetNameApp();
@@ -25,6 +27,7 @@ namespace SmartLanche.ViewModels
 
             ProductRegistrationViewModel = productRegistrationViewModel;
             ClientRegistrationViewModel = clientRegistrationViewModel;
+            SalesViewModel = salesViewModel;
 
             _messenger = messenger;
         }        

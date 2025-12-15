@@ -17,6 +17,10 @@
         <DataTemplate DataType="{x:Type vm:ClientRegistrationViewModel}">
             <views:ClientRegistrationView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:SalesViewModel}">
+            <views:SalesView />
+        </DataTemplate>
     </Window.Resources>
 
     <DockPanel>
@@ -41,30 +45,8 @@
         </Border>       
 
         <TabControl Margin="8">
-            <TabItem Header="Pedidos">                
-                <Grid Margin="8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <TextBlock 
-                            Text="Menu"
-                            FontSize="18"
-                            FontWeight="Bold" />
-                        
-                        <ListBox
-                            ItemsSource="{Binding Products}"
-                            DisplayMemberPath="Name"
-                            Height="500" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="Carrinho" FontSize="18" FontWeight="Bold" />                        
-                        <Button Content="Adicionar Pedido" Command="{Binding AddProductCommand}" />
-                    </StackPanel>
-                </Grid>
+            <TabItem Header="Pedidos">
+                <ContentControl Content="{Binding SalesViewModel}" />
             </TabItem>
             
             <TabItem Header="Cardápio">

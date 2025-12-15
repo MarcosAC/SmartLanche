@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SmartLanche.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartLanche.Models
 {
@@ -15,22 +16,5 @@ namespace SmartLanche.Models
         public Client? Client { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();        
-    }
-
-    public enum OrderStatus
-    {
-        Pending,
-        InPreparation,
-        Ready,
-        Completed,
-        Cancelled
-    }
-
-    public enum PaymentMethod
-    {
-        Cash,
-        Card,
-        Pix,
-        Credit
-    }
+    }    
 }

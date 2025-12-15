@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SmartLanche.Views"
              xmlns:models="clr-namespace:SmartLanche.Models"
+             xmlns:helpers="clr-namespace:SmartLanche.Helpers"
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
     
     <Grid Margin="16">
@@ -96,7 +97,7 @@
                     <DataGridTextColumn 
                         Header="Quantidade"
                         Binding="{Binding Quantity}"
-                        Width="60" />
+                        Width="80" />
 
                     <DataGridTextColumn 
                         Header="Subtotal"
@@ -108,7 +109,7 @@
                             <DataTemplate>
                                 <Button
                                     Content="Remover"
-                                    Command="{Binding DataContex.RemoveItemFromCartCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    Command="{Binding DataContext.RemoveItemFromCartCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                     CommandParameter="{Binding}"
                                     Margin="2" />
                             </DataTemplate>
@@ -147,6 +148,13 @@
                     Margin="0,0,0,5"
                     FontWeight="SemiBold" />
 
+                <ComboBox
+                    ItemsSource="{Binding Source={helpers:EnumValues {x:Type helpers:PaymentMethod}}}"
+                    DisplayMemberPath="DisplayName"
+                    SelectedValuePath="Value"
+                    SelectedItem="{Binding SelectedPaymentMethod, Mode=TwoWay}"
+                    Margin="0,0,0,10" />
+
                 <ComboBox 
                     ItemsSource="{Binding Clients}"
                     SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
@@ -160,9 +168,8 @@
                     FontSize="20"
                     Padding="10"
                     Background="#FF4CAF50"
-                    Foreground="White" />
+                    Foreground="White" />                
             </StackPanel>
-
-        </DockPanel>
-    </Grid>
+        </DockPanel>        
+    </Grid>    
 </UserControl>

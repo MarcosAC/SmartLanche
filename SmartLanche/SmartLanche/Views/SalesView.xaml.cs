@@ -1,26 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using SmartLanche.Models;
+using SmartLanche.ViewModels;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SmartLanche.Views
-{
-    /// <summary>
-    /// Interação lógica para SalesView.xam
-    /// </summary>
+{   
     public partial class SalesView : UserControl
     {
         public SalesView()
         {
             InitializeComponent();
+        }
+
+        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var item = sender as ListViewItem;
+            if (item != null && item.IsSelected)
+            {
+                if (item.Content is Product product)
+                {
+                    if (DataContext is SalesViewModel viewModel)
+                    {
+                        if (viewModel.AddProductToCartCommand.CanExecute(product))
+                        {
+                            viewModel.AddProductToCartCommand.Execute(product);
+                        }
+                    }
+                }
+            }
         }
     }
 }
