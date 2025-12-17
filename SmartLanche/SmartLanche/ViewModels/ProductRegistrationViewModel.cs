@@ -18,62 +18,167 @@ namespace SmartLanche.ViewModels
             _repositoryProduct = repository;            
 
             Products = new ObservableCollection<Product>();
-
-            LoadProductsCommand = new AsyncRelayCommand(LoadProductsAsync);
-            SaveProductCommand = new AsyncRelayCommand(SaveProductAsync, () => IsEditing);
-            DeleteProductCommand = new AsyncRelayCommand(DeleteProductAsync, () => IsViewing && !IsEditing);
-            NewProductCommand = new RelayCommand(NewProduct, () => !IsEditing && !IsViewing);
-            CancelCommand = new RelayCommand(CancelAction, () => IsViewing || IsEditing);
-            EditProductCommand = new RelayCommand(EditProduct, () => IsViewing && !IsEditing);
-
-            _ = LoadProductsAsync();
         }
-        
+
+        #region Propriedades Observáveis
+
         [ObservableProperty]
-        private ObservableCollection<Product> products;
+        private ObservableCollection<Product> products = new();
        
         [ObservableProperty]
         private Product? selectedProduct;
         
-        [ObservableProperty] private int id;
+        [ObservableProperty]
+        private int id;
 
         [Required(ErrorMessage = "O Nome é obrigatório.")]
-        [ObservableProperty] private string name = "";
+        [ObservableProperty]
+        private string name = "";
 
         [Required(ErrorMessage = "A Categopria é obrigatória.")]
-        [ObservableProperty] private string category = "";
+        [ObservableProperty]
+        private string category = "";
 
         [Required(ErrorMessage = "O Preço é obrigatório.")]
-        [ObservableProperty] private decimal price;
+        [ObservableProperty]
+        private decimal price;
 
         [Required(ErrorMessage = "A Descrição é obrigatória")]
-        [ObservableProperty] private string? description;
+        [ObservableProperty]
+        private string? description;
 
-        [ObservableProperty] private bool isCombo;
+        [ObservableProperty]
+        private bool isCombo;
 
-        [ObservableProperty] private bool isEditing = false;
-        [ObservableProperty] private bool isViewing = false;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
+        [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
+        [NotifyCanExecuteChangedFor(nameof(SaveProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(NewProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
+        
+        private bool isEditing = false;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
+        [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
+        [NotifyCanExecuteChangedFor(nameof(EditProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DeleteProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
+        [NotifyCanExecuteChangedFor(nameof(NewProductCommand))]
+
+        private bool isViewing = false;
 
         public bool IsFormEnabled => IsEditing;
         public bool DataGridReadOnly => IsEditing;
 
-        public IRelayCommand CancelCommand { get; }
-        public IAsyncRelayCommand LoadProductsCommand { get; }
-        public IAsyncRelayCommand SaveProductCommand { get; }
-        public IAsyncRelayCommand DeleteProductCommand { get; }
-        public IRelayCommand NewProductCommand { get; }
-        public IRelayCommand EditProductCommand { get; }
+        #endregion
 
+        #region Comandos
+        
+        [RelayCommand]
         private async Task LoadProductsAsync()
         {
-            Products.Clear();
+            try
+            {
+                var listProducts = await _repositoryProduct.GetAllAsync();
 
-            var listProducts = await _repositoryProduct.GetAllAsync();
-
-            foreach (var product in listProducts)
-                Products.Add(product);
+                Products = new ObservableCollection<Product>(listProducts.ToList());
+            }
+            catch (Exception ex)
+            {
+                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", isSuccess: false));
+            }
+            
         }
-        
+
+        [RelayCommand(CanExecute = nameof(CanSave))]
+        private async Task SaveProductAsync()
+        {
+            ValidateAllProperties();
+
+            if (HasErrors)
+            {
+                var firstError = GetErrors().FirstOrDefault()?.ErrorMessage;
+
+                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", isSuccess: false));
+                return;
+            }
+
+            var product = Id == 0 ? new Product() : await _repositoryProduct.GetByIdAsync(Id);
+            if (product == null) return;
+
+            product.Name = Name;
+            product.Category = Category;
+            product.Price = Price;
+            product.Description = Description;
+            product.IsCombo = IsCombo;
+
+            if (Id == 0) await _repositoryProduct.AddAsync(product);
+            else await _repositoryProduct.UpdateAsync(product);
+
+            string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
+            Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
+
+            await LoadProductsAsync();
+
+            CancelAction();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanDelete))]
+        private async Task DeleteProductAsync()
+        {
+            if (SelectedProduct != null)
+            {
+                await _repositoryProduct.DeleteAsync(SelectedProduct.Id);
+                await LoadProductsAsync();
+
+                string sucecessMessage = "Produto excluido com sucesso!";
+                Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
+
+                CancelAction();
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanCreateNew))]
+        private void NewProduct()
+        {
+            ClearFields();
+            IsEditing = true;
+            IsViewing = true;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanEdit))]
+        private void EditProduct() => IsEditing = true;   
+
+        [RelayCommand(CanExecute = nameof(CanCancel))]
+        private void CancelAction()
+        {
+            ClearFields();
+            IsEditing = false;
+            IsViewing = false;
+        }
+        #endregion
+
+        #region Lógica de Apoio (CanExecute)
+
+        private bool CanSave() => IsEditing;
+        private bool CanDelete() => IsViewing && !IsEditing;
+        private bool CanCreateNew() => !IsEditing && !IsViewing;
+        private bool CanEdit() => IsViewing && !IsEditing;
+        private bool CanCancel() => IsViewing || IsEditing;
+
+        private void ClearFields()
+        {
+            Id = 0;
+            Name = "";
+            Category = "";
+            Price = 0;
+            Description = "";
+            IsCombo = false;
+            SelectedProduct = null;
+        }
+
         partial void OnSelectedProductChanged(Product? value)
         {
             if (value != null)
@@ -87,149 +192,8 @@ namespace SmartLanche.ViewModels
 
                 IsEditing = false;
                 IsViewing = true;
-            }
-            else
-            {
-                CancelAction();
-            }
-
-            NewProductCommand.NotifyCanExecuteChanged();
-            SaveProductCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-            EditProductCommand.NotifyCanExecuteChanged();
-            DeleteProductCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(DataGridReadOnly));
-            OnPropertyChanged(nameof(IsFormEnabled));
+            }      
         }
-
-        partial void OnIsEditingChanged(bool value)
-        {
-            SaveProductCommand.NotifyCanExecuteChanged();
-            NewProductCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(DataGridReadOnly));
-            OnPropertyChanged(nameof(IsFormEnabled));
-        }
-
-        private async Task SaveProductAsync()
-        {
-           ValidateAllProperties();
-
-            if (HasErrors)
-            {
-                var firstError = GetErrors().FirstOrDefault()?.ErrorMessage;
-
-                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", isSuccess: false));
-                return;
-            }
-
-            if (Id == 0)
-            {
-                var product = new Product
-                {
-                    Name = Name,
-                    Category = Category,
-                    Price = Price,
-                    Description = Description,
-                    IsCombo = IsCombo
-                };
-
-                await _repositoryProduct.AddAsync(product);
-            }
-            else
-            {
-                var product = await _repositoryProduct.GetByIdAsync(Id);
-                if (product == null) return;
-
-                product.Name = Name;
-                product.Category = Category;
-                product.Price = Price;
-                product.Description = Description;
-                product.IsCombo = IsCombo;
-
-                await _repositoryProduct.UpdateAsync(product);
-            }            
-
-            string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
-            Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
-
-            await LoadProductsAsync();
-
-            CancelAction();          
-        }
-
-        private async Task DeleteProductAsync()
-        {
-            if (SelectedProduct == null)
-                return;
-
-            await _repositoryProduct.DeleteAsync(SelectedProduct.Id);
-            await LoadProductsAsync();
-
-            string sucecessMessage = "Produto excluido com sucesso!";
-            Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
-
-            CancelAction();          
-        }
-
-        private void NewProduct()
-        {
-            Id = 0;
-            Name = "";
-            Category = "";
-            Price = 0;
-            Description = "";
-            IsCombo = false;
-
-            SelectedProduct = null;
-            IsEditing = true;
-            IsViewing = true;
-
-            NewProductCommand.NotifyCanExecuteChanged();
-            SaveProductCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();          
-
-            OnPropertyChanged(nameof(IsFormEnabled));
-            OnPropertyChanged(nameof(DataGridReadOnly));
-        }
-
-        private void EditProduct()
-        {
-            IsEditing = true;
-
-            SaveProductCommand.NotifyCanExecuteChanged();
-            NewProductCommand.NotifyCanExecuteChanged();
-            DeleteProductCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-            EditProductCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(IsFormEnabled));
-            OnPropertyChanged(nameof(DataGridReadOnly));
-        }
-
-        private void CancelAction()
-        {
-            Id = 0;
-            Name = "";
-            Category = "";
-            Price = 0;
-            Description = "";
-            IsCombo = false;
-
-            SelectedProduct = null;
-            IsEditing = false;
-            IsViewing = false;
-
-            NewProductCommand.NotifyCanExecuteChanged();
-            SaveProductCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-            EditProductCommand.NotifyCanExecuteChanged();
-            DeleteProductCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(DataGridReadOnly));
-            OnPropertyChanged(nameof(IsFormEnabled));
-        }
+        #endregion    
     }
 }

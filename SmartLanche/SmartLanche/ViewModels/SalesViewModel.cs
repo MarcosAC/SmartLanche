@@ -29,6 +29,8 @@ namespace SmartLanche.ViewModels
             CartItems = new ObservableCollection<OrderItem>();           
         }
 
+        #region Propriedades Observáveis
+
         [ObservableProperty]
         private ObservableCollection<Product> products = new();
 
@@ -44,10 +46,14 @@ namespace SmartLanche.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanBeCredit))]
-        private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;
+        private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;        
 
         public decimal TotalOrderAmount => CartItems.Sum(item => item.Subtotal);
         public bool CanBeCredit => SelectedPaymentMethod == PaymentMethod.Credit;
+
+        #endregion
+
+        #region Comandos
 
         [RelayCommand]
         private async Task LoadDataAsync()
@@ -176,6 +182,7 @@ namespace SmartLanche.ViewModels
                     Messenger.Send(new StatusMessage($"Falha crítica ao finalizar pedido. Transação revertida. Erro: {ex.Message}", isSuccess: false));
                 }
             }
-        }        
+        }
+        #endregion
     }
 }

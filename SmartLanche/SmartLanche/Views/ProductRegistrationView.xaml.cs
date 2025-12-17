@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using SmartLanche.ViewModels;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace SmartLanche.Views
 {    
@@ -7,6 +9,14 @@ namespace SmartLanche.Views
         public ProductRegistrationView()
         {
             InitializeComponent();
-        }    
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ProductRegistrationViewModel viewModel)
+            {
+                await viewModel.LoadProductsCommand.ExecuteAsync(null);
+            }
+        }
     }
 }
