@@ -14,7 +14,7 @@ namespace SmartLanche.ViewModels
     {
         private readonly IRepository<Product> _repositoryProduct;
         private readonly IRepository<Client> _repositoryClient;
-        private readonly AppDbContext _dbContext;   
+        private readonly AppDbContext _dbContext;
 
         public SalesViewModel(
             IRepository<Product> repostoryProduct,
@@ -26,25 +26,17 @@ namespace SmartLanche.ViewModels
             _repositoryClient = repositoryClient;
             _dbContext = dbContext;
 
-            CartItems = new ObservableCollection<OrderItem>();
-            Products = new ObservableCollection<Product>();
-            Clients = new ObservableCollection<Client>();
-
-            _ = LoadDataAsync();
-
-            AddProductToCartCommand = new RelayCommand<Product>(AddProductToCart);
-            RemoveItemFromCartCommand = new RelayCommand<OrderItem>(RemoveItemFromCart);
-            FinalizeOrderCommand = new AsyncRelayCommand(FinalizeOrderAsync, () => CartItems.Any());
+            CartItems = new ObservableCollection<OrderItem>();           
         }
-      
-        [ObservableProperty]
-        private ObservableCollection<Product> products;
 
         [ObservableProperty]
-        private ObservableCollection<Client> clients;
+        private ObservableCollection<Product> products = new();
 
         [ObservableProperty]
-        private ObservableCollection<OrderItem> cartItems;
+        private ObservableCollection<Client> clients = new();
+
+        [ObservableProperty]
+        private ObservableCollection<OrderItem> cartItems = new();
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanBeCredit))]
@@ -55,21 +47,17 @@ namespace SmartLanche.ViewModels
         private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;
 
         public decimal TotalOrderAmount => CartItems.Sum(item => item.Subtotal);
+        public bool CanBeCredit => SelectedPaymentMethod == PaymentMethod.Credit;
 
-        public bool CanBeCredit => SelectedPaymentMethod == PaymentMethod.Credit && CartItems.Any();
-
-        public IRelayCommand AddProductToCartCommand { get; }
-        public IRelayCommand RemoveItemFromCartCommand { get; }
-        public IAsyncRelayCommand FinalizeOrderCommand { get; }
-
+        [RelayCommand]
         private async Task LoadDataAsync()
         {
             try
             {
-                var productList = await _repositoryProduct.GetAllAsync();
+                var productList = (await _repositoryProduct.GetAllAsync()).ToList();
                 Products = new ObservableCollection<Product>(productList);
 
-                var clientList = await _repositoryClient.GetAllAsync();
+                var clientList = (await _repositoryClient.GetAllAsync()).ToList();
                 Clients = new ObservableCollection<Client>(clientList);
             }
             catch (Exception ex)
@@ -78,6 +66,7 @@ namespace SmartLanche.ViewModels
             }
         }
 
+        [RelayCommand]
         private void AddProductToCart(Product? product)
         {
             if (product == null) return;
@@ -97,13 +86,14 @@ namespace SmartLanche.ViewModels
                     Product = product,
                     Quantity = 1,
                     UnitPrice = product.Price
-                });                
+                });
             }
 
             OnPropertyChanged(nameof(TotalOrderAmount));
             FinalizeOrderCommand.NotifyCanExecuteChanged();
         }
 
+        [RelayCommand]
         private void RemoveItemFromCart(OrderItem? item)
         {
             if (item == null) return;
@@ -114,6 +104,9 @@ namespace SmartLanche.ViewModels
             FinalizeOrderCommand.NotifyCanExecuteChanged();
         }
 
+        private bool CanFinalize() => CartItems?.Any() ?? false;
+
+        [RelayCommand(CanExecute = nameof(CanFinalize))]
         private async Task FinalizeOrderAsync()
         {
             if (!CartItems.Any()) return;
@@ -183,6 +176,6 @@ namespace SmartLanche.ViewModels
                     Messenger.Send(new StatusMessage($"Falha crítica ao finalizar pedido. Transação revertida. Erro: {ex.Message}", isSuccess: false));
                 }
             }
-        }
+        }        
     }
 }

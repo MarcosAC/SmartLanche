@@ -6,8 +6,9 @@
              xmlns:local="clr-namespace:SmartLanche.Views"
              xmlns:models="clr-namespace:SmartLanche.Models"
              xmlns:helpers="clr-namespace:SmartLanche.Helpers"
+             Loaded="UserControl_Loaded"
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
-    
+
     <Grid Margin="16">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -55,7 +56,7 @@
                             Width="120"
                             DisplayMemberBinding="{Binding Category}" />
                     </GridView>
-                </ListView.View>                
+                </ListView.View>
             </ListView>
         </DockPanel>
 
@@ -77,6 +78,7 @@
                 Margin="0,0,0,10" />
 
             <DataGrid
+                DockPanel.Dock="Top"
                 ItemsSource="{Binding CartItems}"
                 AutoGenerateColumns="False"
                 IsReadOnly="True"
@@ -104,7 +106,7 @@
                         Binding="{Binding Subtotal, StringFormat={}{0:C}}"
                         Width="100" />
 
-                    <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button
@@ -119,7 +121,8 @@
             </DataGrid>
 
             <StackPanel
-                DockPanel.Dock="Top"
+                
+                DockPanel.Dock="Right"
                 Margin="0,0,0,16">
 
                 <Grid Margin="0,0,0,10">
@@ -143,24 +146,51 @@
                         Margin="10,0,0,0" />
                 </Grid>
 
-                <TextBlock
-                    Text="Forma de Pagamento"
-                    Margin="0,0,0,5"
-                    FontWeight="SemiBold" />
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <ComboBox
-                    ItemsSource="{Binding Source={helpers:EnumValues {x:Type helpers:PaymentMethod}}}"
-                    DisplayMemberPath="DisplayName"
-                    SelectedValuePath="Value"
-                    SelectedItem="{Binding SelectedPaymentMethod, Mode=TwoWay}"
-                    Margin="0,0,0,10" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <ComboBox 
-                    ItemsSource="{Binding Clients}"
-                    SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
-                    DisplayMemberPath="Name"
-                    IsEnabled="{Binding CanBeCredit}"
-                    Margin="0,0,0,10" />
+                    <TextBlock
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        Text="Forma de Pagamento"
+                        Margin="0,0,0,5"
+                        FontWeight="SemiBold" />
+
+                    <ComboBox
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        ItemsSource="{Binding Source={helpers:EnumValuesExtension {x:Type helpers:PaymentMethod}}}"
+                        DisplayMemberPath="DisplayName"
+                        SelectedValuePath="Value"
+                        SelectedValue="{Binding SelectedPaymentMethod, Mode=TwoWay}"
+                        Width="115"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,10" />
+
+                    <TextBlock
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        Text="Cliente"
+                        Margin="10,0,0,0"
+                        FontWeight="SemiBold" />
+
+                    <ComboBox 
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        ItemsSource="{Binding Clients}"
+                        SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
+                        DisplayMemberPath="Name"
+                        IsEnabled="{Binding CanBeCredit}"
+                        Margin="10,0,0,10" />
+                </Grid>
 
                 <Button
                     Content="FINALIZAR PEDIDO"
@@ -168,8 +198,8 @@
                     FontSize="20"
                     Padding="10"
                     Background="#FF4CAF50"
-                    Foreground="White" />                
+                    Foreground="White" />
             </StackPanel>
-        </DockPanel>        
-    </Grid>    
+        </DockPanel>
+    </Grid>
 </UserControl>
