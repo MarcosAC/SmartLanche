@@ -125,6 +125,13 @@ namespace SmartLanche.ViewModels
 
             var totalAmount = TotalOrderAmount;
 
+            var orderItem = CartItems.Select(item => new OrderItem
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice
+            }).ToList();
+
             var newOrder = new Order
             {
                 TotalAmount = TotalOrderAmount,
@@ -132,7 +139,7 @@ namespace SmartLanche.ViewModels
                 Status = OrderStatus.Pending,
                 PaymentMethod = SelectedPaymentMethod,
                 ClientId = SelectedClient?.Id,
-                OrderItems = CartItems.ToList()
+                OrderItems = orderItem
             };
 
             Client? clientToUpdate = null;
