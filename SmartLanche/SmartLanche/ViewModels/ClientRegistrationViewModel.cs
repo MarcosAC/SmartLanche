@@ -18,16 +18,9 @@ namespace SmartLanche.ViewModels
             _repositoryClient = repository;
 
             Clients = new ObservableCollection<Client>();
+        }
 
-            LoadClientsCommand = new AsyncRelayCommand(LoadClientsAsync);
-            SaveClientCommand = new AsyncRelayCommand(SaveClientAsync, () => IsEditing);
-            DeleteClientCommand = new AsyncRelayCommand(DeleteClientAsync, () => IsViewing && !IsEditing);
-            NewClientCommand = new RelayCommand(NewClient, () => !IsEditing && !IsViewing);
-            CancelCommand = new RelayCommand(CancelAction, () => IsViewing || IsEditing);
-            EditClientCommand = new RelayCommand(EditClient, () => IsViewing && !IsEditing);
-
-            _ = LoadClientsAsync();
-        }       
+        #region Propriedades Observáveis
 
         [ObservableProperty]
         private ObservableCollection<Client> clients;
@@ -35,79 +28,65 @@ namespace SmartLanche.ViewModels
         [ObservableProperty]
         private Client? selectedClient;
 
-        [ObservableProperty] private int id;
+        [ObservableProperty]
+        private int id;
 
         [Required(ErrorMessage = "O nome é obrigatório.")]        
-        [ObservableProperty] private string name = "";
+        [ObservableProperty]
+        private string name = "";
 
         [Required(ErrorMessage = "O telefone é obrigatório.")]
-        [ObservableProperty] private string? phone;
+        [ObservableProperty]
+        private string? phone;
 
-        [ObservableProperty] private string? observations;
+        [ObservableProperty] 
+        private string? observations;
 
-        [ObservableProperty] private decimal outstandingBalance;
+        [ObservableProperty] 
+        private decimal outstandingBalance;
 
-        [ObservableProperty] private bool isEditing = false;        
-        [ObservableProperty] private bool isViewing = false;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
+        [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
+        [NotifyCanExecuteChangedFor(nameof(SaveClientCommand))]
+        [NotifyCanExecuteChangedFor(nameof(NewClientCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
+
+        private bool isEditing = false;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
+        [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
+        [NotifyCanExecuteChangedFor(nameof(EditClientCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DeleteClientCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
+        [NotifyCanExecuteChangedFor(nameof(NewClientCommand))]
+
+        private bool isViewing = false;
 
         public bool IsFormEnabled => IsEditing;
-        public bool DataGridReadOnly => IsEditing;      
+        public bool DataGridReadOnly => IsEditing;
 
-        public IAsyncRelayCommand LoadClientsCommand { get; }
-        public IAsyncRelayCommand SaveClientCommand { get; }
-        public IAsyncRelayCommand DeleteClientCommand { get; }
-        public IRelayCommand NewClientCommand { get; }
-        public IRelayCommand CancelCommand { get; }
-        public IRelayCommand EditClientCommand { get; }
+        #endregion      
 
+        #region Comandos
+
+        [RelayCommand]
         private async Task LoadClientsAsync()
         {
-            Clients.Clear();
-
-            var listClients = await _repositoryClient.GetAllAsync();
-
-            foreach (var client in listClients)
-                Clients.Add(client);
-        }
-
-        partial void OnSelectedClientChanged(Client? value)
-        {
-            if (value != null)
+            try
             {
-                Id = value.Id;
-                Name = value.Name;
-                Phone = value.Phone;
-                Observations = value.Observations;
-                OutstandingBalance = value.OutstandingBalance;
+                var listClients = await _repositoryClient.GetAllAsync();
 
-                IsEditing = false;
-                IsViewing = true;
+                Clients = new ObservableCollection<Client>(listClients.ToList());
             }
-            else 
+            catch (Exception ex)
             {
-                CancelAction();
+                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", isSuccess: false));
             }
-
-            NewClientCommand.NotifyCanExecuteChanged();
-            SaveClientCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-            EditClientCommand.NotifyCanExecuteChanged();
-            DeleteClientCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(DataGridReadOnly));
-            OnPropertyChanged(nameof(IsFormEnabled));
         }
 
-        partial void OnIsEditingChanged(bool value)
-        {
-            NewClientCommand.NotifyCanExecuteChanged();
-            SaveClientCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(DataGridReadOnly));
-            OnPropertyChanged(nameof(IsFormEnabled));
-        }
-
+        [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task SaveClientAsync()
         {
             ValidateAllProperties();
@@ -121,115 +100,98 @@ namespace SmartLanche.ViewModels
                 return;
             }
 
-            if (Id == 0)
-            {
-                var client = new Client
-                {
-                    Name = Name,
-                    Phone = Phone,
-                    Observations = Observations,
-                    OutstandingBalance = OutstandingBalance,
-                };
+            var client = Id == 0 ? new Client() : await _repositoryClient.GetByIdAsync(Id);
+            if (client == null) return;
 
-                await _repositoryClient.AddAsync(client);
-            }
-            else
-            {
-                var client = await _repositoryClient.GetByIdAsync(Id);
+            client.Name = Name;
+            client.Phone = Phone;
+            client.Observations = Observations;
+            client.OutstandingBalance = OutstandingBalance;
 
-                if (client == null) return;
-
-                client.Name = Name;
-                client.Phone = Phone;
-                client.Observations = Observations;
-                client.OutstandingBalance = OutstandingBalance;
-
-                await _repositoryClient.UpdateAsync(client);
-            }
+            if (Id == 0) await _repositoryClient.AddAsync(client);
+            else await _repositoryClient.UpdateAsync(client);
 
             string successMessage = Id == 0 ? "Cliente cadastrado com sucesso!" : "Cliente atualizado com sucesso!";
             Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
-            
+
             await LoadClientsAsync();
 
             CancelAction();
         }
 
+        [RelayCommand(CanExecute = nameof(CanDelete))]
         private async Task DeleteClientAsync()
         {
-            if (SelectedClient == null) return;
-
-            if (SelectedClient.OutstandingBalance > 0)
+            if (SelectedClient != null)
             {
-                Messenger.Send(new Messages.StatusMessage("Não é possível excluir o cliente: Saldo devedor pendente.", isSuccess: false));
-                return;
-            }
+                await _repositoryClient.DeleteAsync(SelectedClient.Id);
+                await LoadClientsAsync();
 
-            string clientName = SelectedClient.Name;
+                string sucecessMessage = "Produto excluido com sucesso!";
+                Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
 
-            await _repositoryClient.DeleteAsync(SelectedClient.Id);
-            await LoadClientsAsync();
-
-            Messenger.Send(new Messages.StatusMessage($"Cliente '{clientName}' excluido com sucesso!", isSuccess: true));
-
-            CancelAction();
+                CancelAction();
+            }            
         }
 
+        [RelayCommand(CanExecute = nameof(CanCreateNew))]
         private void NewClient()
         {
-            Id = 0;
-            Name = "";
-            Phone = "";
-            Observations = "";
-            OutstandingBalance = 0.00m;
-            
-            SelectedClient = null;
+            ClearFields();
             IsEditing = true;
             IsViewing = true;
-
-            NewClientCommand.NotifyCanExecuteChanged();
-            SaveClientCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(IsFormEnabled));
-            OnPropertyChanged(nameof(DataGridReadOnly));
         }
 
-        private void EditClient()
-        {
-            IsEditing = true;
+        [RelayCommand(CanExecute = nameof(CanEdit))]
+        private void EditClient() => IsEditing = true;
 
-            NewClientCommand.NotifyCanExecuteChanged();
-            SaveClientCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-            DeleteClientCommand.NotifyCanExecuteChanged();
-            EditClientCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(IsFormEnabled));
-            OnPropertyChanged(nameof(DataGridReadOnly));
-        }
-
+        [RelayCommand(CanExecute = nameof(CanCancel))]
         private void CancelAction()
+        {
+            ClearFields();
+            IsEditing = false;
+            IsViewing = false;
+        }        
+
+        #endregion
+
+        #region Lógica de Apoio (CanExecute)
+
+        private bool CanSave() => IsEditing;
+        private bool CanDelete() => IsViewing && !IsEditing;
+        private bool CanCreateNew() => !IsEditing && !IsViewing;
+        private bool CanEdit() => IsViewing && !IsEditing;
+        private bool CanCancel() => IsViewing || IsEditing;
+
+        private void ClearFields()
         {
             Id = 0;
             Name = "";
             Phone = "";
             Observations = "";
-            OutstandingBalance = 0.00m;
+            OutstandingBalance = 0;
             SelectedClient = null;
-
-            SelectedClient = null;
-            IsEditing = false;
-            IsViewing = false;
-
-            NewClientCommand.NotifyCanExecuteChanged();
-            SaveClientCommand.NotifyCanExecuteChanged();
-            CancelCommand.NotifyCanExecuteChanged();
-            EditClientCommand.NotifyCanExecuteChanged();
-            DeleteClientCommand.NotifyCanExecuteChanged();
-
-            OnPropertyChanged(nameof(DataGridReadOnly));
-            OnPropertyChanged(nameof(IsFormEnabled));
         }
+
+        partial void OnSelectedClientChanged(Client? value)
+        {
+            if (value != null)
+            {
+                Id = value.Id;
+                Name = value.Name;
+                Phone = value.Phone;
+                Observations = value.Observations;
+                OutstandingBalance = value.OutstandingBalance;
+                
+                IsEditing = false;
+                IsViewing = true;
+            }
+            else
+            {
+                CancelAction();
+            }
+        }
+
+        #endregion
     }
 }
