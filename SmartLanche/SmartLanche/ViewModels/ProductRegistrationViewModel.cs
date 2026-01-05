@@ -55,8 +55,10 @@ namespace SmartLanche.ViewModels
         [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
         [NotifyCanExecuteChangedFor(nameof(SaveProductCommand))]
         [NotifyCanExecuteChangedFor(nameof(NewProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DeleteProductCommand))]
         [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
-        
+
+        [NotifyCanExecuteChangedFor(nameof(EditProductCommand))]
         private bool isEditing = false;
 
         [ObservableProperty]
