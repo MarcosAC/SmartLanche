@@ -183,7 +183,7 @@ namespace SmartLanche.ViewModels
         {
             if (value != null)
             {
-                id = value.Id;
+                Id = value.Id;
                 Name = value.Name;
                 Category = value.Category;
                 Price = value.Price;
@@ -192,7 +192,11 @@ namespace SmartLanche.ViewModels
 
                 IsEditing = false;
                 IsViewing = true;
-            }      
+            }
+            else
+            {
+                CancelAction();
+            }
         }
         #endregion    
     }
