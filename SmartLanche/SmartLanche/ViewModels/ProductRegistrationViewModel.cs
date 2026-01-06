@@ -85,7 +85,7 @@ namespace SmartLanche.ViewModels
             {
                 var listProducts = await _repositoryProduct.GetAllAsync();
 
-                Products = new ObservableCollection<Product>(listProducts.ToList());
+                Products = new ObservableCollection<Product>(listProducts.Where(product => product.IsActive).ToList());                
             }
             catch (Exception ex)
             {
@@ -130,16 +130,27 @@ namespace SmartLanche.ViewModels
         [RelayCommand(CanExecute = nameof(CanDelete))]
         private async Task DeleteProductAsync()
         {
-            if (SelectedProduct != null)
+            if (SelectedProduct == null) return;
+
+            try
             {
-                await _repositoryProduct.DeleteAsync(SelectedProduct.Id);
+                var product = await _repositoryProduct.GetByIdAsync(SelectedProduct.Id);
+
+                if (product != null)
+                {
+                    product.IsActive = false;
+                    await _repositoryProduct.UpdateAsync(product);
+
+                    Messenger.Send(new StatusMessage("Cliente removido da lista com sucesso!", isSuccess: true));
+                }
+
                 await LoadProductsAsync();
-
-                string sucecessMessage = "Produto excluido com sucesso!";
-                Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
-
                 CancelAction();
             }
+            catch (Exception)
+            {
+                Messenger.Send(new StatusMessage("Erro ao desativar produto.", isSuccess: false));
+            }           
         }
 
         [RelayCommand(CanExecute = nameof(CanCreateNew))]

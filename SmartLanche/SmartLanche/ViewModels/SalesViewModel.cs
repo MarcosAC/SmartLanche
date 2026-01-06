@@ -60,11 +60,11 @@ namespace SmartLanche.ViewModels
         {
             try
             {
-                var productList = (await _repositoryProduct.GetAllAsync()).ToList();
-                Products = new ObservableCollection<Product>(productList);
+                var listProducts = (await _repositoryProduct.GetAllAsync()).ToList();
+                Products = new ObservableCollection<Product>(listProducts.Where(product => product.IsActive).ToList());
 
-                var clientList = (await _repositoryClient.GetAllAsync()).ToList();
-                Clients = new ObservableCollection<Client>(clientList);
+                var listClients = (await _repositoryClient.GetAllAsync()).ToList();
+                Clients = new ObservableCollection<Client>(listClients.Where(client => client.IsActive).ToList());
             }
             catch (Exception ex)
             {

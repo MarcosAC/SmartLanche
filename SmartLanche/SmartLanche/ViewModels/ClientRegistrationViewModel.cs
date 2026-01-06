@@ -79,8 +79,8 @@ namespace SmartLanche.ViewModels
             try
             {
                 var listClients = await _repositoryClient.GetAllAsync();
-
-                Clients = new ObservableCollection<Client>(listClients.ToList());
+                                
+                Clients = new ObservableCollection<Client>(listClients.Where(client => client.IsActive).ToList());
             }
             catch (Exception ex)
             {
@@ -124,16 +124,37 @@ namespace SmartLanche.ViewModels
         [RelayCommand(CanExecute = nameof(CanDelete))]
         private async Task DeleteClientAsync()
         {
-            if (SelectedClient != null)
+            if (SelectedClient == null) return;
+
+            try
             {
-                await _repositoryClient.DeleteAsync(SelectedClient.Id);
+                var client = await _repositoryClient.GetByIdAsync(SelectedClient.Id);
+
+                if (client != null)
+                {
+                    client.IsActive = false;
+                    await _repositoryClient.UpdateAsync(client);
+
+                    Messenger.Send(new StatusMessage("Cliente removido da lista com sucesso!", isSuccess: true));
+                }
+
                 await LoadClientsAsync();
-
-                string sucecessMessage = "Produto excluido com sucesso!";
-                Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
-
                 CancelAction();
-            }            
+            }
+            catch (Exception)
+            {
+                Messenger.Send(new StatusMessage("Erro ao desativar cliente.", isSuccess: false));
+            }
+            //if (SelectedClient != null)
+            //{
+            //    await _repositoryClient.DeleteAsync(SelectedClient.Id);
+            //    await LoadClientsAsync();
+
+            //    string sucecessMessage = "Produto excluido com sucesso!";
+            //    Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
+
+            //    CancelAction();
+            //}            
         }
 
         [RelayCommand(CanExecute = nameof(CanCreateNew))]

@@ -12,5 +12,6 @@ namespace SmartLanche.Models
         public string? Phone { get; set; }
         public string? Observations { get; set; }        
         public decimal OutstandingBalance { get; set; } = 0.00m;
+        public bool IsActive { get; set; } = true;
     }
 }

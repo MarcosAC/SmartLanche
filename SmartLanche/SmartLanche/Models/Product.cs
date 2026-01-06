@@ -13,5 +13,6 @@ namespace SmartLanche.Models
         public decimal Price { get; set; }
         public bool IsCombo { get; set; }
         public string? Description { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }
