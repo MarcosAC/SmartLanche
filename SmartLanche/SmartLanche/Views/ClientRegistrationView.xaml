@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="SmartLanche.Views.ClientRegistrationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SmartLanche.Views"
+             Loaded="UserControl_Loaded"
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,16">
+
+            <TextBlock 
+                Text="Cadastro de Clientes"
+                FontSize="24"
+                FontWeight="Bold"
+                Margin="0,0,0,10" />
+
+            <Grid
+                Margin="0,0,0,16"
+                Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock 
+                    Text="Nome:"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,4,8,4" />
+
+                <TextBox
+                    Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="0,4,16,4"
+                    IsEnabled="{Binding IsFormEnabled}" />
+
+                <TextBlock 
+                    Text="Telefone:"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,4,8,4" />
+
+                <TextBox
+                    Text="{Binding Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,4,16,4"
+                    IsEnabled="{Binding IsFormEnabled}" />
+
+                <TextBlock 
+                    Text="Saldo Devedor:"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="0,4,8,4" />
+
+                <TextBox
+                    Text="{Binding OutstandingBalance, Mode=TwoWay, StringFormat={}{0:C}}"
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="0,4,8,4"                    
+                    FontWeight="Black"
+                    Foreground="Red" />
+
+                <TextBlock 
+                    Text="Observações:"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="0,4,8,4" />
+
+                <TextBox
+                    Text="{Binding Observations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="3"
+                    Margin="0,4,8,4"
+                    Height="80"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto"
+                    IsEnabled="{Binding IsFormEnabled}" />
+            </Grid>
+
+            <StackPanel
+                Orientation="Horizontal"
+                Margin="0,0,0,8"
+                HorizontalAlignment="Left">
+
+                <Button 
+                    Content="Novo" 
+                    Command="{Binding NewClientCommand}" 
+                    Width="80" 
+                    Margin="0,0,8,0" />
+
+                <Button 
+                    Content="Editar"
+                    Command="{Binding EditClientCommand}"
+                    Width="80"
+                    Margin="0,0,8,0"
+                    Background="#FF007ACC"
+                    Foreground="White"
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button 
+                    Content="Salvar" 
+                    Command="{Binding SaveClientCommand}" 
+                    Width="80" 
+                    Margin="0,0,8,0" 
+                    Background="#FF007ACC" 
+                    Foreground="White" 
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button
+                    Content="Cancelar" 
+                    Command="{Binding CancelActionCommand}" 
+                    Width="80" 
+                    Margin="0,0,8,0" 
+                    Background="#FF6C757D" 
+                    Foreground="White" 
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button
+                    Content="Excluir" 
+                    Command="{Binding DeleteClientCommand}" 
+                    Width="80" 
+                    Background="#FFDC3545" 
+                    Foreground="White" 
+                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid
+            Grid.Row="1"
+            ItemsSource="{Binding Clients}"
+            SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
+            AutoGenerateColumns="False"
+            IsReadOnly="{Binding DataGridReadOnly}"
+            SelectionMode="Single">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn 
+                    Header="Id"
+                    Binding="{Binding Id}"
+                    Width="60" />
+                
+                <DataGridTextColumn
+                    Header="Nome"
+                    Binding="{Binding Name}"
+                    Width="*" />
+                
+                <DataGridTextColumn
+                    Header="Telefone"
+                    Binding="{Binding Phone}"
+                    Width="150" />
+                
+                <DataGridTextColumn 
+                    Header="Saldo Devedor"
+                    Binding="{Binding OutstandingBalance, StringFormat={}{0:C}}"
+                    Width="120" />
+                
+                <DataGridTextColumn
+                    Header="Observações"
+                    Binding="{Binding Observations}"
+                    Width="2*" />
+            </DataGrid.Columns>
+            
+        </DataGrid>
+    </Grid>
+</UserControl>
