@@ -9,6 +9,7 @@ namespace SmartLanche.ViewModels
         public ProductRegistrationViewModel ProductRegistrationViewModel { get; }
         public ClientRegistrationViewModel ClientRegistrationViewModel { get; }
         public SalesViewModel SalesViewModel { get; }
+        public PendingPaymentsViewModel PendingPaymentsViewModel { get; }
 
         private readonly IMessenger _messenger;       
 
@@ -20,6 +21,7 @@ namespace SmartLanche.ViewModels
             ProductRegistrationViewModel productRegistrationViewModel,
             ClientRegistrationViewModel clientRegistrationViewModel,
             SalesViewModel salesViewModel,
+            PendingPaymentsViewModel pendingPaymentsViewModel,
             IMessenger messenger)
         {
             AppName = configuration.GetNameApp();
@@ -28,6 +30,7 @@ namespace SmartLanche.ViewModels
             ProductRegistrationViewModel = productRegistrationViewModel;
             ClientRegistrationViewModel = clientRegistrationViewModel;
             SalesViewModel = salesViewModel;
+            PendingPaymentsViewModel = pendingPaymentsViewModel;
 
             _messenger = messenger;
         }        
