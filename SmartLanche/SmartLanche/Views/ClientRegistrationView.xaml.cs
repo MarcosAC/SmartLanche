@@ -3,19 +3,19 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace SmartLanche.Views
-{    
-    public partial class ProductRegistrationView : UserControl
+{
+    public partial class ClientRegistrationView : UserControl
     {
-        public ProductRegistrationView()
+        public ClientRegistrationView()
         {
             InitializeComponent();
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ProductRegistrationViewModel viewModel)
+            if (DataContext is ClientRegistrationViewModel viewModel)
             {
-                await viewModel.LoadProductsCommand.ExecuteAsync(null);
+                await viewModel.LoadClientsCommand.ExecuteAsync(null);
             }
         }
     }

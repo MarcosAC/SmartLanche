@@ -8,9 +8,9 @@ namespace SmartLanche.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Product> Products => Set<Product>();
-        //public DbSet<Client> Clients => Set<Client>();
-        //public DbSet<Order> Orders => Set<Order>();
-        //public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+        public DbSet<Client> Clients => Set<Client>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         //public DbSet<StockItem> StockItems => Set<StockItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,13 +20,44 @@ namespace SmartLanche.Data
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.ToTable("Products");
-                entity.HasKey(x => x.Id);
-                entity.Property(x => x.Name).IsRequired().HasMaxLength(100);
-                entity.Property(x => x.Category).HasMaxLength(50);
-                entity.Property(x => x.Price).HasColumnType("decimal(10,2)");
-                entity.Property(x => x.Description).HasMaxLength(250);
+                entity.HasKey(product => product.Id);
+                entity.Property(product => product.Name).IsRequired().HasMaxLength(100);
+                entity.Property(product => product.Category).HasMaxLength(50);
+                entity.Property(product => product.Price).HasColumnType("decimal(10,2)");
+                entity.Property(product => product.Description).HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.Property(client => client.OutstandingBalance).HasColumnType("decimal(10,2)");
+                entity.Property(client => client.Name).IsRequired().HasMaxLength(150);
+            });
+
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.Property(order => order.TotalAmount).HasColumnType("decimal(10,2)");
+
+                entity.HasOne(order => order.Client)
+                      .WithMany()
+                      .HasForeignKey(order => order.ClientId)
+                      .IsRequired(false)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<OrderItem>(entity =>
+            {
+                entity.Property(orderItem => orderItem.UnitPrice).HasColumnType("decimal(10,2)");
+
+                entity.HasOne(orderItem => orderItem.Order)
+                      .WithMany(order => order.OrderItems)
+                      .HasForeignKey(orderItem => orderItem.OrderId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(orderItem => orderItem.Product)
+                          .WithMany()
+                          .HasForeignKey(orderItem => orderItem.ProductId)
+                          .OnDelete(DeleteBehavior.Restrict);
             });
         }
-
     }
 }

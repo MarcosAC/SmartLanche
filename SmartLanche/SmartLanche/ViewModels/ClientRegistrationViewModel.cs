@@ -9,93 +9,87 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartLanche.ViewModels
 {
-    public partial class ProductRegistrationViewModel : BaseViewModel
+    public partial class ClientRegistrationViewModel : BaseViewModel
     {
-        private readonly IRepository<Product> _repositoryProduct;        
+        private readonly IRepository<Client> _repositoryClient;
 
-        public ProductRegistrationViewModel(IRepository<Product> repository, IMessenger messenger) : base(messenger)
+        public ClientRegistrationViewModel(IRepository<Client> repository, IMessenger messenger) : base(messenger)
         {
-            _repositoryProduct = repository;            
+            _repositoryClient = repository;
 
-            Products = new ObservableCollection<Product>();
+            Clients = new ObservableCollection<Client>();
         }
 
         #region Propriedades Observáveis
 
         [ObservableProperty]
-        private ObservableCollection<Product> products = new();
-       
+        private ObservableCollection<Client> clients;
+
         [ObservableProperty]
-        private Product? selectedProduct;
-        
+        private Client? selectedClient;
+
         [ObservableProperty]
         private int id;
 
-        [Required(ErrorMessage = "O Nome é obrigatório.")]
+        [Required(ErrorMessage = "O nome é obrigatório.")]        
         [ObservableProperty]
         private string name = "";
 
-        [Required(ErrorMessage = "A Categopria é obrigatória.")]
+        [Required(ErrorMessage = "O telefone é obrigatório.")]
         [ObservableProperty]
-        private string category = "";
+        private string? phone;
 
-        [Required(ErrorMessage = "O Preço é obrigatório.")]
-        [ObservableProperty]
-        private decimal price;
+        [ObservableProperty] 
+        private string? observations;
 
-        [Required(ErrorMessage = "A Descrição é obrigatória")]
-        [ObservableProperty]
-        private string? description;
-
-        [ObservableProperty]
-        private bool isCombo;
+        [ObservableProperty] 
+        private decimal outstandingBalance;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
         [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
-        [NotifyCanExecuteChangedFor(nameof(SaveProductCommand))]
-        [NotifyCanExecuteChangedFor(nameof(NewProductCommand))]
-        [NotifyCanExecuteChangedFor(nameof(DeleteProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(SaveClientCommand))]
+        [NotifyCanExecuteChangedFor(nameof(NewClientCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DeleteClientCommand))]
         [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
 
-        [NotifyCanExecuteChangedFor(nameof(EditProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(EditClientCommand))]
         private bool isEditing = false;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
         [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
-        [NotifyCanExecuteChangedFor(nameof(EditProductCommand))]
-        [NotifyCanExecuteChangedFor(nameof(DeleteProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(EditClientCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DeleteClientCommand))]
         [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
-        [NotifyCanExecuteChangedFor(nameof(NewProductCommand))]
+        [NotifyCanExecuteChangedFor(nameof(NewClientCommand))]
 
         private bool isViewing = false;
 
         public bool IsFormEnabled => IsEditing;
         public bool DataGridReadOnly => IsEditing;
 
-        #endregion
+        #endregion      
 
         #region Comandos
-        
+
         [RelayCommand]
-        private async Task LoadProductsAsync()
+        private async Task LoadClientsAsync()
         {
             try
             {
-                var listProducts = await _repositoryProduct.GetAllAsync();
-
-                Products = new ObservableCollection<Product>(listProducts.Where(product => product.IsActive).ToList());                
+                var listClients = await _repositoryClient.GetAllAsync();
+                                
+                Clients = new ObservableCollection<Client>(listClients.Where(client => client.IsActive).ToList());
             }
             catch (Exception ex)
             {
                 Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", isSuccess: false));
             }
-            
         }
 
         [RelayCommand(CanExecute = nameof(CanSave))]
-        private async Task SaveProductAsync()
+        private async Task SaveClientAsync()
         {
             ValidateAllProperties();
 
@@ -104,57 +98,67 @@ namespace SmartLanche.ViewModels
                 var firstError = GetErrors().FirstOrDefault()?.ErrorMessage;
 
                 Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", isSuccess: false));
+
                 return;
             }
 
-            var product = Id == 0 ? new Product() : await _repositoryProduct.GetByIdAsync(Id);
-            if (product == null) return;
+            var client = Id == 0 ? new Client() : await _repositoryClient.GetByIdAsync(Id);
+            if (client == null) return;
 
-            product.Name = Name;
-            product.Category = Category;
-            product.Price = Price;
-            product.Description = Description;
-            product.IsCombo = IsCombo;
+            client.Name = Name;
+            client.Phone = Phone;
+            client.Observations = Observations;
+            client.OutstandingBalance = OutstandingBalance;
 
-            if (Id == 0) await _repositoryProduct.AddAsync(product);
-            else await _repositoryProduct.UpdateAsync(product);
+            if (Id == 0) await _repositoryClient.AddAsync(client);
+            else await _repositoryClient.UpdateAsync(client);
 
-            string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
+            string successMessage = Id == 0 ? "Cliente cadastrado com sucesso!" : "Cliente atualizado com sucesso!";
             Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
 
-            await LoadProductsAsync();
+            await LoadClientsAsync();
 
             CancelAction();
         }
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
-        private async Task DeleteProductAsync()
+        private async Task DeleteClientAsync()
         {
-            if (SelectedProduct == null) return;
+            if (SelectedClient == null) return;
 
             try
             {
-                var product = await _repositoryProduct.GetByIdAsync(SelectedProduct.Id);
+                var client = await _repositoryClient.GetByIdAsync(SelectedClient.Id);
 
-                if (product != null)
+                if (client != null)
                 {
-                    product.IsActive = false;
-                    await _repositoryProduct.UpdateAsync(product);
+                    client.IsActive = false;
+                    await _repositoryClient.UpdateAsync(client);
 
                     Messenger.Send(new StatusMessage("Cliente removido da lista com sucesso!", isSuccess: true));
                 }
 
-                await LoadProductsAsync();
+                await LoadClientsAsync();
                 CancelAction();
             }
             catch (Exception)
             {
-                Messenger.Send(new StatusMessage("Erro ao desativar produto.", isSuccess: false));
-            }           
+                Messenger.Send(new StatusMessage("Erro ao desativar cliente.", isSuccess: false));
+            }
+            //if (SelectedClient != null)
+            //{
+            //    await _repositoryClient.DeleteAsync(SelectedClient.Id);
+            //    await LoadClientsAsync();
+
+            //    string sucecessMessage = "Produto excluido com sucesso!";
+            //    Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
+
+            //    CancelAction();
+            //}            
         }
 
         [RelayCommand(CanExecute = nameof(CanCreateNew))]
-        private void NewProduct()
+        private void NewClient()
         {
             ClearFields();
             IsEditing = true;
@@ -162,7 +166,7 @@ namespace SmartLanche.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanEdit))]
-        private void EditProduct() => IsEditing = true;   
+        private void EditClient() => IsEditing = true;
 
         [RelayCommand(CanExecute = nameof(CanCancel))]
         private void CancelAction()
@@ -170,7 +174,8 @@ namespace SmartLanche.ViewModels
             ClearFields();
             IsEditing = false;
             IsViewing = false;
-        }
+        }        
+
         #endregion
 
         #region Lógica de Apoio (CanExecute)
@@ -185,24 +190,22 @@ namespace SmartLanche.ViewModels
         {
             Id = 0;
             Name = "";
-            Category = "";
-            Price = 0;
-            Description = "";
-            IsCombo = false;
-            SelectedProduct = null;
+            Phone = "";
+            Observations = "";
+            OutstandingBalance = 0;
+            SelectedClient = null;
         }
 
-        partial void OnSelectedProductChanged(Product? value)
+        partial void OnSelectedClientChanged(Client? value)
         {
             if (value != null)
             {
                 Id = value.Id;
                 Name = value.Name;
-                Category = value.Category;
-                Price = value.Price;
-                Description = value.Description;
-                IsCombo = value.IsCombo;
-
+                Phone = value.Phone;
+                Observations = value.Observations;
+                OutstandingBalance = value.OutstandingBalance;
+                
                 IsEditing = false;
                 IsViewing = true;
             }
@@ -211,6 +214,7 @@ namespace SmartLanche.ViewModels
                 CancelAction();
             }
         }
-        #endregion    
+
+        #endregion
     }
 }

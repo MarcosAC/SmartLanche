@@ -24,7 +24,7 @@ namespace SmartLanche
 
             Configuration = builder.Build();
 
-            //--- Confgirações Banco de Dados
+            // Confgirações Banco de Dados
             var dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             Directory.CreateDirectory(dataDir);
             AppDomain.CurrentDomain.SetData("DataDirectory", dataDir);
@@ -35,7 +35,7 @@ namespace SmartLanche
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Configuration["Database:ConnectionString"];
 
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
             // Services e Repository
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
@@ -45,10 +45,14 @@ namespace SmartLanche
             // ViewModels
             services.AddSingleton<MainWindowViewModel>();
             services.AddTransient<ProductRegistrationViewModel>();
+            services.AddTransient<ClientRegistrationViewModel>();
+            services.AddTransient<SalesViewModel>();
 
             // Views
             services.AddTransient<MainWindowView>();
             services.AddTransient<ProductRegistrationView>();
+            services.AddTransient<ClientRegistrationView>();
+            services.AddTransient<SalesView>();
 
             ServiceProvider = services.BuildServiceProvider();
 
