@@ -47,12 +47,14 @@ namespace SmartLanche
             services.AddTransient<ProductRegistrationViewModel>();
             services.AddTransient<ClientRegistrationViewModel>();
             services.AddTransient<SalesViewModel>();
+            services.AddTransient<PendingPaymentsViewModel>();
 
             // Views
             services.AddTransient<MainWindowView>();
             services.AddTransient<ProductRegistrationView>();
             services.AddTransient<ClientRegistrationView>();
             services.AddTransient<SalesView>();
+            services.AddTransient<PendingPaymentsView>();
 
             ServiceProvider = services.BuildServiceProvider();
 

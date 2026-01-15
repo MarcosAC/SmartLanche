@@ -21,6 +21,10 @@
         <DataTemplate DataType="{x:Type vm:SalesViewModel}">
             <views:SalesView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:PendingPaymentsViewModel}">
+            <views:PendingPaymentsView />
+        </DataTemplate>
     </Window.Resources>
 
     <DockPanel>
@@ -62,7 +66,7 @@
             </TabItem>
 
             <TabItem Header="Pendências">
-                <TextBlock Text="Contas a Receber (Fiado)" Margin="8" />
+                <ContentControl Content="{Binding PendingPaymentsViewModel}" />
             </TabItem>
 
             <TabItem Header="Pedidos em Preparação">
