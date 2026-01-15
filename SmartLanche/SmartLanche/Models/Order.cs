@@ -15,6 +15,7 @@ namespace SmartLanche.Models
         public int? ClientId { get; set; }
         public Client? Client { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();        
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public bool IsPaid { get; set; }
     }    
 }

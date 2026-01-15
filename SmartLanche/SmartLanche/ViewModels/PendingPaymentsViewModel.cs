@@ -87,17 +87,43 @@ namespace SmartLanche.ViewModels
 
             try
             {
+                IsLoading = true;
+
                 SelectedClient.OutstandingBalance -= PaymentAmount;
                 await _repositoryClient.UpdateAsync(SelectedClient);
 
+                if (SelectedClient.OutstandingBalance == 0)
+                {
+                    var allOrders = await _repositoryOrder.GetAllAsync();
+
+                    var pendingOrders = allOrders
+                        .Where(order => order.ClientId == SelectedClient.Id &&
+                                        order.PaymentMethod == PaymentMethod.Credit &&
+                                        !order.IsPaid)
+                        .ToList();
+
+                    foreach (var order in pendingOrders)
+                    {
+                        order.IsPaid = true;
+                        await _repositoryOrder.UpdateAsync(order);
+                    }
+                }
+
                 Messenger.Send(new StatusMessage($"Pagamento de {PaymentAmount:C} recebido com sucesso!", false));
 
+                var clientId = SelectedClient.Id;
                 PaymentAmount = 0;
+
                 await LoadPendingDataAsync();
+                await LoadClientOrderHistoryAsync(clientId);
             }
             catch (Exception)
             {
                 Messenger.Send(new StatusMessage($"Erro ao processar pagamento.", false));
+            }
+            finally 
+            { 
+                IsLoading = false;
             }
         }
 
@@ -126,7 +152,7 @@ namespace SmartLanche.ViewModels
             var orders = await _repositoryOrder.GetAllAsync();
 
             var history = orders
-                .Where(order => order.Id == clientId && order.PaymentMethod == PaymentMethod.Credit)
+                .Where(order => order.ClientId == clientId && order.PaymentMethod == PaymentMethod.Credit)
                 .OrderByDescending(order => order.OrderDate)
                 .ToList();
 
