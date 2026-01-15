@@ -51,14 +51,15 @@
             </Grid.RowDefinitions>
 
             <GroupBox 
-                Header="RegistrarPagamenti"
+                Header="Registrar Pagamento"
                 Margin="0,0,0,10">
                 
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="0,0,15,0">
                         <TextBlock 
                             Text="Valor do Pagamento:"
-                            FontWeight="Bold" />
+                            FontWeight="Bold"
+                            Margin="15,0,0,0" />
 
                         <TextBox 
                             Text="{Binding PaymentAmount, UpdateSourceTrigger=PropertyChanged}"
@@ -71,6 +72,7 @@
                             Command="{Binding ReceivePaymentCommand}"
                             Width="180"
                             Height="45"
+                            Margin="0,10,0,0"
                             VerticalAlignment="Bottom" />
                     </StackPanel>
                 </StackPanel>                
