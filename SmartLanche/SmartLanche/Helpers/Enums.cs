@@ -22,9 +22,11 @@ namespace SmartLanche.Helpers
         Cash,
         [Display(Name = "Cartão")]
         Card,
-        [Display(Name = "Pix")]
-        Pix,
-        [Display(Name = "Fiado")]
+        [Display(Name = "Dinheiro+Cartão")]
+        CashCard,
+        [Display(Name = "Vale Refeição")]
+        MealVoucher,
+        [Display(Name = "Conta")]
         Credit
     }
 }

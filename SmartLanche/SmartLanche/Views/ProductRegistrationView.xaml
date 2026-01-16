@@ -64,13 +64,24 @@
                         Text="Categoria:" 
                         VerticalAlignment="Center" 
                         Margin="16,5,10,5" />
-                    
-                    <TextBox 
+
+                    <ComboBox
+                        SelectedValue="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedValuePath="Content"
                         Grid.Row="0"
-                        Grid.Column="3" 
-                        Text="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Margin="0,5"
-                        IsEnabled="{Binding IsFormEnabled}" />
+                        Grid.Column="3"
+                        Margin="0,5"    
+                        Height="30"
+                        IsEnabled="{Binding IsFormEnabled}">
+
+                        <ComboBoxItem Content="Almoços" />
+                        <ComboBoxItem Content="Bebidas" />
+                        <ComboBoxItem Content="Doces" />
+                        <ComboBoxItem Content="Café da manhã" />
+                        <ComboBoxItem Content="Lanche natural" />
+                        <ComboBoxItem Content="Pizza" />                        
+                        <ComboBoxItem Content="Salgados" />
+                    </ComboBox>
 
                     <TextBlock 
                         Grid.Row="0"
