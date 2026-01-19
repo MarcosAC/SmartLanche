@@ -18,13 +18,20 @@ namespace SmartLanche.ViewModels
             _repositoryProduct = repository;            
 
             Products = new ObservableCollection<Product>();
+            FilteredProducts = new ObservableCollection<Product>();
         }
 
         #region Propriedades Observáveis
 
         [ObservableProperty]
-        private ObservableCollection<Product> products = new();
-       
+        private ObservableCollection<Product> products = new();        
+
+        [ObservableProperty]
+        private ObservableCollection<Product> filteredProducts;
+
+        [ObservableProperty]
+        private List<Product> allProducts = new();
+
         [ObservableProperty]
         private Product? selectedProduct;
         
@@ -49,6 +56,12 @@ namespace SmartLanche.ViewModels
 
         [ObservableProperty]
         private bool isCombo;
+
+        [ObservableProperty]
+        private string? categoryFilter;        
+
+        [ObservableProperty]
+        private string? searchText;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
@@ -84,8 +97,11 @@ namespace SmartLanche.ViewModels
             try
             {
                 var listProducts = await _repositoryProduct.GetAllAsync();
+                AllProducts = listProducts.Where(products => products.IsActive).ToList();
 
-                Products = new ObservableCollection<Product>(listProducts.Where(product => product.IsActive).ToList());                
+                ApplyFilter();
+
+                //Products = new ObservableCollection<Product>(listProducts.Where(product => product.IsActive).ToList());                
             }
             catch (Exception ex)
             {
@@ -171,6 +187,24 @@ namespace SmartLanche.ViewModels
             IsEditing = false;
             IsViewing = false;
         }
+
+        private void ApplyFilter()
+        {
+            IEnumerable<Product> query = AllProducts;
+
+            if (!string.IsNullOrEmpty(CategoryFilter) || CategoryFilter == "Todas")
+            {
+                query = query.Where(product => product.Category == CategoryFilter);
+            }
+
+            if (!string.IsNullOrEmpty(SearchText))
+            {
+                query = query.Where(product => product.Name != null && 
+                                               product.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+            }
+
+            FilteredProducts = new ObservableCollection<Product>(query.ToList());
+        }
         #endregion
 
         #region Lógica de Apoio (CanExecute)
@@ -190,6 +224,9 @@ namespace SmartLanche.ViewModels
             Description = "";
             IsCombo = false;
             SelectedProduct = null;
+
+            SearchText = string.Empty;
+            CategoryFilter = "Todas";
         }
 
         partial void OnSelectedProductChanged(Product? value)
@@ -211,6 +248,9 @@ namespace SmartLanche.ViewModels
                 CancelAction();
             }
         }
-        #endregion    
+
+        partial void OnSearchTextChanged(string? value) => ApplyFilter();
+        partial void OnCategoryFilterChanged(string? value) => ApplyFilter();
+        #endregion
     }
 }
