@@ -16,14 +16,17 @@ namespace SmartLanche.ViewModels
         public ClientRegistrationViewModel(IRepository<Client> repository, IMessenger messenger) : base(messenger)
         {
             _repositoryClient = repository;
-
-            Clients = new ObservableCollection<Client>();
+            
+            FilteredClients = new ObservableCollection<Client>();
         }
 
         #region Propriedades Observáveis
 
         [ObservableProperty]
-        private ObservableCollection<Client> clients;
+        private ObservableCollection<Client> filteredClients;
+
+        [ObservableProperty]
+        private List<Client> allClients = new();
 
         [ObservableProperty]
         private Client? selectedClient;
@@ -44,6 +47,9 @@ namespace SmartLanche.ViewModels
 
         [ObservableProperty] 
         private decimal outstandingBalance;
+
+        [ObservableProperty]
+        private string? searchText;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
@@ -79,8 +85,9 @@ namespace SmartLanche.ViewModels
             try
             {
                 var listClients = await _repositoryClient.GetAllAsync();
-                                
-                Clients = new ObservableCollection<Client>(listClients.Where(client => client.IsActive).ToList());
+                AllClients = listClients.Where(clients => clients.IsActive).ToList();
+
+                ApplyFilter();
             }
             catch (Exception ex)
             {
@@ -144,17 +151,7 @@ namespace SmartLanche.ViewModels
             catch (Exception)
             {
                 Messenger.Send(new StatusMessage("Erro ao desativar cliente.", isSuccess: false));
-            }
-            //if (SelectedClient != null)
-            //{
-            //    await _repositoryClient.DeleteAsync(SelectedClient.Id);
-            //    await LoadClientsAsync();
-
-            //    string sucecessMessage = "Produto excluido com sucesso!";
-            //    Messenger.Send(new StatusMessage(sucecessMessage, isSuccess: true));
-
-            //    CancelAction();
-            //}            
+            }                  
         }
 
         [RelayCommand(CanExecute = nameof(CanCreateNew))]
@@ -174,7 +171,21 @@ namespace SmartLanche.ViewModels
             ClearFields();
             IsEditing = false;
             IsViewing = false;
-        }        
+        }
+
+        private void ApplyFilter()
+        {
+            if (AllClients == null) return;
+
+            IEnumerable<Client> query = AllClients;
+
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                query = query.Where(client => client.Name != null && client.Name.Contains(SearchText!, StringComparison.OrdinalIgnoreCase));
+            }
+
+            FilteredClients = new ObservableCollection<Client>(query.ToList());
+        }
 
         #endregion
 
@@ -214,6 +225,8 @@ namespace SmartLanche.ViewModels
                 CancelAction();
             }
         }
+
+        partial void OnSearchTextChanged(string? value) => ApplyFilter();
 
         #endregion
     }
