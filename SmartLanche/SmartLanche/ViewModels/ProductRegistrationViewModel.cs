@@ -15,16 +15,14 @@ namespace SmartLanche.ViewModels
 
         public ProductRegistrationViewModel(IRepository<Product> repository, IMessenger messenger) : base(messenger)
         {
-            _repositoryProduct = repository;            
+            _repositoryProduct = repository;
 
-            Products = new ObservableCollection<Product>();
             FilteredProducts = new ObservableCollection<Product>();
+
+            CategoryFilter = "Todas";
         }
 
-        #region Propriedades Observáveis
-
-        [ObservableProperty]
-        private ObservableCollection<Product> products = new();        
+        #region Propriedades Observáveis              
 
         [ObservableProperty]
         private ObservableCollection<Product> filteredProducts;
@@ -82,6 +80,8 @@ namespace SmartLanche.ViewModels
         [NotifyCanExecuteChangedFor(nameof(CancelActionCommand))]
         [NotifyCanExecuteChangedFor(nameof(NewProductCommand))]
 
+        [NotifyCanExecuteChangedFor(nameof(ClearFiltersCommand))]
+
         private bool isViewing = false;
 
         public bool IsFormEnabled => IsEditing;
@@ -99,9 +99,7 @@ namespace SmartLanche.ViewModels
                 var listProducts = await _repositoryProduct.GetAllAsync();
                 AllProducts = listProducts.Where(products => products.IsActive).ToList();
 
-                ApplyFilter();
-
-                //Products = new ObservableCollection<Product>(listProducts.Where(product => product.IsActive).ToList());                
+                ApplyFilter();                
             }
             catch (Exception ex)
             {
@@ -188,19 +186,30 @@ namespace SmartLanche.ViewModels
             IsViewing = false;
         }
 
+        [RelayCommand]
+        private void ClearFilters()
+        {
+            SearchText = string.Empty;
+            CategoryFilter = "Todas";
+
+            ApplyFilter();
+        }
+
         private void ApplyFilter()
         {
+            if (AllProducts == null) return;
+
             IEnumerable<Product> query = AllProducts;
 
-            if (!string.IsNullOrEmpty(CategoryFilter) || CategoryFilter == "Todas")
+            if (!string.IsNullOrWhiteSpace(CategoryFilter) && CategoryFilter != "Todas")
             {
                 query = query.Where(product => product.Category == CategoryFilter);
             }
 
-            if (!string.IsNullOrEmpty(SearchText))
+            if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 query = query.Where(product => product.Name != null && 
-                                               product.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+                                               product.Name.Contains(SearchText!, StringComparison.OrdinalIgnoreCase));
             }
 
             FilteredProducts = new ObservableCollection<Product>(query.ToList());
