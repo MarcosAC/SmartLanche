@@ -29,15 +29,10 @@
 
             <ListView
                 ItemsSource="{Binding Products}"
+                SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
                 SelectionMode="Single"
                 DockPanel.Dock="Top"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto">
-
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
-                    </Style>
-                </ListView.ItemContainerStyle>
+                ScrollViewer.HorizontalScrollBarVisibility="Auto">                
 
                 <ListView.View>
                     <GridView>
@@ -94,12 +89,39 @@
                     <DataGridTextColumn 
                         Header="Preço Unit."
                         Binding="{Binding UnitPrice, StringFormat={}{0:C}}"
-                        Width="100" />
+                        Width="100" />                   
 
-                    <DataGridTextColumn 
-                        Header="Quantidade"
-                        Binding="{Binding Quantity}"
-                        Width="80" />
+                    <DataGridTemplateColumn
+                        Header="Quantidade" 
+                        Width="110">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>                                
+                                <StackPanel 
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Center">
+                                    
+                                    <Button 
+                                        Content="-" 
+                                        Width="25" Margin="2"
+                                        Command="{Binding DataContext.DecreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}" />
+
+                                    <TextBlock 
+                                       Text="{Binding Quantity}" 
+                                       VerticalAlignment="Center" 
+                                       FontWeight="Bold" 
+                                       Margin="5,0" />
+
+                                    <Button 
+                                        Content="+" 
+                                        Width="25"
+                                        Margin="2"
+                                        Command="{Binding DataContext.IncreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}" />
+                                </StackPanel>                                
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
                     <DataGridTextColumn 
                         Header="Subtotal"
@@ -120,8 +142,7 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <StackPanel
-                
+            <StackPanel                
                 DockPanel.Dock="Right"
                 Margin="0,0,0,16">
 
