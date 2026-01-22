@@ -46,9 +46,13 @@ namespace SmartLanche.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanBeCredit))]
-        private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;        
+        private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;
+
+        [ObservableProperty]
+        private Product? selectedProduct;
 
         public decimal TotalOrderAmount => CartItems.Sum(item => item.Subtotal);
+        public int TotalQuantity => CartItems.Sum(item => item.Quantity);
         public bool CanBeCredit => SelectedPaymentMethod == PaymentMethod.Credit;
 
         #endregion
@@ -76,16 +80,10 @@ namespace SmartLanche.ViewModels
         private void AddProductToCart(Product? product)
         {
             if (product == null) return;
-
-            var existingItem = CartItems.FirstOrDefault(item => item.ProductId == product.Id);
-
-            if (existingItem != null)
-            {
-                existingItem.Quantity++;
-                OnPropertyChanged(nameof(TotalOrderAmount));
-            }
-            else
-            {
+            
+            if (CartItems.Any(item => item.ProductId == product.Id))
+                return;
+           
                 CartItems.Add(new OrderItem
                 {
                     ProductId = product.Id,
@@ -93,10 +91,8 @@ namespace SmartLanche.ViewModels
                     Quantity = 1,
                     UnitPrice = product.Price
                 });
-            }
 
-            OnPropertyChanged(nameof(TotalOrderAmount));
-            FinalizeOrderCommand.NotifyCanExecuteChanged();
+            UpdateTotals();
         }
 
         [RelayCommand]
@@ -116,79 +112,100 @@ namespace SmartLanche.ViewModels
         private async Task FinalizeOrderAsync()
         {
             if (!CartItems.Any()) return;
-
+            
             if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient == null)
             {
-                Messenger.Send(new Messages.StatusMessage("Selecione um cliente para pedidos no Fiado.", isSuccess: false));
+                Messenger.Send(new StatusMessage("Selecione um cliente para pedidos no Fiado.", isSuccess: false));
                 return;
             }
 
-            var totalAmount = TotalOrderAmount;
-
-            var orderItem = CartItems.Select(item => new OrderItem
-            {
-                ProductId = item.ProductId,
-                Quantity = item.Quantity,
-                UnitPrice = item.UnitPrice
-            }).ToList();
-
-            var newOrder = new Order
-            {
-                TotalAmount = TotalOrderAmount,
-                OrderDate = DateTime.Now,
-                Status = OrderStatus.Pending,
-                PaymentMethod = SelectedPaymentMethod,
-                ClientId = SelectedClient?.Id,
-                OrderItems = orderItem
-            };
-
-            Client? clientToUpdate = null;
-
-            if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient != null)
-            {
-                clientToUpdate = SelectedClient;
-                clientToUpdate.OutstandingBalance += totalAmount;
-            }
-
-            using (var transiction = await _dbContext.Database.BeginTransactionAsync())
-            {
-                try
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {                
+                var newOrder = new Order
                 {
-                    _dbContext.Orders.Add(newOrder);
-
+                    TotalAmount = TotalOrderAmount,
+                    OrderDate = DateTime.Now,
+                    Status = OrderStatus.Pending,
+                    PaymentMethod = SelectedPaymentMethod,
+                    ClientId = SelectedClient?.Id,
+                    
+                    OrderItems = CartItems.Select(item => new OrderItem
+                    {
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice
+                    }).ToList()
+                };
+               
+                _dbContext.Orders.Add(newOrder);
+                await _dbContext.SaveChangesAsync();
+                
+                if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient != null)
+                {
+                    SelectedClient.OutstandingBalance += TotalOrderAmount;
+                    _dbContext.Clients.Update(SelectedClient);
                     await _dbContext.SaveChangesAsync();
-
-                    if (clientToUpdate != null)
-                    {
-                        _dbContext.Clients.Update(clientToUpdate);
-
-                        await _dbContext.SaveChangesAsync();
-                    }
-
-                    await transiction.CommitAsync();
-
-                    CartItems.Clear();
-                    SelectedClient = null;
-                    SelectedPaymentMethod = PaymentMethod.Cash;
-
-                    OnPropertyChanged(nameof(TotalOrderAmount));
-                    OnPropertyChanged(nameof(CanBeCredit));
-                    FinalizeOrderCommand.NotifyCanExecuteChanged();
-
-                    Messenger.Send(new Messages.StatusMessage($"Pedido Nº{newOrder.Id} finalizado com sucesso! Total: {newOrder.TotalAmount:C}", isSuccess: true));
                 }
-                catch (Exception ex)
-                {
-                    await transiction.RollbackAsync();
 
-                    if (clientToUpdate != null)
-                    {
-                        clientToUpdate.OutstandingBalance -= totalAmount;
-                    }
+                await transaction.CommitAsync();
+               
+                CartItems.Clear();
+                SelectedClient = null;
+                SelectedPaymentMethod = PaymentMethod.Cash;
+                
+                OnPropertyChanged(nameof(TotalOrderAmount));
+                OnPropertyChanged(nameof(TotalQuantity));
+                FinalizeOrderCommand.NotifyCanExecuteChanged();
 
-                    Messenger.Send(new StatusMessage($"Falha crítica ao finalizar pedido. Transação revertida. Erro: {ex.Message}", isSuccess: false));
-                }
+                Messenger.Send(new StatusMessage($"Pedido Nº{newOrder.Id} finalizado com sucesso!", isSuccess: true));
             }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Messenger.Send(new StatusMessage($"Erro ao gravar pedido: {ex.Message}", isSuccess: false));
+            }
+        }
+
+        [RelayCommand]
+        private void IncreaseQuantity(OrderItem item)
+        {
+            item.Quantity++;
+            UpdateTotals();
+        }
+
+        [RelayCommand]
+        private void DecreaseQuantity(OrderItem item)
+        {
+            if (item.Quantity > 1)
+            {
+                item.Quantity--;
+            }
+            else
+            {                
+                CartItems.Remove(item);
+            }
+
+            UpdateTotals();
+        }        
+        
+        #endregion
+
+        #region Lógica de Apoio (CanExecute)
+        partial void OnSelectedProductChanged(Product? value)
+        {
+            if (value == null) return;
+            
+            AddProductToCart(value);
+
+            SelectedProduct = null;
+        }
+
+        private void UpdateTotals()
+        {
+            OnPropertyChanged(nameof(TotalOrderAmount));
+            OnPropertyChanged(nameof(TotalQuantity));
+            FinalizeOrderCommand.NotifyCanExecuteChanged();
         }
         #endregion
     }
