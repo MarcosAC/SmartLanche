@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartLanche.Models
 {
-    public class OrderItem
+    public partial class OrderItem : ObservableObject
     {
         [Key]
         public int Id { get; set; }
@@ -20,8 +21,9 @@ namespace SmartLanche.Models
         [ForeignKey(nameof(ProductId))]
         public Product? Product { get; set; }
 
-        [Required]
-        public int Quantity { get; set; }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Subtotal))]
+        private int quantity;
         public decimal UnitPrice { get; set; }
         public decimal Subtotal => Quantity * UnitPrice;
     }

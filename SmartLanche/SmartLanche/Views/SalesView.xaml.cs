@@ -1,8 +1,6 @@
-﻿using SmartLanche.Models;
-using SmartLanche.ViewModels;
+﻿using SmartLanche.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace SmartLanche.Views
 {   
@@ -18,24 +16,6 @@ namespace SmartLanche.Views
             if (DataContext is SalesViewModel viewModel)
             {
                 await viewModel.LoadDataCommand.ExecuteAsync(null);
-            }
-        }
-
-        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var item = sender as ListViewItem;
-            if (item != null && item.IsSelected)
-            {
-                if (item.Content is Product product)
-                {
-                    if (DataContext is SalesViewModel viewModel)
-                    {
-                        if (viewModel.AddProductToCartCommand.CanExecute(product))
-                        {
-                            viewModel.AddProductToCartCommand.Execute(product);
-                        }
-                    }
-                }
             }
         }
     }
