@@ -3,15 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SmartLanche.Views"  
+             xmlns:local="clr-namespace:SmartLanche.Views" 
+             xmlns:converters="clr-namespace:SmartLanche.Converters"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1000">
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />        
     </UserControl.Resources>
 
-    <Grid Margin="16">
+    <Grid 
+        Margin="16"
+        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -19,8 +23,8 @@
 
         <StackPanel 
             Grid.Row="0"
-            Margin="0,0,0,16"> 
-            
+            Margin="0,0,0,16">
+
             <StackPanel Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock 
                     Text="Cadastro de Produtos"
@@ -66,7 +70,7 @@
                         Margin="16,5,10,5" />
 
                     <ComboBox
-                        SelectedValue="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedValue="{Binding Category, Mode=TwoWay}"
                         SelectedValuePath="Content"
                         Grid.Row="0"
                         Grid.Column="3"
@@ -227,7 +231,9 @@
             Grid.Row="1" 
             ItemsSource="{Binding FilteredProducts}" 
             SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" 
-            AutoGenerateColumns="False" 
+            IsSynchronizedWithCurrentItem="False" 
+            SelectionUnit="FullRow"
+            AutoGenerateColumns="False"
             IsReadOnly="{Binding DataGridReadOnly}" 
             SelectionMode="Single">
 

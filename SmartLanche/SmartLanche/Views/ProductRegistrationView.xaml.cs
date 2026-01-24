@@ -15,6 +15,7 @@ namespace SmartLanche.Views
         {
             if (DataContext is ProductRegistrationViewModel viewModel)
             {
+                viewModel.ResetScreenState();
                 await viewModel.LoadProductsCommand.ExecuteAsync(null);
             }
         }

@@ -3,9 +3,12 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace SmartLanche.ViewModels
 {
-    public class BaseViewModel : ObservableValidator
+    public partial class BaseViewModel : ObservableValidator
     {
         protected readonly IMessenger Messenger;
+
+        [ObservableProperty]
+        private bool _isBusy;
 
         public BaseViewModel(IMessenger messenger)
         {

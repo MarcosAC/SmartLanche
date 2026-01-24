@@ -28,5 +28,5 @@ namespace SmartLanche.Helpers
         MealVoucher,
         [Display(Name = "Conta")]
         Credit
-    }
+    }    
 }
