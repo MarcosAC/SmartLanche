@@ -37,7 +37,11 @@
                       CanUserAddRows="False"
                       GridLinesVisibility="Horizontal"
                       Background="White"
-                      BorderThickness="0">
+                      BorderThickness="0"
+                      RowHeaderWidth="0"
+                      MinRowHeight="40"
+                      EnableRowVirtualization="True"
+                      VirtualizingStackPanel.VirtualizationMode="Recycling">
 
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Width="15">
@@ -92,6 +96,7 @@
                                           SelectedValuePath="Value"
                                           DisplayMemberPath="DisplayName"
                                           SelectionChanged="StatusComboBox_SelectionChanged"
+                                          Height="30"
                                           Margin="5">                                    
                                     <ComboBox.ItemContainerStyle>
                                         <Style TargetType="ComboBoxItem">

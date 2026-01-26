@@ -13,12 +13,17 @@ namespace SmartLanche.Views
         }
 
         private void StatusComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.RemovedItems.Count > 0 && sender is ComboBox comboBox && comboBox.DataContext is Order order)
-            {
-                if (this.DataContext is OrderStatusViewModel viewModel)
+        {            
+            var comboBox = sender as ComboBox;
+          
+            if (comboBox != null && comboBox.IsLoaded && comboBox.IsFocused)
+            {                
+                if (comboBox.DataContext is Order order)
                 {
-                    viewModel.ChangeStatusCommand.Execute(order);
+                    if (DataContext is OrderStatusViewModel viewModel)
+                    {
+                        viewModel.ChangeStatusCommand.Execute(order);
+                    }
                 }
             }
         }

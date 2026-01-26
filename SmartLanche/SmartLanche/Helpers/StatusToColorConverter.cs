@@ -12,19 +12,19 @@ namespace SmartLanche.Helpers
             {
                 return status switch
                 {
-                    OrderStatus.InPreparation => new SolidColorBrush(Colors.OrangeRed),
-                    OrderStatus.Ready => new SolidColorBrush(Colors.MediumSeaGreen),
-                    OrderStatus.Cancelled => new SolidColorBrush(Colors.DarkRed),
-                    _ => new SolidColorBrush(Colors.Gray)
+                    OrderStatus.InPreparation => Brushes.OrangeRed,
+                    OrderStatus.Ready => Brushes.MediumSeaGreen,
+                    OrderStatus.Cancelled => Brushes.DarkRed,
+                    _ => Brushes.Gray
                 };
             }
 
-            return new SolidColorBrush(Colors.Transparent);
+            return Brushes.Transparent;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return Binding.DoNothing;
         }
     }
 }

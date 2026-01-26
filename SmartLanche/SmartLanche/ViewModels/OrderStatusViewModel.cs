@@ -48,16 +48,6 @@ namespace SmartLanche.ViewModels
             {
                 IsBusy = false;
             }
-
-            //using var context = await _contextFactory.CreateDbContextAsync();
-
-            //var list = await context.Orders
-            //    .Include(o => o.OrderItems).ThenInclude(oi => oi.Product)
-            //    .Include(o => o.Client)
-            //    .OrderByDescending(o => o.OrderDate)
-            //    .ToListAsync();
-
-            //Orders = new ObservableCollection<Order>(list);
         }
 
         [RelayCommand]
@@ -68,8 +58,11 @@ namespace SmartLanche.ViewModels
             try
             {
                 using var context = await _contextFactory.CreateDbContextAsync();
-                
-                context.Orders.Update(order);
+                                
+                context.Orders.Attach(order);
+
+                context.Entry(order).Property(x => x.Status).IsModified = true;
+
                 await context.SaveChangesAsync();
 
                 Messenger.Send(new StatusMessage("Status atualizado!", true));
@@ -78,20 +71,6 @@ namespace SmartLanche.ViewModels
             {
                 Messenger.Send(new StatusMessage($"Erro ao atualizar: {ex.Message}", false));
             }
-
-            //if (order == null) return;
-
-            //try
-            //{
-            //    using var context = await _contextFactory.CreateDbContextAsync();
-
-            //    context.Orders.Update(order);
-            //    await context.SaveChangesAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    Messenger.Send(new StatusMessage($"Erro ao atualizar: {ex.Message}", false));
-            //}
         }
     }
 }
