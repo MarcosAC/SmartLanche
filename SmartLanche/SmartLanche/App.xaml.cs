@@ -48,8 +48,8 @@ namespace SmartLanche
             services.AddSingleton<ProductRegistrationViewModel>();
             services.AddSingleton<ClientRegistrationViewModel>();
             services.AddSingleton<SalesViewModel>();
-            services.AddTransient<PendingPaymentsViewModel>();
-            services.AddTransient<OrderStatusViewModel>();
+            services.AddSingleton<PendingPaymentsViewModel>();
+            services.AddSingleton<OrderStatusViewModel>();
 
             // Views
             services.AddTransient<MainWindowView>();
