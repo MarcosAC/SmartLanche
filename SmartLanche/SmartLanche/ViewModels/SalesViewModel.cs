@@ -149,7 +149,7 @@ namespace SmartLanche.ViewModels
                 {
                     TotalAmount = TotalOrderAmount,
                     OrderDate = DateTime.Now,
-                    Status = OrderStatus.Pending,
+                    status = OrderStatus.Pending,
                     PaymentMethod = SelectedPaymentMethod,
                     ClientId = SelectedClient?.Id,
 

@@ -29,6 +29,7 @@ namespace SmartLanche.ViewModels
             try
             {
                 IsBusy = true;
+
                 using var context = await _contextFactory.CreateDbContextAsync();
 
                 var list = await context.Orders
@@ -53,23 +54,23 @@ namespace SmartLanche.ViewModels
         [RelayCommand]
         public async Task ChangeStatusAsync(Order order)
         {
-            if (order == null) return;
-
             try
             {
                 using var context = await _contextFactory.CreateDbContextAsync();
-                                
-                context.Orders.Attach(order);
+                
+                var dbOrder = await context.Orders.FindAsync(order.Id);
+                if (dbOrder != null)
+                {
+                    dbOrder.Status = order.Status;
 
-                context.Entry(order).Property(x => x.Status).IsModified = true;
+                    await context.SaveChangesAsync();
 
-                await context.SaveChangesAsync();
-
-                Messenger.Send(new StatusMessage("Status atualizado!", true));
+                    Messenger.Send(new StatusMessage($"Pedido #{order.Id} atualizado para {order.status}!", true));
+                }
             }
             catch (Exception ex)
             {
-                Messenger.Send(new StatusMessage($"Erro ao atualizar: {ex.Message}", false));
+                Messenger.Send(new StatusMessage("Erro ao salvar: " + ex.Message, false));
             }
         }
     }

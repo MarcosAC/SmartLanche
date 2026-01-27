@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helpers="clr-namespace:SmartLanche.Helpers"
              xmlns:models="clr-namespace:SmartLanche.Models"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              Loaded="UserControl_Loaded"
              mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
 
@@ -95,14 +96,22 @@
                                           SelectedValue="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                           SelectedValuePath="Value"
                                           DisplayMemberPath="DisplayName"
-                                          SelectionChanged="StatusComboBox_SelectionChanged"
+                                          
+                                          VerticalAlignment="Center"
                                           Height="30"
                                           Margin="5">                                    
-                                    <ComboBox.ItemContainerStyle>
+                                    <ComboBox.ItemContainerStyle>                                        
                                         <Style TargetType="ComboBoxItem">
                                             <Setter Property="Padding" Value="8"/>
                                         </Style>
                                     </ComboBox.ItemContainerStyle>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="DropDownClosed">
+                                            <i:InvokeCommandAction Command="{Binding DataContext.ChangeStatusCommand, 
+                                     RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                   CommandParameter="{Binding}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                 </ComboBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
