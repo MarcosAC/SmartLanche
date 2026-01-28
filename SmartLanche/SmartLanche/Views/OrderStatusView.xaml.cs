@@ -3,20 +3,20 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace SmartLanche.Views
-{
-    public partial class ClientRegistrationView : UserControl
+{    
+    public partial class OrderStatusView : UserControl
     {
-        public ClientRegistrationView()
+        public OrderStatusView()
         {
             InitializeComponent();
-        }
+        }        
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ClientRegistrationViewModel viewModel)
+            if (DataContext is OrderStatusViewModel viewModel)
             {
-                viewModel.ResetScreenState();
-                await viewModel.LoadClientsCommand.ExecuteAsync(null);
+                viewModel.InitializeFilters();
+                await viewModel.LoadOrdersCommand.ExecuteAsync(null);
             }
         }
     }

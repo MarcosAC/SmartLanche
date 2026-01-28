@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.EntityFrameworkCore;
+using SmartLanche.Data;
 using SmartLanche.Helpers;
 using SmartLanche.Messages;
 using SmartLanche.Models;
@@ -13,17 +15,25 @@ namespace SmartLanche.ViewModels
     {
         private readonly IRepository<Client> _repositoryClient;
         private readonly IRepository<Order> _repositoryOrder;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
         public PendingPaymentsViewModel(
             IRepository<Client> repositoryClient,
             IRepository<Order> repositoryOrder,
+            IDbContextFactory<AppDbContext> contextFactory,
             IMessenger messenger) : base(messenger)
         {
             _repositoryClient = repositoryClient;
             _repositoryOrder = repositoryOrder;
+            _contextFactory = contextFactory;
 
             DebtorClients = new ObservableCollection<Client>();
             ClientOrders = new ObservableCollection<Order>();
+
+            Messenger.Register<OrderCreatedMessage>(this, (r, m) => _ = LoadPendingDataAsync());
+            Messenger.Register<ClientsChangedMessage>(this, (r, m) => _ = LoadPendingDataAsync());
+
+            _ = LoadPendingDataAsync();
         }
 
         #region Propriedades Observáveis
@@ -39,6 +49,7 @@ namespace SmartLanche.ViewModels
         private Client? selectedClient;
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ReceivePaymentCommand))]
         private decimal paymentAmount;
 
         [ObservableProperty]
@@ -51,10 +62,10 @@ namespace SmartLanche.ViewModels
         [RelayCommand]
         private async Task LoadPendingDataAsync()
         {
-            IsLoading = true;
-
             try
             {
+                IsBusy = true;
+
                 var allClients = await _repositoryClient.GetAllAsync();
 
                 var debtors = allClients
@@ -69,8 +80,8 @@ namespace SmartLanche.ViewModels
                 Messenger.Send(new StatusMessage($"Erro ao carregar pendências: {ex.Message}", false));
             }
             finally
-            { 
-                IsLoading = false;
+            {
+                IsBusy = false;
             }
         }
 
@@ -79,51 +90,63 @@ namespace SmartLanche.ViewModels
         {
             if (SelectedClient == null || PaymentAmount <= 0) return;
 
-            if (PaymentAmount > SelectedClient.OutstandingBalance)
-            {
-                Messenger.Send(new StatusMessage("O valor do pagamento não pode ser maior que a dívida.", false));
-                return;
-            }
+            using var context = await _contextFactory.CreateDbContextAsync();
+            using var transaction = await context.Database.BeginTransactionAsync();
 
             try
             {
-                IsLoading = true;
+                IsBusy = true;
+                                
+                var clientDb = await context.Clients.FindAsync(SelectedClient.Id);
 
-                SelectedClient.OutstandingBalance -= PaymentAmount;
-                await _repositoryClient.UpdateAsync(SelectedClient);
+                if (clientDb == null) return;
 
-                if (SelectedClient.OutstandingBalance == 0)
+                if (PaymentAmount > clientDb.OutstandingBalance)
                 {
-                    var allOrders = await _repositoryOrder.GetAllAsync();
+                    Messenger.Send(new StatusMessage("Valor maior que a dívida.", false));
+                    return;
+                }
 
-                    var pendingOrders = allOrders
-                        .Where(order => order.ClientId == SelectedClient.Id &&
-                                        order.PaymentMethod == PaymentMethod.Credit &&
-                                        !order.IsPaid)
-                        .ToList();
+                clientDb.OutstandingBalance -= PaymentAmount;
+
+                if (clientDb.OutstandingBalance == 0)
+                {
+                    var pendingOrders = await context.Orders
+                        .Where(order => order.ClientId == clientDb.Id &&
+                                    order.PaymentMethod == PaymentMethod.Credit &&
+                                    !order.IsPaid)
+                        .ToListAsync();
 
                     foreach (var order in pendingOrders)
                     {
                         order.IsPaid = true;
-                        await _repositoryOrder.UpdateAsync(order);
                     }
                 }
 
-                Messenger.Send(new StatusMessage($"Pagamento de {PaymentAmount:C} recebido com sucesso!", false));
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
-                var clientId = SelectedClient.Id;
+                Messenger.Send(new StatusMessage($"Pagamento de {PaymentAmount:C} recebido!", true));
+                Messenger.Send(new ClientsChangedMessage());
+
+                var clientId = clientDb.Id;
                 PaymentAmount = 0;
 
                 await LoadPendingDataAsync();
-                await LoadClientOrderHistoryAsync(clientId);
+
+                if (clientDb.OutstandingBalance > 0)
+                    await LoadClientOrderHistoryAsync(clientId);
+                else
+                    SelectedClient = null;
             }
             catch (Exception)
             {
-                Messenger.Send(new StatusMessage($"Erro ao processar pagamento.", false));
+                await transaction.RollbackAsync();
+                Messenger.Send(new StatusMessage("Erro ao processar pagamento.", false));
             }
             finally 
             { 
-                IsLoading = false;
+                IsBusy = false;
             }
         }
 
@@ -131,7 +154,10 @@ namespace SmartLanche.ViewModels
 
         #region Lógica de Apoio
 
-        private bool CanReceivePayment() => SelectedClient != null && SelectedClient.OutstandingBalance > 0;
+        private bool CanReceivePayment() => 
+            SelectedClient != null && 
+            SelectedClient.OutstandingBalance > 0 && 
+            PaymentAmount > 0;
 
         partial void OnSelectedClientChanged(Client? value)
         {
@@ -148,13 +174,13 @@ namespace SmartLanche.ViewModels
         }
 
         private async Task LoadClientOrderHistoryAsync(int clientId)
-        {
-            var orders = await _repositoryOrder.GetAllAsync();
+        {           
+            using var context = await _contextFactory.CreateDbContextAsync();          
 
-            var history = orders
-                .Where(order => order.ClientId == clientId && order.PaymentMethod == PaymentMethod.Credit)
-                .OrderByDescending(order => order.OrderDate)
-                .ToList();
+            var history = await context.Orders
+                .Where(o => o.ClientId == clientId && o.PaymentMethod == PaymentMethod.Credit)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
 
             ClientOrders = new ObservableCollection<Order>(history);
         }

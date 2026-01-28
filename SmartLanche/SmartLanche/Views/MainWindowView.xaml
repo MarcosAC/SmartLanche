@@ -7,26 +7,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="SmartLanche" Height="760" Width="1200">
+        Title="SmartLanche" Height="760" Width="1200"
+        WindowStartupLocation="CenterScreen">
     
-    <Window.Resources>        
-        <DataTemplate DataType="{x:Type vm:ProductRegistrationViewModel}">
-            <views:ProductRegistrationView />           
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type vm:ClientRegistrationViewModel}">
-            <views:ClientRegistrationView />
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type vm:SalesViewModel}">
-            <views:SalesView />
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type vm:PendingPaymentsViewModel}">
-            <views:PendingPaymentsView />
-        </DataTemplate>
-    </Window.Resources>
-
     <DockPanel>
         <Border
             DockPanel.Dock="Top"
@@ -46,9 +29,23 @@
                     VerticalAlignment="Center"
                     FontWeight="Bold" />
             </StackPanel>
-        </Border>       
+        </Border>
 
-        <TabControl Margin="8">
+        <TabControl Margin="8" SelectionChanged="TabControl_SelectionChanged">
+            <TabItem Header="Pedidos" Tag="Sales" />
+            <TabItem Header="Cardápio" Tag="Products" />
+            <TabItem Header="Clientes" Tag="Clients" />
+            <TabItem Header="Pendências" Tag="Payments" />
+            <TabItem Header="Pedidos em Preparação" Tag="Status" />
+
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding DataContext.CurrentViewModel, RelativeSource={RelativeSource AncestorType=Window}}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+
+        <!--<TabControl Margin="8">
             <TabItem Header="Pedidos">
                 <ContentControl Content="{Binding SalesViewModel}" />
             </TabItem>
@@ -70,7 +67,7 @@
             </TabItem>
 
             <TabItem Header="Pedidos em Preparação">
-                <TextBlock Text="Pedidos em Preparação (alterar status)" Margin="8" />
+                <ContentControl Content="{Binding OrderStatusViewModel}" />
             </TabItem>
 
             <TabItem Header="Carrinho">
@@ -90,6 +87,6 @@
                     Text="Personalize em Config/appsettings.json"
                     Margin="8" />
             </TabItem>
-        </TabControl>
+        </TabControl>-->
     </DockPanel>
 </Window>

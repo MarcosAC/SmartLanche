@@ -3,6 +3,7 @@ using SmartLanche.Messages;
 using SmartLanche.ViewModels;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SmartLanche.Views
 {
@@ -40,6 +41,18 @@ namespace SmartLanche.Views
         {
             _messenger.Unregister<StatusMessage>(this);
             base.OnClosing(e);
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source is TabControl tabControl && tabControl.SelectedItem is TabItem selectedTab)
+            {
+                var destination = selectedTab.Tag?.ToString();
+                if (!string.IsNullOrEmpty(destination) && DataContext is MainWindowViewModel vm)
+                {
+                    vm.NavigateCommand.Execute(destination);
+                }
+            }
         }
     }
 }

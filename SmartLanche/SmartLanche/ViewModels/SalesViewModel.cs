@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.EntityFrameworkCore;
 using SmartLanche.Data;
 using SmartLanche.Helpers;
 using SmartLanche.Messages;
@@ -14,19 +15,29 @@ namespace SmartLanche.ViewModels
     {
         private readonly IRepository<Product> _repositoryProduct;
         private readonly IRepository<Client> _repositoryClient;
-        private readonly AppDbContext _dbContext;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
         public SalesViewModel(
             IRepository<Product> repostoryProduct,
             IRepository<Client> repositoryClient,
-            AppDbContext dbContext,
+            IDbContextFactory<AppDbContext> contextFactory,
             IMessenger messenger) : base(messenger)
         {
             _repositoryProduct = repostoryProduct;
             _repositoryClient = repositoryClient;
-            _dbContext = dbContext;
+            _contextFactory = contextFactory;
 
-            CartItems = new ObservableCollection<OrderItem>();           
+            Messenger.Register<SalesViewModel, ProductsChangedMessage>(this, async (r, m) =>
+            {
+                await r.LoadDataAsync();
+            });
+
+            Messenger.Register<SalesViewModel, ClientsChangedMessage>(this, async (r, m) =>
+            {
+                await r.LoadDataAsync();
+            });
+
+            _ = LoadDataAsync();
         }
 
         #region Propriedades Observáveis
@@ -62,8 +73,12 @@ namespace SmartLanche.ViewModels
         [RelayCommand]
         private async Task LoadDataAsync()
         {
+            if (IsBusy) return;
+
             try
             {
+                IsBusy = true;
+
                 var listProducts = (await _repositoryProduct.GetAllAsync()).ToList();
                 Products = new ObservableCollection<Product>(listProducts.Where(product => product.IsActive).ToList());
 
@@ -72,7 +87,11 @@ namespace SmartLanche.ViewModels
             }
             catch (Exception ex)
             {
-                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", isSuccess: false));
+                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", false));
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -112,16 +131,20 @@ namespace SmartLanche.ViewModels
         private async Task FinalizeOrderAsync()
         {
             if (!CartItems.Any()) return;
-            
+
             if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient == null)
             {
-                Messenger.Send(new StatusMessage("Selecione um cliente para pedidos no Fiado.", isSuccess: false));
+                Messenger.Send(new StatusMessage("Selecione um cliente para pedidos no Fiado.", false));
                 return;
             }
+            
+            using var context = await _contextFactory.CreateDbContextAsync();
+            using var transaction = await context.Database.BeginTransactionAsync();
 
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
-            {                
+            {
+                IsBusy = true;
+
                 var newOrder = new Order
                 {
                     TotalAmount = TotalOrderAmount,
@@ -129,7 +152,7 @@ namespace SmartLanche.ViewModels
                     Status = OrderStatus.Pending,
                     PaymentMethod = SelectedPaymentMethod,
                     ClientId = SelectedClient?.Id,
-                    
+
                     OrderItems = CartItems.Select(item => new OrderItem
                     {
                         ProductId = item.ProductId,
@@ -137,33 +160,40 @@ namespace SmartLanche.ViewModels
                         UnitPrice = item.UnitPrice
                     }).ToList()
                 };
-               
-                _dbContext.Orders.Add(newOrder);
-                await _dbContext.SaveChangesAsync();
+
+                context.Orders.Add(newOrder);
+                await context.SaveChangesAsync();
                 
                 if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient != null)
-                {
-                    SelectedClient.OutstandingBalance += TotalOrderAmount;
-                    _dbContext.Clients.Update(SelectedClient);
-                    await _dbContext.SaveChangesAsync();
+                {                    
+                    var clientDb = await context.Clients.FindAsync(SelectedClient.Id);
+                    if (clientDb != null)
+                    {
+                        clientDb.OutstandingBalance += TotalOrderAmount;
+                        context.Clients.Update(clientDb);
+                        await context.SaveChangesAsync();
+                    }
                 }
 
                 await transaction.CommitAsync();
-               
+                
+                Messenger.Send(new OrderCreatedMessage(newOrder));
+                
                 CartItems.Clear();
                 SelectedClient = null;
                 SelectedPaymentMethod = PaymentMethod.Cash;
-                
-                OnPropertyChanged(nameof(TotalOrderAmount));
-                OnPropertyChanged(nameof(TotalQuantity));
-                FinalizeOrderCommand.NotifyCanExecuteChanged();
+                UpdateTotals();
 
-                Messenger.Send(new StatusMessage($"Pedido Nº{newOrder.Id} finalizado com sucesso!", isSuccess: true));
+                Messenger.Send(new StatusMessage($"Pedido Nº{newOrder.Id} finalizado com sucesso!", true));
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                Messenger.Send(new StatusMessage($"Erro ao gravar pedido: {ex.Message}", isSuccess: false));
+                Messenger.Send(new StatusMessage($"Erro ao gravar pedido: {ex.Message}", false));
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -198,7 +228,7 @@ namespace SmartLanche.ViewModels
             
             AddProductToCart(value);
 
-            SelectedProduct = null;
+            SelectedProduct = null;          
         }
 
         private void UpdateTotals()
