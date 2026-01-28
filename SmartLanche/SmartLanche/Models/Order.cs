@@ -14,8 +14,7 @@ namespace SmartLanche.Models
         public decimal TotalAmount { get; set; }
 
         [ObservableProperty]
-        public OrderStatus status;
-        //public OrderStatus Status { get; set; } = OrderStatus.Pending;
+        public OrderStatus status;       
         public int? ClientId { get; set; }
         public Client? Client { get; set; }
         public PaymentMethod PaymentMethod { get; set; }

@@ -15,6 +15,7 @@ namespace SmartLanche.Views
         {
             if (DataContext is OrderStatusViewModel viewModel)
             {
+                viewModel.InitializeFilters();
                 await viewModel.LoadOrdersCommand.ExecuteAsync(null);
             }
         }
