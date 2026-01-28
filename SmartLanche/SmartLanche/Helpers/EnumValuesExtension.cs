@@ -43,5 +43,18 @@ namespace SmartLanche.Helpers
 
             return result; ;
         }
+
+        public static string GetDisplayName(Enum value)
+        {
+            var fieldInfo = value.GetType().GetField(value.ToString());
+            var displayAttribute = fieldInfo?.GetCustomAttribute<DisplayAttribute>(false);
+
+            return displayAttribute?.Name ?? value.ToString();
+        }
+
+        public static class FilterOptions
+        {
+            public const string All = "ALL_STATUS";
+        }
     }
 }

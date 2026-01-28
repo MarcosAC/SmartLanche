@@ -34,20 +34,22 @@ namespace SmartLanche
             services.AddSingleton<IConfiguration>(Configuration);
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Configuration["Database:ConnectionString"];
+                        
+            services.AddDbContextFactory<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
-            // Services e Repository
-            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+            // Services e Repository            
+            services.AddTransient(typeof(IRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IConfigurationService, ConfigurationService>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>();
             
             // ViewModels
             services.AddSingleton<MainWindowViewModel>();
-            services.AddTransient<ProductRegistrationViewModel>();
-            services.AddTransient<ClientRegistrationViewModel>();
-            services.AddTransient<SalesViewModel>();
-            services.AddTransient<PendingPaymentsViewModel>();
+            services.AddSingleton<ProductRegistrationViewModel>();
+            services.AddSingleton<ClientRegistrationViewModel>();
+            services.AddSingleton<SalesViewModel>();
+            services.AddSingleton<PendingPaymentsViewModel>();
+            services.AddSingleton<OrderStatusViewModel>();
 
             // Views
             services.AddTransient<MainWindowView>();
@@ -55,14 +57,15 @@ namespace SmartLanche
             services.AddTransient<ClientRegistrationView>();
             services.AddTransient<SalesView>();
             services.AddTransient<PendingPaymentsView>();
+            services.AddTransient<OrderStatusView>();
 
             ServiceProvider = services.BuildServiceProvider();
 
-            using (var scope = ServiceProvider.CreateScope())
+            var factory = ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
+            using (var db = factory.CreateDbContext())
             {
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 db.Database.EnsureCreated();
-            }
+            }           
 
             var mainWindow = ServiceProvider.GetRequiredService<MainWindowView>();
             mainWindow.Show();

@@ -84,14 +84,22 @@ namespace SmartLanche.ViewModels
         {
             try
             {
+                IsBusy = true;
+
                 var listClients = await _repositoryClient.GetAllAsync();
+
+                // mover essa lógica de "IsActive" para dentro do repositório no futuro
                 AllClients = listClients.Where(clients => clients.IsActive).ToList();
 
                 ApplyFilter();
             }
             catch (Exception ex)
             {
-                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", isSuccess: false));
+                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", false));
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -104,28 +112,52 @@ namespace SmartLanche.ViewModels
             {
                 var firstError = GetErrors().FirstOrDefault()?.ErrorMessage;
 
-                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", isSuccess: false));
+                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", false));
 
                 return;
             }
 
-            var client = Id == 0 ? new Client() : await _repositoryClient.GetByIdAsync(Id);
-            if (client == null) return;
+            try
+            {
+                IsBusy = true;
 
-            client.Name = Name;
-            client.Phone = Phone;
-            client.Observations = Observations;
-            client.OutstandingBalance = OutstandingBalance;
+                Client? client;
 
-            if (Id == 0) await _repositoryClient.AddAsync(client);
-            else await _repositoryClient.UpdateAsync(client);
+                if (Id == 0)
+                {
+                    client = new Client { IsActive = true };
+                }
+                else
+                {
+                    client = await _repositoryClient.GetByIdAsync(Id);
+                }
 
-            string successMessage = Id == 0 ? "Cliente cadastrado com sucesso!" : "Cliente atualizado com sucesso!";
-            Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
+                if (client == null) return;
 
-            await LoadClientsAsync();
+                client.Name = Name;
+                client.Phone = Phone;
+                client.Observations = Observations;
+                client.OutstandingBalance = OutstandingBalance;
 
-            CancelAction();
+                if (Id == 0)
+                    await _repositoryClient.AddAsync(client);
+                else
+                    await _repositoryClient.UpdateAsync(client);
+
+                Messenger.Send(new StatusMessage("Dados salvos com sucesso!", true));
+                Messenger.Send(new ClientsChangedMessage());
+
+                await LoadClientsAsync();
+                CancelAction();
+            }
+            catch (Exception ex)
+            {
+                Messenger.Send(new StatusMessage($"Erro ao salvar: {ex.Message}", false));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
@@ -135,6 +167,8 @@ namespace SmartLanche.ViewModels
 
             try
             {
+                IsBusy = true;
+
                 var client = await _repositoryClient.GetByIdAsync(SelectedClient.Id);
 
                 if (client != null)
@@ -142,7 +176,8 @@ namespace SmartLanche.ViewModels
                     client.IsActive = false;
                     await _repositoryClient.UpdateAsync(client);
 
-                    Messenger.Send(new StatusMessage("Cliente removido da lista com sucesso!", isSuccess: true));
+                    Messenger.Send(new StatusMessage("Cliente removido da lista com sucesso!", true));
+                    Messenger.Send(new ClientsChangedMessage());
                 }
 
                 await LoadClientsAsync();
@@ -150,8 +185,12 @@ namespace SmartLanche.ViewModels
             }
             catch (Exception)
             {
-                Messenger.Send(new StatusMessage("Erro ao desativar cliente.", isSuccess: false));
-            }                  
+                Messenger.Send(new StatusMessage("Erro ao desativar cliente.", false));
+            }
+            finally 
+            { 
+                IsBusy = false;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanCreateNew))]
@@ -187,6 +226,17 @@ namespace SmartLanche.ViewModels
             FilteredClients = new ObservableCollection<Client>(query.ToList());
         }
 
+        [RelayCommand]
+        public void ResetScreenState()
+        {
+            IsBusy = false;
+            ClearFields();
+            SearchText = string.Empty;
+            IsEditing = false;
+            IsViewing = false;
+            ApplyFilter();
+        }
+
         #endregion
 
         #region Lógica de Apoio (CanExecute)
@@ -209,6 +259,8 @@ namespace SmartLanche.ViewModels
 
         partial void OnSelectedClientChanged(Client? value)
         {
+            if (IsEditing) return;
+
             if (value != null)
             {
                 Id = value.Id;
@@ -222,7 +274,7 @@ namespace SmartLanche.ViewModels
             }
             else
             {
-                CancelAction();
+                if (!IsViewing && !IsEditing) CancelAction();
             }
         }
 

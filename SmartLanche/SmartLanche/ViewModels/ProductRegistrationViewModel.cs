@@ -94,18 +94,23 @@ namespace SmartLanche.ViewModels
         [RelayCommand]
         private async Task LoadProductsAsync()
         {
+            IsBusy = true;
+
             try
             {
                 var listProducts = await _repositoryProduct.GetAllAsync();
                 AllProducts = listProducts.Where(products => products.IsActive).ToList();
 
-                ApplyFilter();                
+                ApplyFilter();
             }
             catch (Exception ex)
             {
-                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", isSuccess: false));
+                Messenger.Send(new StatusMessage($"Erro ao carregar dados iniciais: {ex.Message}", false));
             }
-            
+            finally
+            {                
+                IsBusy = false;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanSave))]
@@ -117,34 +122,50 @@ namespace SmartLanche.ViewModels
             {
                 var firstError = GetErrors().FirstOrDefault()?.ErrorMessage;
 
-                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", isSuccess: false));
+                Messenger.Send(new StatusMessage(firstError ?? "Verifique os campos obrigatórios.", false));
                 return;
             }
 
-            var product = Id == 0 ? new Product() : await _repositoryProduct.GetByIdAsync(Id);
-            if (product == null) return;
+            IsBusy = true;
 
-            product.Name = Name;
-            product.Category = Category;
-            product.Price = Price;
-            product.Description = Description;
-            product.IsCombo = IsCombo;
+            try
+            {
+                var product = Id == 0 ? new Product() : await _repositoryProduct.GetByIdAsync(Id);
+                if (product == null) return;
 
-            if (Id == 0) await _repositoryProduct.AddAsync(product);
-            else await _repositoryProduct.UpdateAsync(product);
+                product.Name = Name;
+                product.Category = Category;
+                product.Price = Price;
+                product.Description = Description;
+                product.IsCombo = IsCombo;
 
-            string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
-            Messenger.Send(new StatusMessage(successMessage, isSuccess: true));
+                if (Id == 0) await _repositoryProduct.AddAsync(product);
+                else await _repositoryProduct.UpdateAsync(product);
 
-            await LoadProductsAsync();
+                string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
+                Messenger.Send(new StatusMessage(successMessage, true));
+                Messenger.Send(new ProductsChangedMessage());
 
-            CancelAction();
+                await LoadProductsAsync();
+
+                CancelAction();
+            }
+            catch (Exception ex)
+            {
+                Messenger.Send(new StatusMessage($"Erro ao salvar: {ex.Message}", false));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
         private async Task DeleteProductAsync()
         {
             if (SelectedProduct == null) return;
+
+            IsBusy = true;
 
             try
             {
@@ -155,7 +176,7 @@ namespace SmartLanche.ViewModels
                     product.IsActive = false;
                     await _repositoryProduct.UpdateAsync(product);
 
-                    Messenger.Send(new StatusMessage("Cliente removido da lista com sucesso!", isSuccess: true));
+                    Messenger.Send(new StatusMessage("Item removido da lista com sucesso!", true));
                 }
 
                 await LoadProductsAsync();
@@ -163,16 +184,20 @@ namespace SmartLanche.ViewModels
             }
             catch (Exception)
             {
-                Messenger.Send(new StatusMessage("Erro ao desativar produto.", isSuccess: false));
-            }           
+                Messenger.Send(new StatusMessage("Erro ao desativar produto.", false));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanCreateNew))]
         private void NewProduct()
         {
             ClearFields();
-            IsEditing = true;
             IsViewing = true;
+            IsEditing = true;            
         }
 
         [RelayCommand(CanExecute = nameof(CanEdit))]
@@ -208,12 +233,24 @@ namespace SmartLanche.ViewModels
 
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                query = query.Where(product => product.Name != null && 
+                query = query.Where(product => product.Name != null &&
                                                product.Name.Contains(SearchText!, StringComparison.OrdinalIgnoreCase));
             }
 
             FilteredProducts = new ObservableCollection<Product>(query.ToList());
         }
+
+        [RelayCommand]
+        public void ResetScreenState()
+        {
+            IsBusy = false;
+            ClearFields();
+            SearchText = string.Empty;
+            IsEditing = false;
+            IsViewing = false;
+            ApplyFilter();
+        }
+
         #endregion
 
         #region Lógica de Apoio (CanExecute)
@@ -240,6 +277,8 @@ namespace SmartLanche.ViewModels
 
         partial void OnSelectedProductChanged(Product? value)
         {
+            if (IsEditing) return;
+
             if (value != null)
             {
                 Id = value.Id;
@@ -254,7 +293,7 @@ namespace SmartLanche.ViewModels
             }
             else
             {
-                CancelAction();
+                if (!IsViewing && !IsEditing) CancelAction();
             }
         }
 
