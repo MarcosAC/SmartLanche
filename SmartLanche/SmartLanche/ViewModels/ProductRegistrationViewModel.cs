@@ -62,6 +62,9 @@ namespace SmartLanche.ViewModels
         private string? searchText;
 
         [ObservableProperty]
+        private string priceDisplay = "R$ 0,00";
+
+        [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsFormEnabled))]
         [NotifyPropertyChangedFor(nameof(DataGridReadOnly))]
         [NotifyCanExecuteChangedFor(nameof(SaveProductCommand))]
@@ -233,9 +236,32 @@ namespace SmartLanche.ViewModels
 
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                query = query.Where(product => product.Name != null &&
-                                               product.Name.Contains(SearchText!, StringComparison.OrdinalIgnoreCase));
-            }
+                string term = SearchText.Trim();
+
+                if (int.TryParse(term, out int searchId))
+                {
+                    var idMatch = query.Where(product => product.Id == searchId).ToList();
+
+                    if (idMatch.Any())
+                    {
+                        FilteredProducts = new ObservableCollection<Product>(idMatch);
+                        return;
+                    }
+                }
+
+                var exactMatch = query.Where(product => product.Name != null &&
+                                                        product.Name.Equals(term, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                if (exactMatch.Any())
+                {
+                    query = exactMatch;
+                }
+                else
+                {
+                    query = query.Where(product => product.Name != null &&
+                                                   product.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+                }
+            }            
 
             FilteredProducts = new ObservableCollection<Product>(query.ToList());
         }
@@ -285,6 +311,7 @@ namespace SmartLanche.ViewModels
                 Name = value.Name;
                 Category = value.Category;
                 Price = value.Price;
+                PriceDisplay = value.Price.ToString("C");
                 Description = value.Description;
                 IsCombo = value.IsCombo;
 
@@ -294,6 +321,20 @@ namespace SmartLanche.ViewModels
             else
             {
                 if (!IsViewing && !IsEditing) CancelAction();
+            }
+        }
+
+        partial void OnPriceDisplayChanged(string value)
+        {            
+            string cleanValue = System.Text.RegularExpressions.Regex.Replace(value, @"[^0-9]", "");
+
+            if (decimal.TryParse(cleanValue, out decimal result))
+            {
+                decimal priceConverted = result / 100;
+
+                price = priceConverted;
+
+                priceDisplay = priceConverted.ToString("C");
             }
         }
 
