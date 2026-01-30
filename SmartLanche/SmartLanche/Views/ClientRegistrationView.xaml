@@ -166,14 +166,7 @@
                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                             Width="250"
                             Height="28" />                        
-                    </StackPanel>
-
-                    <!--<Button
-                        Content="Limpar Filtro"
-                        Command="{Binding ClearFiltersCommand}"
-                        VerticalAlignment="Bottom"
-                        Margin="20,0,0,0"
-                        Padding="15,5" />-->
+                    </StackPanel>                  
                 </StackPanel>                
             </Border>
         </StackPanel>        
@@ -211,8 +204,7 @@
                     Header="Observações"
                     Binding="{Binding Observations}"
                     Width="2*" />
-            </DataGrid.Columns>
-            
+            </DataGrid.Columns>            
         </DataGrid>
     </Grid>
 </UserControl>
