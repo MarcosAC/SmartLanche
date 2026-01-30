@@ -70,5 +70,19 @@ namespace SmartLanche
             var mainWindow = ServiceProvider.GetRequiredService<MainWindowView>();
             mainWindow.Show();
         }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {            
+            var culture = new System.Globalization.CultureInfo("pt-BR");
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(culture.IetfLanguageTag)));
+
+            base.OnStartup(e);
+        }
     }
 }

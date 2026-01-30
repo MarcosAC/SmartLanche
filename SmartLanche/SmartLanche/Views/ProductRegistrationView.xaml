@@ -97,7 +97,7 @@
                     <TextBox 
                         Grid.Row="0"
                         Grid.Column="5" 
-                        Text="{Binding Price, Mode=TwoWay, StringFormat={}{0:N2}}" 
+                        Text="{Binding PriceDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                         Margin="0,5"
                         IsEnabled="{Binding IsFormEnabled}" />
 
@@ -189,10 +189,12 @@
                             Margin="0,0,0,5" />
                         
                         <TextBox 
+                            x:Name="TxtSearch"
                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
                             Width="250" 
                             Height="28"
-                            VerticalContentAlignment="Center" />
+                            VerticalContentAlignment="Center"
+                            ToolTip="Digite o nome exato, parte do nome ou o código do produto." />
                     </StackPanel>
 
                     <StackPanel>
