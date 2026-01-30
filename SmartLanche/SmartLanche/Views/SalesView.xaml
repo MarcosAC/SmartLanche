@@ -6,8 +6,7 @@
              xmlns:local="clr-namespace:SmartLanche.Views"
              xmlns:models="clr-namespace:SmartLanche.Models"
              xmlns:helpers="clr-namespace:SmartLanche.Helpers"              
-             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
-    <!--Loaded="UserControl_Loaded"-->
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">    
 
     <Grid Margin="16">
         <Grid.ColumnDefinitions>
@@ -29,8 +28,7 @@
 
             <ListView
                 ItemsSource="{Binding Products}"
-                SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
-                SelectionMode="Single"
+                SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"                
                 DockPanel.Dock="Top"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto">                
 

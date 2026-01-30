@@ -1,6 +1,7 @@
 ﻿using SmartLanche.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace SmartLanche.Views
 {    
@@ -8,11 +9,13 @@ namespace SmartLanche.Views
     {
         public ProductRegistrationView()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            TxtSearch.Focus();
+
             if (DataContext is ProductRegistrationViewModel viewModel)
             {
                 viewModel.ResetScreenState();
