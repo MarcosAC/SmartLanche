@@ -1,7 +1,6 @@
 ﻿using SmartLanche.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace SmartLanche.Views
 {    
