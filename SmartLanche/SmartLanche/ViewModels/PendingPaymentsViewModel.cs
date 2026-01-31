@@ -55,6 +55,9 @@ namespace SmartLanche.ViewModels
         [ObservableProperty]
         private bool isLoading;
 
+        [ObservableProperty]
+        private string paymentAmountDisplay = "R$ 0,00";
+
         #endregion
 
         #region Comandos
@@ -130,7 +133,9 @@ namespace SmartLanche.ViewModels
                 Messenger.Send(new ClientsChangedMessage());
 
                 var clientId = clientDb.Id;
+
                 PaymentAmount = 0;
+                PaymentAmountDisplay = "R$ 0,00";
 
                 await LoadPendingDataAsync();
 
@@ -183,6 +188,22 @@ namespace SmartLanche.ViewModels
                 .ToListAsync();
 
             ClientOrders = new ObservableCollection<Order>(history);
+        }
+
+        partial void OnPaymentAmountDisplayChanged(string value)
+        {            
+            string cleanValue = System.Text.RegularExpressions.Regex.Replace(value, @"[^0-9]", "");
+
+            if (decimal.TryParse(cleanValue, out decimal result))
+            {                
+                decimal amountConverted = result / 100;
+                
+                paymentAmount = amountConverted;
+                
+                this.paymentAmountDisplay = amountConverted.ToString("C");
+                
+                ReceivePaymentCommand.NotifyCanExecuteChanged();
+            }
         }
 
         #endregion
