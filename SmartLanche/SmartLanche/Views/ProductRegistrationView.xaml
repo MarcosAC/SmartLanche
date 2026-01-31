@@ -10,204 +10,177 @@
 
     <UserControl.Resources>
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />        
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
-    <Grid 
-        Margin="16"
-        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
+    <Grid Margin="16" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel 
-            Grid.Row="0"
-            Margin="0,0,0,16">
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">            
+            <TextBlock Text="Cadastro de Produtos"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10" />
 
-            <StackPanel Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock 
-                    Text="Cadastro de Produtos"
-                    FontSize="24"
-                    FontWeight="Bold"
-                    Margin="0,0,0,10" />
+            <Grid Margin="0,0,0,16" Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Text="Nome:"
-                        VerticalAlignment="Center"
-                        Margin="0,5,10,5" />
-                    
-                    <TextBox 
-                        Grid.Row="0" 
-                        Grid.Column="1" 
-                        Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Margin="0,5"
-                        IsEnabled="{Binding IsFormEnabled}" />
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           Text="Nome:"
+                           VerticalAlignment="Center"
+                           Margin="0,5,10,5" />
 
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Text="Categoria:" 
-                        VerticalAlignment="Center" 
-                        Margin="16,5,10,5" />
+                <TextBox Grid.Row="0" 
+                         Grid.Column="1" 
+                         Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,5"
+                         IsEnabled="{Binding IsFormEnabled}" />
 
-                    <ComboBox
-                        SelectedValue="{Binding Category, Mode=TwoWay}"
-                        SelectedValuePath="Content"
-                        Grid.Row="0"
-                        Grid.Column="3"
-                        Margin="0,5"    
-                        Height="30"
-                        IsEnabled="{Binding IsFormEnabled}">
-                        
-                        <ComboBoxItem Content="Almoços" />
-                        <ComboBoxItem Content="Bebidas" />
-                        <ComboBoxItem Content="Doces" />
-                        <ComboBoxItem Content="Café da manhã" />
-                        <ComboBoxItem Content="Lanche natural" />
-                        <ComboBoxItem Content="Pizza" />                        
-                        <ComboBoxItem Content="Salgados" />
-                    </ComboBox>
+                <TextBlock Grid.Row="0"
+                           Grid.Column="2"
+                           Text="Categoria:" 
+                           VerticalAlignment="Center" 
+                           Margin="16,5,10,5" />
 
-                    <TextBlock 
-                        Grid.Row="0"
-                        Grid.Column="4"
-                        Text="Preço:" 
-                        VerticalAlignment="Center"
-                        Margin="16,5,10,5" />
-                    
-                    <TextBox 
-                        Grid.Row="0"
-                        Grid.Column="5" 
-                        Text="{Binding PriceDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Margin="0,5"
-                        IsEnabled="{Binding IsFormEnabled}" />
+                <ComboBox SelectedValue="{Binding Category, Mode=TwoWay}"
+                          SelectedValuePath="Content"
+                          Grid.Row="0"
+                          Grid.Column="3"
+                          Margin="0,5"
+                          IsEnabled="{Binding IsFormEnabled}"
+                          VerticalContentAlignment="Center">
 
-                    <TextBlock
-                        Grid.Row="1" 
-                        Grid.Column="0"
-                        Text="Descrição:"
-                        VerticalAlignment="Center"
-                        Margin="0,5,10,5" />
-                    
-                    <TextBox 
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="4"
-                        Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Height="50" 
-                        TextWrapping="Wrap"
-                        AcceptsReturn="True"
-                        Margin="0,5,0,16"
-                        IsEnabled="{Binding IsFormEnabled}" />
+                    <ComboBoxItem Content="Almoços" />
+                    <ComboBoxItem Content="Bebidas" />
+                    <ComboBoxItem Content="Doces" />
+                    <ComboBoxItem Content="Café da manhã" />
+                    <ComboBoxItem Content="Lanche natural" />
+                    <ComboBoxItem Content="Pizza" />
+                    <ComboBoxItem Content="Salgados" />
+                </ComboBox>
 
-                    <CheckBox 
-                        Grid.Row="1" Grid.Column="5" 
-                        Content="É Combo/Promoção"
-                        IsChecked="{Binding IsCombo, Mode=TwoWay}"
-                        VerticalAlignment="Center"
-                        Margin="16,0,0,0"
-                        IsEnabled="{Binding IsFormEnabled}" />                    
-                </Grid>
+                <TextBlock Grid.Row="0"
+                           Grid.Column="4"
+                           Text="Preço:" 
+                           VerticalAlignment="Center"
+                           Margin="16,5,10,5" />
+
+                <TextBox Grid.Row="0"
+                         Grid.Column="5" 
+                         Text="{Binding PriceDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,5"
+                         IsEnabled="{Binding IsFormEnabled}"                             
+                         HorizontalContentAlignment="Right"
+                         VerticalContentAlignment="Center" />
+
+                <TextBlock Grid.Row="1" 
+                           Grid.Column="0"
+                           Text="Descrição:"
+                           VerticalAlignment="Center"
+                           Margin="0,5,10,5" />
+
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="3"
+                         Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="80" 
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"                         
+                         IsEnabled="{Binding IsFormEnabled}" />
+
+                <CheckBox Grid.Row="1" Grid.Column="5" 
+                          Content="É Combo/Promoção"
+                          IsChecked="{Binding IsCombo, Mode=TwoWay}"
+                          VerticalAlignment="Center"
+                          Margin="16,0,0,0"
+                          IsEnabled="{Binding IsFormEnabled}" />
+            </Grid>
+
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="Left">
+
+                <Button Content="Novo" 
+                        Command="{Binding NewProductCommand}" 
+                        Width="80" 
+                        Margin="0,0,8,0" />
+
+                <Button Content="Editar"
+                        Command="{Binding EditProductCommand}"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Background="#FF007ACC"
+                        Foreground="White"
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button Content="Salvar" 
+                        Command="{Binding SaveProductCommand}" 
+                        Width="80" 
+                        Margin="0,0,8,0" 
+                        Background="#FF007ACC" 
+                        Foreground="White" 
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button Content="Cancelar" 
+                        Command="{Binding CancelActionCommand}" 
+                        Width="80" 
+                        Margin="0,0,8,0" 
+                        Background="#FF6C757D" 
+                        Foreground="White" 
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button Content="Excluir" 
+                        Command="{Binding DeleteProductCommand}" 
+                        Width="80" 
+                        Background="#FFDC3545" 
+                        Foreground="White" 
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
 
-            <StackPanel 
-                Orientation="Horizontal"
-                Margin="0,0,0,0"
-                HorizontalAlignment="Left">
-                
-                <Button 
-                    Content="Novo" 
-                    Command="{Binding NewProductCommand}" 
-                    Width="80" 
-                    Margin="0,0,8,0" />
-
-                <Button 
-                    Content="Editar"
-                    Command="{Binding EditProductCommand}"
-                    Width="80"
-                    Margin="0,0,8,0"
-                    Background="#FF007ACC"
-                    Foreground="White"
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <Button 
-                    Content="Salvar" 
-                    Command="{Binding SaveProductCommand}" 
-                    Width="80" 
-                    Margin="0,0,8,0" 
-                    Background="#FF007ACC" 
-                    Foreground="White" 
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <Button
-                    Content="Cancelar" 
-                    Command="{Binding CancelActionCommand}" 
-                    Width="80" 
-                    Margin="0,0,8,0" 
-                    Background="#FF6C757D" 
-                    Foreground="White" 
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <Button
-                    Content="Excluir" 
-                    Command="{Binding DeleteProductCommand}" 
-                    Width="80" 
-                    Background="#FFDC3545" 
-                    Foreground="White" 
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />                
-            </StackPanel>
-
-            <Border 
-                Background="#F3F3F3"
-                Padding="10" 
-                CornerRadius="5"
-                Margin="0,10,0,0">
+            <Border Background="#F3F3F3"
+                    Padding="10" 
+                    CornerRadius="5"
+                    Margin="0,10,0,0">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="0,0,20,0">
-                        <TextBlock 
-                            Text="Pesquisar Produto:"
-                            FontWeight="Bold"
-                            Margin="0,0,0,5" />
-                        
-                        <TextBox 
-                            x:Name="TxtSearch"
-                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
-                            Width="250" 
-                            Height="28"
-                            VerticalContentAlignment="Center"
-                            ToolTip="Digite o nome exato, parte do nome ou o código do produto." />
+                        <TextBlock Text="Pesquisar Produto:"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,5" />
+
+                        <TextBox x:Name="TxtSearch"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                 Width="250" 
+                                 Height="28"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Digite o nome exato, parte do nome ou o código do produto." />
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock
-                            Text="Filtrar Categoria:" 
-                            FontWeight="Bold"
-                            Margin="0,0,0,5" />
-                        
-                        <ComboBox
-                            SelectedValue="{Binding CategoryFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedValuePath="Content"
-                            Width="180"
-                            Height="28">
+                        <TextBlock Text="Filtrar Categoria:" 
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,5" />
+
+                        <ComboBox SelectedValue="{Binding CategoryFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedValuePath="Content"
+                                  Width="180"
+                                  Height="28">
 
                             <ComboBoxItem Content="Todas" IsSelected="True" />
                             <ComboBoxItem Content="Almoços" />
@@ -221,54 +194,48 @@
                     </StackPanel>
 
                     <Button Content="Limpar Filtros" 
-                        Command="{Binding ClearFiltersCommand}"
-                        VerticalAlignment="Bottom"
-                        Margin="20,0,0,0"
-                        Padding="15,5"/>
+                            Command="{Binding ClearFiltersCommand}"
+                            VerticalAlignment="Bottom"
+                            Margin="20,0,0,0"
+                            Padding="15,5"/>
                 </StackPanel>
             </Border>
-        </StackPanel>             
+        </StackPanel>
 
-        <DataGrid 
-            Grid.Row="1" 
-            ItemsSource="{Binding FilteredProducts}" 
-            SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" 
-            IsSynchronizedWithCurrentItem="False" 
-            SelectionUnit="FullRow"
-            AutoGenerateColumns="False"
-            IsReadOnly="{Binding DataGridReadOnly}" 
-            SelectionMode="Single">
+        <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding FilteredProducts}" 
+                  SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" 
+                  IsSynchronizedWithCurrentItem="False" 
+                  SelectionUnit="FullRow"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="{Binding DataGridReadOnly}" 
+                  SelectionMode="Single">
 
             <DataGrid.Columns>
-                <DataGridTextColumn 
-                    Header="Id"
-                    Binding="{Binding Id}" 
-                    Width="60" />
-                
-                <DataGridTextColumn
-                    Header="Nome"
-                    Binding="{Binding Name}"
-                    Width="*" />
-                
-                <DataGridTextColumn 
-                    Header="Categoria" 
-                    Binding="{Binding Category}" 
-                    Width="150" />
-                
-                <DataGridTextColumn
-                    Header="Preço"
-                    Binding="{Binding Price, StringFormat={}{0:C}}"
-                    Width="100" />
-                
-                <DataGridTextColumn
-                    Header="Descrição"
-                    Binding="{Binding Description}"
-                    Width="2*" />
-                
-                <DataGridCheckBoxColumn 
-                    Header="Combo"
-                    Binding="{Binding IsCombo}" 
-                    Width="80" />
+                <DataGridTextColumn Header="Id"
+                                    Binding="{Binding Id}" 
+                                    Width="60" />
+
+                <DataGridTextColumn Header="Nome"
+                                    Binding="{Binding Name}"
+                                    Width="*" />
+
+                <DataGridTextColumn Header="Categoria" 
+                                    Binding="{Binding Category}" 
+                                    Width="150" />
+
+                <DataGridTextColumn Header="Preço"
+                                    Binding="{Binding Price, StringFormat={}{0:C}}"
+                                    ElementStyle="{StaticResource NumericDataGridColumnStyle}"
+                                    Width="100" />
+
+                <DataGridTextColumn Header="Descrição"
+                                    Binding="{Binding Description}"
+                                    Width="2*" />
+
+                <DataGridCheckBoxColumn Header="Combo"
+                                        Binding="{Binding IsCombo}" 
+                                        Width="80" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
-    
+
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -45,10 +45,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock 
-                    Text="Nome:"
+                <TextBlock
                     Grid.Row="0"
                     Grid.Column="0"
+                    Text="Nome:"
                     Margin="0,4,8,4" />
 
                 <TextBox
@@ -83,7 +83,8 @@
                     Grid.Column="3"
                     Margin="0,4,8,4"                    
                     FontWeight="Black"
-                    Foreground="Red" />
+                    Foreground="Red"
+                    HorizontalContentAlignment="Right" />
 
                 <TextBlock 
                     Text="Observações:"
@@ -165,11 +166,11 @@
                         <TextBox 
                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                             Width="250"
-                            Height="28" />                        
-                    </StackPanel>                  
-                </StackPanel>                
+                            Height="28" />
+                    </StackPanel>
+                </StackPanel>
             </Border>
-        </StackPanel>        
+        </StackPanel>
 
         <DataGrid
             Grid.Row="1"
@@ -184,27 +185,27 @@
                     Header="Id"
                     Binding="{Binding Id}"
                     Width="60" />
-                
+
                 <DataGridTextColumn
                     Header="Nome"
                     Binding="{Binding Name}"
                     Width="*" />
-                
+
                 <DataGridTextColumn
                     Header="Telefone"
                     Binding="{Binding Phone}"
                     Width="150" />
-                
+
                 <DataGridTextColumn 
                     Header="Saldo Devedor"
                     Binding="{Binding OutstandingBalance, StringFormat={}{0:C}}"
                     Width="120" />
-                
+
                 <DataGridTextColumn
                     Header="Observações"
                     Binding="{Binding Observations}"
                     Width="2*" />
-            </DataGrid.Columns>            
+            </DataGrid.Columns>
         </DataGrid>
     </Grid>
 </UserControl>

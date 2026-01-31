@@ -92,6 +92,7 @@
 
                     <DataGridTextColumn Header="Total"
                                         Binding="{Binding TotalAmount, StringFormat={}{0:C}}"
+                                        ElementStyle="{StaticResource NumericDataGridColumnStyle}"
                                         Width="100" />
 
                     <DataGridTemplateColumn Header="Status (Clique para mudar)" Width="200">
