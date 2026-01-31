@@ -33,10 +33,11 @@
                         Header="Nome" 
                         Binding="{Binding Name}"
                         Width="*" />
-                    
+
                     <DataGridTextColumn
                         Header="Saldo"
                         Binding="{Binding OutstandingBalance, StringFormat=C}"
+                        ElementStyle="{StaticResource NumericDataGridColumnStyle}"
                         Width="100" />
                 </DataGrid.Columns>
             </DataGrid>            
@@ -62,10 +63,11 @@
                             Margin="15,0,0,0" />
 
                         <TextBox 
-                            Text="{Binding PaymentAmount, UpdateSourceTrigger=PropertyChanged}"
+                            Text="{Binding PaymentAmountDisplay, UpdateSourceTrigger=PropertyChanged}"
                             Width="150"
                             Height="30"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Right" />
 
                         <Button 
                             Content="Confirmar Recebimento"
@@ -94,8 +96,8 @@
                         <DataGridTextColumn 
                             Header="Total"
                             Binding="{Binding TotalAmount, StringFormat=C}"
+                            ElementStyle="{StaticResource NumericDataGridColumnStyle}"
                             Width="*" />
-
                         <DataGridTextColumn 
                             Header="Status"                            
                             Width="100">                            
