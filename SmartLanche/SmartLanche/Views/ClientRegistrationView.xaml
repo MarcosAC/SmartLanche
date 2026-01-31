@@ -17,20 +17,13 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel
-            Grid.Row="0"
-            Margin="0,0,0,16">
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Cadastro de Clientes"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10" />
 
-            <TextBlock 
-                Text="Cadastro de Clientes"
-                FontSize="24"
-                FontWeight="Bold"
-                Margin="0,0,0,10" />
-
-            <Grid
-                Margin="0,0,0,16"
-                Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}">
-
+            <Grid Margin="0,0,0,16" Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="2*" />
@@ -45,166 +38,145 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Text="Nome:"
-                    Margin="0,4,8,4" />
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           Text="Nome:"
+                           Margin="0,4,8,4" />
 
-                <TextBox
-                    Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="0,4,16,4"
-                    IsEnabled="{Binding IsFormEnabled}" />
+                <TextBox Grid.Row="0"
+                         Grid.Column="1"
+                         Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                         Margin="0,4,16,4"
+                         IsEnabled="{Binding IsFormEnabled}" />
 
-                <TextBlock 
-                    Text="Telefone:"
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="0,4,8,4" />
+                <TextBlock Grid.Row="1"
+                           Grid.Column="0"
+                           Text="Telefone:"
+                           Margin="0,4,8,4" />
 
-                <TextBox
-                    Text="{Binding Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="0,4,16,4"
-                    IsEnabled="{Binding IsFormEnabled}" />
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         Text="{Binding Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,4,16,4"
+                         IsEnabled="{Binding IsFormEnabled}" />
 
-                <TextBlock 
-                    Text="Saldo Devedor:"
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Margin="0,4,8,4" />
+                <TextBlock Grid.Row="0"
+                           Grid.Column="2"
+                           Text="Saldo Devedor:"
+                           Margin="0,4,8,4" />
 
-                <TextBox
-                    Text="{Binding OutstandingBalance, Mode=TwoWay, StringFormat={}{0:C}}"
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    Margin="0,4,8,4"                    
-                    FontWeight="Black"
-                    Foreground="Red"
-                    HorizontalContentAlignment="Right" />
+                <TextBox Grid.Row="0"
+                         Grid.Column="3"
+                         Text="{Binding OutstandingBalance, Mode=TwoWay, StringFormat={}{0:C}}"                         
+                         Margin="0,4,8,4"                    
+                         FontWeight="Black"
+                         Foreground="Red"
+                         HorizontalContentAlignment="Right" />
 
-                <TextBlock 
-                    Text="Observações:"
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="0,4,8,4" />
+                <TextBlock Grid.Row="2"
+                           Grid.Column="0"
+                           Text="Observações:"                    
+                           Margin="0,4,8,4" />
 
-                <TextBox
-                    Text="{Binding Observations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="3"
-                    Margin="0,4,8,4"
-                    Height="80"
-                    TextWrapping="Wrap"
-                    VerticalScrollBarVisibility="Auto"
-                    IsEnabled="{Binding IsFormEnabled}" />
+                <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="3"
+                         Text="{Binding Observations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                    
+                         Margin="0,4,8,4"
+                         Height="80"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         IsEnabled="{Binding IsFormEnabled}" />
             </Grid>
 
-            <StackPanel
-                Orientation="Horizontal"
-                Margin="0,0,0,8"
-                HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,0,0,8"
+                        HorizontalAlignment="Left">
+                <Button Content="Novo" 
+                        Command="{Binding NewClientCommand}" 
+                        Width="80" 
+                        Margin="0,0,8,0" />
 
-                <Button 
-                    Content="Novo" 
-                    Command="{Binding NewClientCommand}" 
-                    Width="80" 
-                    Margin="0,0,8,0" />
+                <Button Content="Editar"
+                        Command="{Binding EditClientCommand}"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Background="#FF007ACC"
+                        Foreground="White"
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <Button 
-                    Content="Editar"
-                    Command="{Binding EditClientCommand}"
-                    Width="80"
-                    Margin="0,0,8,0"
-                    Background="#FF007ACC"
-                    Foreground="White"
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Button Content="Salvar" 
+                        Command="{Binding SaveClientCommand}" 
+                        Width="80" 
+                        Margin="0,0,8,0" 
+                        Background="#FF007ACC" 
+                        Foreground="White" 
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <Button 
-                    Content="Salvar" 
-                    Command="{Binding SaveClientCommand}" 
-                    Width="80" 
-                    Margin="0,0,8,0" 
-                    Background="#FF007ACC" 
-                    Foreground="White" 
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Button Content="Cancelar" 
+                        Command="{Binding CancelActionCommand}" 
+                        Width="80" 
+                        Margin="0,0,8,0" 
+                        Background="#FF6C757D" 
+                        Foreground="White" 
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <Button
-                    Content="Cancelar" 
-                    Command="{Binding CancelActionCommand}" 
-                    Width="80" 
-                    Margin="0,0,8,0" 
-                    Background="#FF6C757D" 
-                    Foreground="White" 
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <Button
-                    Content="Excluir" 
-                    Command="{Binding DeleteClientCommand}" 
-                    Width="80" 
-                    Background="#FFDC3545" 
-                    Foreground="White" 
-                    Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Button Content="Excluir" 
+                        Command="{Binding DeleteClientCommand}" 
+                        Width="80" 
+                        Background="#FFDC3545" 
+                        Foreground="White" 
+                        Visibility="{Binding IsViewing, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
 
-            <Border
-                Background="#F3F3F3"
-                Padding="10"
-                CornerRadius="5"
-                Margin="0,10,0,0">
+            <Border Background="#F3F3F3"
+                    Padding="10"
+                    CornerRadius="5"
+                    Margin="0,10,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <StackPanel Margin="0,0,20,0">
-                        <TextBlock 
-                            Text="Pesquisar Cliente:"
-                            FontWeight="Bold" 
-                            Margin="0,0,0,5" />
 
-                        <TextBox 
-                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                            Width="250"
-                            Height="28" />
+                    <StackPanel Margin="0,0,20,0">
+                        <TextBlock Text="Pesquisar Cliente:"
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,5" />
+
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="250"
+                                 Height="28" />
                     </StackPanel>
+
                 </StackPanel>
             </Border>
         </StackPanel>
 
-        <DataGrid
-            Grid.Row="1"
-            ItemsSource="{Binding FilteredClients}"
-            SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
-            AutoGenerateColumns="False"
-            IsReadOnly="{Binding DataGridReadOnly}"
-            SelectionMode="Single">
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding FilteredClients}"
+                  SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="{Binding DataGridReadOnly}"
+                  SelectionMode="Single">
 
             <DataGrid.Columns>
-                <DataGridTextColumn 
-                    Header="Id"
-                    Binding="{Binding Id}"
-                    Width="60" />
+                <DataGridTextColumn Header="Código"
+                                    Binding="{Binding Id}"
+                                    Width="60" />
 
-                <DataGridTextColumn
-                    Header="Nome"
-                    Binding="{Binding Name}"
-                    Width="*" />
+                <DataGridTextColumn Header="Nome"
+                                    Binding="{Binding Name}"
+                                    Width="*" />
 
-                <DataGridTextColumn
-                    Header="Telefone"
-                    Binding="{Binding Phone}"
-                    Width="150" />
+                <DataGridTextColumn Header="Telefone"
+                                    Binding="{Binding Phone}"
+                                    Width="150" />
 
-                <DataGridTextColumn 
-                    Header="Saldo Devedor"
-                    Binding="{Binding OutstandingBalance, StringFormat={}{0:C}}"
-                    Width="120" />
+                <DataGridTextColumn Header="Saldo Devedor"
+                                    Binding="{Binding OutstandingBalance, StringFormat={}{0:C}}"
+                                    ElementStyle="{StaticResource NumericDataGridColumnStyle}"
+                                    Width="120" />
 
-                <DataGridTextColumn
-                    Header="Observações"
-                    Binding="{Binding Observations}"
-                    Width="2*" />
+                <DataGridTextColumn Header="Observações"
+                                    Binding="{Binding Observations}"
+                                    Width="2*" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
