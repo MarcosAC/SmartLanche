@@ -218,7 +218,8 @@
 
                 <DataGridTextColumn Header="Nome"
                                     Binding="{Binding Name}"
-                                    Width="*" />
+                                    Width="*" 
+                                    ElementStyle="{StaticResource TextColumnStyle}" />
 
                 <DataGridTextColumn Header="Categoria" 
                                     Binding="{Binding Category}" 
@@ -226,7 +227,7 @@
 
                 <DataGridTextColumn Header="Preço"
                                     Binding="{Binding Price, StringFormat={}{0:C}}"
-                                    ElementStyle="{StaticResource NumericDataGridColumnStyle}"
+                                    ElementStyle="{StaticResource MonetaryColumnStyle}"
                                     Width="100" />
 
                 <DataGridTextColumn Header="Descrição"
