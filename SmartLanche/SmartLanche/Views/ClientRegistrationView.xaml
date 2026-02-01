@@ -166,12 +166,12 @@
                                     Width="*" />
 
                 <DataGridTextColumn Header="Telefone"
-                                    Binding="{Binding Phone}"
+                                    Binding="{Binding Phone}"                                    
                                     Width="150" />
 
                 <DataGridTextColumn Header="Saldo Devedor"
                                     Binding="{Binding OutstandingBalance, StringFormat={}{0:C}}"
-                                    ElementStyle="{StaticResource NumericDataGridColumnStyle}"
+                                    ElementStyle="{StaticResource MonetaryColumnStyle}"
                                     Width="120" />
 
                 <DataGridTextColumn Header="Observações"

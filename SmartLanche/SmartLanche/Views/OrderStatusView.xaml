@@ -69,6 +69,7 @@
 
                     <DataGridTextColumn Header="Cliente"
                                         Binding="{Binding Client.Name, TargetNullValue='Balcão'}"
+                                        ElementStyle="{StaticResource BaseDataGridTextStyle}"
                                         Width="150" />
 
                     <DataGridTemplateColumn Header="Itens"
@@ -80,8 +81,8 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock>
-                                                <Run Text="{Binding Quantity}" FontWeight="Bold"/>x 
-                                                <Run Text="{Binding Product.Name}"/>
+                                                <Run Text="{Binding Quantity}" FontWeight="Bold" />x 
+                                                <Run Text="{Binding Product.Name}" />
                                             </TextBlock>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -92,7 +93,7 @@
 
                     <DataGridTextColumn Header="Total"
                                         Binding="{Binding TotalAmount, StringFormat={}{0:C}}"
-                                        ElementStyle="{StaticResource NumericDataGridColumnStyle}"
+                                        ElementStyle="{StaticResource MonetaryColumnStyle}"
                                         Width="100" />
 
                     <DataGridTemplateColumn Header="Status (Clique para mudar)" Width="200">
