@@ -230,6 +230,7 @@
         <DataGrid Grid.Row="1" 
                   ItemsSource="{Binding FilteredProducts}" 
                   SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" 
+                  RowStyle="{StaticResource ProductRowInventoryStyle}"
                   IsSynchronizedWithCurrentItem="False" 
                   SelectionUnit="FullRow"
                   AutoGenerateColumns="False"
@@ -249,6 +250,11 @@
                 <DataGridTextColumn Header="Categoria" 
                                     Binding="{Binding Category}" 
                                     Width="150" />
+
+                <DataGridTextColumn Header="Estoque" 
+                                    Binding="{Binding StockQuantity}" 
+                                    Width="80" 
+                                    ElementStyle="{StaticResource NumericDataGridColumnStyle}" />
 
                 <DataGridTextColumn Header="Preço"
                                     Binding="{Binding Price, StringFormat={}{0:C}}"
