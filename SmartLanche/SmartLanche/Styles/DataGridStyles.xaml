@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="BaseDataGridTextStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="8,4" />        
+    </Style>
+
+    <Style x:Key="TextColumnStyle"
+           TargetType="TextBlock"
+           BasedOn="{StaticResource BaseDataGridTextStyle}">
+        <Setter Property="HorizontalAlignment" Value="Left" />        
+    </Style>
+
+    <Style x:Key="MonetaryColumnStyle"
+           TargetType="TextBlock"
+           BasedOn="{StaticResource BaseDataGridTextStyle}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="CenterColumnStyle"
+       TargetType="TextBlock"
+       BasedOn="{StaticResource BaseDataGridTextStyle}">
+        <Setter Property="HorizontalAlignment" Value="Center" />        
+    </Style>
+   
+    <Style TargetType="DataGrid">
+        <Setter Property="AutoGenerateColumns" Value="False" />
+        <!--<Setter Property="CanUserAddRows" Value="False" />-->
+        <!--<Setter Property="HeadersVisibility" Value="Column" />-->
+        <!--<Setter Property="GridLinesVisibility" Value="None" />-->
+        <!--<Setter Property="Background" Value="Transparent" />-->
+        <!--<Setter Property="BorderThickness" Value="0" />-->
+        <!--<Setter Property="RowHeight" Value="32" />-->
+    </Style>
+</ResourceDictionary>

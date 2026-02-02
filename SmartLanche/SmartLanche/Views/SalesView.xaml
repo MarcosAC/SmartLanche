@@ -32,11 +32,12 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nome"
                                             Binding="{Binding Name}"
-                                            Width="2*" />
+                                            Width="2*"
+                                            ElementStyle="{StaticResource TextColumnStyle}" />
 
                         <DataGridTextColumn Header="Preço"
                                             Binding="{Binding Price, StringFormat={}{0:C}}"
-                                            ElementStyle="{StaticResource NumericDataGridColumnStyle}"
+                                            ElementStyle="{StaticResource MonetaryColumnStyle}"
                                             Width="1*" />
 
                         <DataGridTextColumn Header="Categoria"
