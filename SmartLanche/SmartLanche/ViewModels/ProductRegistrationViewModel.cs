@@ -56,6 +56,12 @@ namespace SmartLanche.ViewModels
         private bool isCombo;
 
         [ObservableProperty]
+        private double stockQuantity;
+
+        [ObservableProperty]
+        private double minStockLevel = 5;
+
+        [ObservableProperty]
         private string? categoryFilter;        
 
         [ObservableProperty]
@@ -141,6 +147,8 @@ namespace SmartLanche.ViewModels
                 product.Price = Price;
                 product.Description = Description;
                 product.IsCombo = IsCombo;
+                product.StockQuantity = StockQuantity;
+                product.MinStockLevel = MinStockLevel;
 
                 if (Id == 0) await _repositoryProduct.AddAsync(product);
                 else await _repositoryProduct.UpdateAsync(product);
@@ -296,6 +304,8 @@ namespace SmartLanche.ViewModels
             Description = "";
             IsCombo = false;
             SelectedProduct = null;
+            StockQuantity = 0;
+            MinStockLevel = 5;
 
             SearchText = string.Empty;
             CategoryFilter = "Todas";
@@ -313,6 +323,8 @@ namespace SmartLanche.ViewModels
                 Price = value.Price;
                 PriceDisplay = value.Price.ToString("C");
                 Description = value.Description;
+                StockQuantity = value.StockQuantity;
+                MinStockLevel = value.MinStockLevel;
                 IsCombo = value.IsCombo;
 
                 IsEditing = false;
