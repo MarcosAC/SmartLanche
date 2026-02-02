@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartLanche.Models
 {
@@ -16,5 +17,8 @@ namespace SmartLanche.Models
         public bool IsActive { get; set; } = true;
         public double StockQuantity { get; set; }
         public double MinStockLevel { get; set; } = 5;
+
+        [NotMapped]
+        public bool IsLowStock => StockQuantity <= MinStockLevel;
     }
 }
