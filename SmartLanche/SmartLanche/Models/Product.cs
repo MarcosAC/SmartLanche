@@ -14,5 +14,7 @@ namespace SmartLanche.Models
         public bool IsCombo { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; } = true;
+        public double StockQuantity { get; set; }
+        public double MinStockLevel { get; set; } = 5;
     }
 }

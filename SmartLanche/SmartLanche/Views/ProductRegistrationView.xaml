@@ -111,6 +111,31 @@
                           VerticalAlignment="Center"
                           Margin="16,0,0,0"
                           IsEnabled="{Binding IsFormEnabled}" />
+
+                <StackPanel Grid.Row="2" 
+                            Grid.Column="1" 
+                            Grid.ColumnSpan="5"
+                            Orientation="Horizontal"
+                            Margin="0,10,0,0">
+                    <StackPanel Width="150" Margin="0,0,20,0">
+                        <TextBlock Text="Estoque Atual"
+                                   FontWeight="SemiBold"
+                                   FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding StockQuantity}" 
+                                 Style="{StaticResource NumericEntryStyle}" 
+                                 IsEnabled="{Binding IsFormEnabled}"/>
+                    </StackPanel>
+
+                    <StackPanel Width="150">
+                        <TextBlock Text="Estoque Mínimo (Alerta)"
+                                   FontWeight="SemiBold"
+                                   FontSize="11"
+                                   Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding MinStockLevel}"
+                                 Style="{StaticResource NumericEntryStyle}"
+                                 IsEnabled="{Binding IsFormEnabled}"/>
+                    </StackPanel>
+                </StackPanel>
             </Grid>
 
             <StackPanel Orientation="Horizontal"
