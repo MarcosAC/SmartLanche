@@ -7,30 +7,36 @@
              Startup="Application_Startup">
     
     <Application.Resources>
-        <DataTemplate DataType="{x:Type vms:SalesViewModel}">
-            <views:SalesView />
-        </DataTemplate>
+        <ResourceDictionary>
+            <DataTemplate DataType="{x:Type vms:SalesViewModel}">
+                <views:SalesView />
+            </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vms:ProductRegistrationViewModel}">
-            <views:ProductRegistrationView />
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:ProductRegistrationViewModel}">
+                <views:ProductRegistrationView />
+            </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vms:ClientRegistrationViewModel}">
-            <views:ClientRegistrationView />
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:ClientRegistrationViewModel}">
+                <views:ClientRegistrationView />
+            </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vms:OrderStatusViewModel}">
-            <views:OrderStatusView />
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:OrderStatusViewModel}">
+                <views:OrderStatusView />
+            </DataTemplate>
 
-        <DataTemplate DataType="{x:Type vms:PendingPaymentsViewModel}">
-            <views:PendingPaymentsView />
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:PendingPaymentsViewModel}">
+                <views:PendingPaymentsView />
+            </DataTemplate>
 
-        <Style x:Key="NumericDataGridColumnStyle" TargetType="TextBlock">
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="Margin" Value="0,0,5,0" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
+            <Style x:Key="NumericDataGridColumnStyle" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="Margin" Value="0,0,5,0" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/DataGridStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
