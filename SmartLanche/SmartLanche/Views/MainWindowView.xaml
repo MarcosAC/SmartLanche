@@ -37,6 +37,7 @@
             <TabItem Header="Clientes" Tag="Clients" />
             <TabItem Header="Pendências" Tag="Payments" />
             <TabItem Header="Pedidos em Preparação" Tag="Status" />
+            <TabItem Header="Estoque" Tag="Inventory" />
 
             <TabControl.ContentTemplate>
                 <DataTemplate>
