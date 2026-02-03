@@ -60,10 +60,10 @@ namespace SmartLanche.ViewModels
         private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;
 
         [ObservableProperty]
-        private Product? selectedProduct;
+        private Product? selectedProduct; 
 
-        public decimal TotalOrderAmount => CartItems.Sum(item => item.Subtotal);
-        public int TotalQuantity => CartItems.Sum(item => item.Quantity);
+        public decimal TotalOrderAmount => CartItems?.Where(item => item != null).Sum(item => item.Subtotal) ?? 0;
+        public int TotalQuantity => CartItems?.Where(item => item != null).Sum(item => item.Quantity) ?? 0;
         public bool CanBeCredit => SelectedPaymentMethod == PaymentMethod.Credit;
 
         #endregion
@@ -98,20 +98,33 @@ namespace SmartLanche.ViewModels
         [RelayCommand]
         private void AddProductToCart(Product? product)
         {
-            if (product == null) return;
-            
-            if (CartItems.Any(item => item.ProductId == product.Id))
-                return;
-           
-                CartItems.Add(new OrderItem
-                {
-                    ProductId = product.Id,
-                    Product = product,
-                    Quantity = 1,
-                    UnitPrice = product.Price
-                });
+            if (product == null) return;            
 
-            UpdateTotals();
+            try
+            {
+                var existing = CartItems.FirstOrDefault(item => item.ProductId == product.Id);
+
+                if (existing != null)
+                {
+                    IncreaseQuantity(existing);
+                }
+                else
+                {
+                    CartItems.Add(new OrderItem
+                    {
+                        ProductId = product.Id,
+                        Product = product,
+                        Quantity = 1,
+                        UnitPrice = product.Price
+                    });
+                }
+
+                UpdateTotals();
+            }
+            catch (Exception ex)
+            {
+                Messenger.Send(new StatusMessage("Erro ao adicionar item: " + ex.Message, false));
+            }            
         }
 
         [RelayCommand]
@@ -161,6 +174,25 @@ namespace SmartLanche.ViewModels
                     }).ToList()
                 };
 
+                foreach (var item in CartItems)
+                {
+                    var product = await context.Products.FindAsync(item.ProductId);
+
+                    if (product != null)
+                    {
+                        product.StockQuantity -= item.Quantity;
+
+                        context.StockMovements.Add(new StockMovement
+                        {
+                            ProductId = product.Id,
+                            Type = MovementType.Output,
+                            Quantity = item.Quantity,
+                            Date = DateTime.Now,
+                            Reason = $"Venda #{newOrder.Id} (Automática)"
+                        });
+                    }
+                }
+
                 context.Orders.Add(newOrder);
                 await context.SaveChangesAsync();
                 
@@ -176,7 +208,8 @@ namespace SmartLanche.ViewModels
                 }
 
                 await transaction.CommitAsync();
-                
+
+                Messenger.Send(new ProductsChangedMessage());
                 Messenger.Send(new OrderCreatedMessage(newOrder));
                 
                 CartItems.Clear();
@@ -200,6 +233,12 @@ namespace SmartLanche.ViewModels
         [RelayCommand]
         private void IncreaseQuantity(OrderItem item)
         {
+            if (item.Product?.StockQuantity <= item.Quantity)
+            {
+                Messenger.Send(new StatusMessage($"Estoque insuficiente para {item.Product.Name}!", false));
+                return;
+            }
+
             item.Quantity++;
             UpdateTotals();
         }
@@ -228,7 +267,10 @@ namespace SmartLanche.ViewModels
             
             AddProductToCart(value);
 
-            SelectedProduct = null;          
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SelectedProduct = null;
+            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
         private void UpdateTotals()

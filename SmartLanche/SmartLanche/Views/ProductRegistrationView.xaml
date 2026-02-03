@@ -240,7 +240,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id"
                                     Binding="{Binding Id}" 
-                                    Width="60" />
+                                    Width="60" 
+                                    ElementStyle="{StaticResource TextColumnStyle}" />
 
                 <DataGridTextColumn Header="Nome"
                                     Binding="{Binding Name}"
@@ -249,7 +250,8 @@
 
                 <DataGridTextColumn Header="Categoria" 
                                     Binding="{Binding Category}" 
-                                    Width="150" />
+                                    Width="150" 
+                                    ElementStyle="{StaticResource TextColumnStyle}" />
 
                 <DataGridTextColumn Header="Estoque" 
                                     Binding="{Binding StockQuantity}" 
@@ -263,7 +265,8 @@
 
                 <DataGridTextColumn Header="Descrição"
                                     Binding="{Binding Description}"
-                                    Width="2*" />
+                                    Width="2*"
+                                    ElementStyle="{StaticResource TextColumnStyle}" />
 
                 <DataGridCheckBoxColumn Header="Combo"
                                         Binding="{Binding IsCombo}" 

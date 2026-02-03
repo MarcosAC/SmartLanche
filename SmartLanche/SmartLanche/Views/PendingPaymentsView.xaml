@@ -32,7 +32,8 @@
                     <DataGridTextColumn 
                         Header="Nome" 
                         Binding="{Binding Name}"
-                        Width="*" />
+                        Width="*" 
+                        ElementStyle="{StaticResource TextColumnStyle}" />
 
                     <DataGridTextColumn
                         Header="Saldo"
@@ -92,6 +93,7 @@
                         <DataGridTextColumn 
                             Header="Data"
                             Binding="{Binding OrderDate, StringFormat=\{0:dd/MM/yyy H:mm\}}"
+                            ElementStyle="{StaticResource TextColumnStyle}"
                             Width="130" />
                         
                         <DataGridTextColumn 
@@ -107,6 +109,7 @@
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontWeight" Value="Bold" />
                                     <Setter Property="HorizontalAlignment" Value="Center" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
                                     
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPaid}" Value="True">

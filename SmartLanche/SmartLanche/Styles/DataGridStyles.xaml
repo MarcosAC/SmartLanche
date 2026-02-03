@@ -39,6 +39,6 @@
     </Style>
 
     <Style TargetType="DataGrid">
-        <Setter Property="AutoGenerateColumns" Value="False" />        
+        <Setter Property="AutoGenerateColumns" Value="False" />   
     </Style>
 </ResourceDictionary>
