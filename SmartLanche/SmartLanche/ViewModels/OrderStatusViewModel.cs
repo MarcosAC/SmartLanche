@@ -7,6 +7,7 @@ using SmartLanche.Helpers;
 using SmartLanche.Messages;
 using SmartLanche.Models;
 using System.Collections.ObjectModel;
+
 using static SmartLanche.Helpers.EnumValuesExtension;
 
 namespace SmartLanche.ViewModels
@@ -37,26 +38,24 @@ namespace SmartLanche.ViewModels
             try
             {
                 IsBusy = true;
+
                 using var context = await _contextFactory.CreateDbContextAsync();
 
                 var query = context.Orders
-                    .Include(o => o.OrderItems).ThenInclude(oi => oi.Product)
-                    .Include(o => o.Client)
+                    .Include(order => order.OrderItems).ThenInclude(orderItem => orderItem.Product)
+                    .Include(order => order.Client)
                     .AsNoTracking();
 
                 query = SelectedFilterStatus?.Value switch
                 {
                     OrderStatus status => query.Where(o => o.Status == status),
                     FilterOptions.All => query,
-
-                    _ => query.Where(o => o.Status != OrderStatus.Ready &&
-                                          o.Status != OrderStatus.Completed &&
-                                          o.Status != OrderStatus.Cancelled)
+                    _ => query.Where(order => order.Status != OrderStatus.Ready &&
+                                              order.Status != OrderStatus.Completed &&
+                                              order.Status != OrderStatus.Cancelled)
                 };
 
-                Orders = new ObservableCollection<Order>(
-                    await query.OrderByDescending(o => o.OrderDate).ToListAsync()
-                );                
+                Orders = new ObservableCollection<Order>(await query.OrderByDescending(o => o.OrderDate).ToListAsync());                
             }
             catch (Exception ex)
             {
@@ -76,39 +75,38 @@ namespace SmartLanche.ViewModels
                 
                 var dbOrder = await context.Orders.FindAsync(order.Id);
 
-                if (dbOrder != null)
+                if (dbOrder == null) return;
+
+                dbOrder.Status = order.Status;
+
+                await context.SaveChangesAsync();
+
+                if (!ShouldOrderBeVisible(order))
                 {
-                    dbOrder.Status = order.Status;
-
-                    await context.SaveChangesAsync();
-
-                    string statusPtBr = EnumValuesExtension.GetDisplayName(order.Status);
-
-                    if (SelectedFilterStatus?.Value != null)
-                    {
-                        var filtroAtivo = (OrderStatus)SelectedFilterStatus.Value;
-                        if (order.Status != filtroAtivo)
-                        {
-                            Orders.Remove(order);
-                        }
-                    }
-                    else
-                    {                        
-                        if (order.Status == OrderStatus.Ready ||
-                            order.Status == OrderStatus.Completed ||
-                            order.Status == OrderStatus.Cancelled)
-                        {                           
-                            await LoadOrdersAsync();
-                        }
-                    }
-
-                    Messenger.Send(new StatusMessage($"Pedido #{order.Id} atualizado para {statusPtBr}!", true));
+                    Orders.Remove(order);
                 }
+                
+                string statusPtBr = EnumValuesExtension.GetDisplayName(order.Status);
+
+                Messenger.Send(new StatusMessage($"Pedido #{order.Id} atualizado para {statusPtBr}!", true));
             }
             catch (Exception ex)
             {   
                 Messenger.Send(new StatusMessage("Erro ao salvar: " + ex.Message, false));
             }
+        }
+
+        private bool ShouldOrderBeVisible(Order order)
+        {            
+            if (SelectedFilterStatus?.Value is FilterOptions.All)
+                return true;
+            
+            if (SelectedFilterStatus?.Value is OrderStatus filterStatus)
+                return order.Status == filterStatus;
+            
+            var finalizedStatuses = new[] { OrderStatus.Ready, OrderStatus.Completed, OrderStatus.Cancelled };
+
+            return !finalizedStatuses.Contains(order.Status);
         }
 
         public void InitializeFilters()

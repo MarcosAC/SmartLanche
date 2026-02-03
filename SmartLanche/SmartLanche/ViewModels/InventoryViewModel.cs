@@ -24,6 +24,11 @@ namespace SmartLanche.ViewModels
             _repositoryProduct = repository;
             _contextFactory = contextFactory;
 
+            Messenger.Register<InventoryViewModel, ProductsChangedMessage>(this, async (r, m) =>
+            {
+                await r.LoadInventoryAsync();
+            });
+
             FilteredProducts = new ObservableCollection<Product>();
             _ = LoadInventoryAsync();
         }
@@ -63,6 +68,7 @@ namespace SmartLanche.ViewModels
             {
                 var list = await _repositoryProduct.GetAllAsync();
                 AllProducts = list.Where(product => product.IsActive).ToList();
+                
                 ApplyFilter();
                 OnPropertyChanged(nameof(IsLowStockWarningVisible));
             }
@@ -138,7 +144,7 @@ namespace SmartLanche.ViewModels
 
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                query = query.Where(p => p.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(product => product.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
             }
 
             FilteredProducts = new ObservableCollection<Product>(query);

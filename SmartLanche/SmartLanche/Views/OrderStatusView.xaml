@@ -41,11 +41,6 @@
                       AutoGenerateColumns="False" 
                       IsReadOnly="True" 
                       CanUserAddRows="False"
-                      GridLinesVisibility="Horizontal"
-                      Background="White"
-                      BorderThickness="0"
-                      RowHeaderWidth="0"
-                      MinRowHeight="40"
                       EnableRowVirtualization="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling">
 
@@ -60,16 +55,18 @@
 
                     <DataGridTextColumn Header="Pedido #"
                                         Binding="{Binding Id}"
+                                        ElementStyle="{StaticResource TextColumnStyle}"
                                         Width="80"
                                         FontWeight="Bold" />
 
                     <DataGridTextColumn Header="Hora"
                                         Binding="{Binding OrderDate, StringFormat={}{0:HH:mm}}"
+                                        ElementStyle="{StaticResource TextColumnStyle}"
                                         Width="80" />
 
                     <DataGridTextColumn Header="Cliente"
                                         Binding="{Binding Client.Name, TargetNullValue='Balcão'}"
-                                        ElementStyle="{StaticResource BaseDataGridTextStyle}"
+                                        ElementStyle="{StaticResource TextColumnStyle}"
                                         Width="150" />
 
                     <DataGridTemplateColumn Header="Itens"
@@ -130,8 +127,8 @@
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="DropDownClosed">
                                             <i:InvokeCommandAction Command="{Binding DataContext.ChangeStatusCommand, 
-                                     RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                   CommandParameter="{Binding}" />
+                                                                   RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                                                   CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </ComboBox>

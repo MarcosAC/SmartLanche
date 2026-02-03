@@ -159,14 +159,17 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Código"
                                     Binding="{Binding Id}"
+                                    ElementStyle="{StaticResource TextColumnStyle}"
                                     Width="60" />
 
                 <DataGridTextColumn Header="Nome"
                                     Binding="{Binding Name}"
+                                    ElementStyle="{StaticResource TextColumnStyle}"
                                     Width="*" />
 
                 <DataGridTextColumn Header="Telefone"
-                                    Binding="{Binding Phone}"                                    
+                                    Binding="{Binding Phone}" 
+                                    ElementStyle="{StaticResource TextColumnStyle}"
                                     Width="150" />
 
                 <DataGridTextColumn Header="Saldo Devedor"
@@ -176,6 +179,7 @@
 
                 <DataGridTextColumn Header="Observações"
                                     Binding="{Binding Observations}"
+                                    ElementStyle="{StaticResource TextColumnStyle}"
                                     Width="2*" />
             </DataGrid.Columns>
         </DataGrid>
