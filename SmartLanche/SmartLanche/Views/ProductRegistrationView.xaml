@@ -253,6 +253,11 @@
                                     Width="150" 
                                     ElementStyle="{StaticResource TextColumnStyle}" />
 
+                <DataGridTextColumn Header="Estoque" 
+                                    Binding="{Binding StockQuantity}" 
+                                    Width="80" 
+                                    ElementStyle="{StaticResource NumericDataGridColumnStyle}" />
+
                 <DataGridTextColumn Header="Preço"
                                     Binding="{Binding Price, StringFormat={}{0:C}}"
                                     ElementStyle="{StaticResource MonetaryColumnStyle}"

@@ -22,8 +22,8 @@
     </Style>
 
     <Style x:Key="CenterColumnStyle"
-       TargetType="TextBlock"
-       BasedOn="{StaticResource BaseDataGridTextStyle}">
+           TargetType="TextBlock"
+           BasedOn="{StaticResource BaseDataGridTextStyle}">
         <Setter Property="HorizontalAlignment" Value="Center" />        
     </Style>
 
