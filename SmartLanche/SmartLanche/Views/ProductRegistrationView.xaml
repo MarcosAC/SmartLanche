@@ -230,6 +230,7 @@
         <DataGrid Grid.Row="1" 
                   ItemsSource="{Binding FilteredProducts}" 
                   SelectedItem="{Binding SelectedProduct, Mode=TwoWay}" 
+                  RowStyle="{StaticResource ProductRowInventoryStyle}"
                   IsSynchronizedWithCurrentItem="False" 
                   SelectionUnit="FullRow"
                   AutoGenerateColumns="False"
@@ -239,7 +240,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id"
                                     Binding="{Binding Id}" 
-                                    Width="60" />
+                                    Width="60" 
+                                    ElementStyle="{StaticResource TextColumnStyle}" />
 
                 <DataGridTextColumn Header="Nome"
                                     Binding="{Binding Name}"
@@ -248,7 +250,13 @@
 
                 <DataGridTextColumn Header="Categoria" 
                                     Binding="{Binding Category}" 
-                                    Width="150" />
+                                    Width="150" 
+                                    ElementStyle="{StaticResource TextColumnStyle}" />
+
+                <DataGridTextColumn Header="Estoque" 
+                                    Binding="{Binding StockQuantity}" 
+                                    Width="80" 
+                                    ElementStyle="{StaticResource NumericDataGridColumnStyle}" />
 
                 <DataGridTextColumn Header="Preço"
                                     Binding="{Binding Price, StringFormat={}{0:C}}"
@@ -257,7 +265,8 @@
 
                 <DataGridTextColumn Header="Descrição"
                                     Binding="{Binding Description}"
-                                    Width="2*" />
+                                    Width="2*"
+                                    ElementStyle="{StaticResource TextColumnStyle}" />
 
                 <DataGridCheckBoxColumn Header="Combo"
                                         Binding="{Binding IsCombo}" 

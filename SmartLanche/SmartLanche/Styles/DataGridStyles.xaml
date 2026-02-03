@@ -22,18 +22,23 @@
     </Style>
 
     <Style x:Key="CenterColumnStyle"
-       TargetType="TextBlock"
-       BasedOn="{StaticResource BaseDataGridTextStyle}">
+           TargetType="TextBlock"
+           BasedOn="{StaticResource BaseDataGridTextStyle}">
         <Setter Property="HorizontalAlignment" Value="Center" />        
     </Style>
-   
+
+    <Style x:Key="ProductRowInventoryStyle"
+           TargetType="DataGridRow"
+           BasedOn="{StaticResource {x:Type DataGridRow}}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                <Setter Property="Foreground" Value="#E53935" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="DataGrid">
-        <Setter Property="AutoGenerateColumns" Value="False" />
-        <!--<Setter Property="CanUserAddRows" Value="False" />-->
-        <!--<Setter Property="HeadersVisibility" Value="Column" />-->
-        <!--<Setter Property="GridLinesVisibility" Value="None" />-->
-        <!--<Setter Property="Background" Value="Transparent" />-->
-        <!--<Setter Property="BorderThickness" Value="0" />-->
-        <!--<Setter Property="RowHeight" Value="32" />-->
+        <Setter Property="AutoGenerateColumns" Value="False" />   
     </Style>
 </ResourceDictionary>
