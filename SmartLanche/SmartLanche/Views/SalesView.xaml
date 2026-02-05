@@ -42,7 +42,8 @@
 
                         <DataGridTextColumn Header="Categoria"
                                             Binding="{Binding Category}"
-                                            Width="1.5*" />
+                                            Width="1.5*" 
+                                            ElementStyle="{StaticResource TextColumnStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </GroupBox>            
