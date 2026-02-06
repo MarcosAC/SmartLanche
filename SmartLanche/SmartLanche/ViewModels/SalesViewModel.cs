@@ -29,7 +29,7 @@ namespace SmartLanche.ViewModels
 
             Messenger.Register<SalesViewModel, ProductsChangedMessage>(this, async (r, m) =>
             {
-                await r.LoadDataAsync();
+                if (!r.IsBusy) await r.LoadDataAsync();
             });
 
             Messenger.Register<SalesViewModel, ClientsChangedMessage>(this, async (r, m) =>
@@ -98,17 +98,17 @@ namespace SmartLanche.ViewModels
         [RelayCommand]
         private void AddProductToCart(Product? product)
         {
-            if (product == null) return;            
+            if (product == null || product.StockQuantity <= 0)
+            {
+                Messenger.Send(new StatusMessage("Produto sem estoque disponível!", false));
+                return;
+            }
 
             try
             {
-                var existing = CartItems.FirstOrDefault(item => item.ProductId == product.Id);
+                var existing = CartItems.FirstOrDefault(item => item.ProductId == product.Id);               
 
-                if (existing != null)
-                {
-                    IncreaseQuantity(existing);
-                }
-                else
+                if (existing == null)
                 {
                     CartItems.Add(new OrderItem
                     {
@@ -117,9 +117,9 @@ namespace SmartLanche.ViewModels
                         Quantity = 1,
                         UnitPrice = product.Price
                     });
-                }
 
-                UpdateTotals();
+                    UpdateTotals();
+                }                
             }
             catch (Exception ex)
             {
@@ -209,11 +209,27 @@ namespace SmartLanche.ViewModels
 
                 await transaction.CommitAsync();
 
+                foreach (var cartItem in CartItems)
+                {
+                    var productInList = Products.FirstOrDefault(p => p.Id == cartItem.ProductId);
+                    if (productInList != null)
+                    {                        
+                        productInList.StockQuantity -= cartItem.Quantity;
+                    }
+                                        
+                    if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient != null)
+                    {
+                        var clientInList = Clients.FirstOrDefault(c => c.Id == SelectedClient.Id);
+                        if (clientInList != null) clientInList.OutstandingBalance += TotalOrderAmount;
+                    }
+                }
+
                 Messenger.Send(new ProductsChangedMessage());
                 Messenger.Send(new OrderCreatedMessage(newOrder));
                 
                 CartItems.Clear();
                 SelectedClient = null;
+                SelectedProduct = null;
                 SelectedPaymentMethod = PaymentMethod.Cash;
                 UpdateTotals();
 
@@ -266,11 +282,6 @@ namespace SmartLanche.ViewModels
             if (value == null) return;
             
             AddProductToCart(value);
-
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SelectedProduct = null;
-            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
         private void UpdateTotals()
