@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartLanche.Models
 {
-    public class Product
+    public partial class Product : ObservableObject
     {
         [Key]
         public int Id { get; set; }
@@ -15,8 +16,14 @@ namespace SmartLanche.Models
         public bool IsCombo { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; } = true;
-        public double StockQuantity { get; set; }
-        public double MinStockLevel { get; set; } = 5;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsLowStock))]
+        public double stockQuantity;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsLowStock))]
+        private double minStockLevel = 5;
 
         [NotMapped]
         public bool IsLowStock => StockQuantity <= MinStockLevel;

@@ -22,12 +22,12 @@
 
                 <DataGrid ItemsSource="{Binding Products}"
                           SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                          RowStyle="{StaticResource ProductRowInventoryStyle}"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           SelectionMode="Single"
                           HeadersVisibility="Column"
-                          GridLinesVisibility="None"
-                          Background="White">
+                          SelectionUnit="FullRow" >
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nome"
@@ -42,7 +42,8 @@
 
                         <DataGridTextColumn Header="Categoria"
                                             Binding="{Binding Category}"
-                                            Width="1.5*" />
+                                            Width="1.5*" 
+                                            ElementStyle="{StaticResource TextColumnStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </GroupBox>            
@@ -64,6 +65,7 @@
                       ItemsSource="{Binding CartItems}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
+                      VerticalScrollBarVisibility="Auto"
                       Height="300"
                       Margin="0,0,0,16">
 
@@ -110,7 +112,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Remover"
-                                        Command="{Binding DataContext.RemoveItemFromCartCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        Command="{Binding DataContext.RemoveItemFromCartCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                         CommandParameter="{Binding}"
                                         Margin="2" />
                             </DataTemplate>
