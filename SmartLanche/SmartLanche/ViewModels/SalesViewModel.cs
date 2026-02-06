@@ -229,6 +229,7 @@ namespace SmartLanche.ViewModels
                 
                 CartItems.Clear();
                 SelectedClient = null;
+                SelectedProduct = null;
                 SelectedPaymentMethod = PaymentMethod.Cash;
                 UpdateTotals();
 
