@@ -119,9 +119,7 @@ namespace SmartLanche.ViewModels
                     });
 
                     UpdateTotals();
-                }
-
-                UpdateTotals();
+                }                
             }
             catch (Exception ex)
             {
@@ -283,12 +281,6 @@ namespace SmartLanche.ViewModels
             if (value == null) return;
             
             AddProductToCart(value);
-
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                SelectedProduct = null;
-                OnPropertyChanged(nameof(SelectedProduct));
-            }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
         private void UpdateTotals()

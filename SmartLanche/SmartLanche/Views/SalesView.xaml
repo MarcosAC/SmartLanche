@@ -27,8 +27,7 @@
                           IsReadOnly="True"
                           SelectionMode="Single"
                           HeadersVisibility="Column"
-                          GridLinesVisibility="None"
-                          Background="White">
+                          SelectionUnit="FullRow" >
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nome"
