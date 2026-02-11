@@ -51,6 +51,7 @@ namespace SmartLanche
             services.AddSingleton<PendingPaymentsViewModel>();
             services.AddSingleton<OrderStatusViewModel>();
             services.AddSingleton<InventoryViewModel>();
+            services.AddSingleton<StockHistoryViewModel>();
 
             // Views
             services.AddTransient<MainWindowView>();
@@ -60,6 +61,7 @@ namespace SmartLanche
             services.AddTransient<PendingPaymentsView>();
             services.AddTransient<OrderStatusView>();
             services.AddTransient<InventoryView>();
+            services.AddTransient<StockHistoryView>();
 
             ServiceProvider = services.BuildServiceProvider();
 

@@ -41,4 +41,10 @@
     <Style TargetType="DataGrid">
         <Setter Property="AutoGenerateColumns" Value="False" />   
     </Style>
+
+    <Style x:Key="RightAlignedColumnStyle" TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+    </Style>
 </ResourceDictionary>

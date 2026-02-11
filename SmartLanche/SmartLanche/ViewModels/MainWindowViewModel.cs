@@ -39,6 +39,7 @@ namespace SmartLanche.ViewModels
                 "Status" => _serviceProvider.GetRequiredService<OrderStatusViewModel>(),
                 "Payments" => _serviceProvider.GetRequiredService<PendingPaymentsViewModel>(),
                 "Inventory" => _serviceProvider.GetRequiredService<InventoryViewModel>(),
+                "StockHistory" => _serviceProvider.GetRequiredService<StockHistoryViewModel>(),
                 _ => CurrentViewModel
             };
         }
