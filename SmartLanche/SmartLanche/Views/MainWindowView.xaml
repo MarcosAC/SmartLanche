@@ -38,56 +38,13 @@
             <TabItem Header="Pendências" Tag="Payments" />
             <TabItem Header="Pedidos em Preparação" Tag="Status" />
             <TabItem Header="Estoque" Tag="Inventory" />
+            <TabItem Header="Movimentação de Estoque" Tag="StockHistory" />
 
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <ContentControl Content="{Binding DataContext.CurrentViewModel, RelativeSource={RelativeSource AncestorType=Window}}" />
                 </DataTemplate>
             </TabControl.ContentTemplate>
-        </TabControl>
-
-        <!--<TabControl Margin="8">
-            <TabItem Header="Pedidos">
-                <ContentControl Content="{Binding SalesViewModel}" />
-            </TabItem>
-            
-            <TabItem Header="Cardápio">
-                <ContentControl Content="{Binding ProductRegistrationViewModel}" />
-            </TabItem>
-
-            <TabItem Header="Clientes">
-                <ContentControl Content="{Binding ClientRegistrationViewModel}" />
-            </TabItem>
-
-            <TabItem Header="Promoções">
-                <TextBlock Text="Promoções / Combos" Margin="8" />
-            </TabItem>
-
-            <TabItem Header="Pendências">
-                <ContentControl Content="{Binding PendingPaymentsViewModel}" />
-            </TabItem>
-
-            <TabItem Header="Pedidos em Preparação">
-                <ContentControl Content="{Binding OrderStatusViewModel}" />
-            </TabItem>
-
-            <TabItem Header="Carrinho">
-
-            </TabItem>
-
-            <TabItem Header="Estoque">
-                <TextBlock Text="Controle de Estoque" Margin="8" />
-            </TabItem>
-
-            <TabItem Header="Resumo/Vendas">
-                <TextBlock Text="Resumo diário de vendas" Margin="8" />
-            </TabItem>
-
-            <TabItem Header="Configurações">
-                <TextBlock
-                    Text="Personalize em Config/appsettings.json"
-                    Margin="8" />
-            </TabItem>
-        </TabControl>-->
+        </TabControl>        
     </DockPanel>
 </Window>
