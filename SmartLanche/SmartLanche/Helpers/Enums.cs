@@ -31,9 +31,12 @@ namespace SmartLanche.Helpers
     }
 
     public enum MovementType 
-    { 
+    {
+        [Display(Name = "Entrada")]
         Input,
+        [Display(Name = "Saída")]
         Output,
+        [Display(Name = "Venda")]
         Sale
     }
 }

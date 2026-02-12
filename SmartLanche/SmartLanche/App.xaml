@@ -47,6 +47,10 @@
             <DataTemplate DataType="{x:Type vms:InventoryViewModel}">
                 <views:InventoryView />
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vms:StockHistoryViewModel}">
+                <views:StockHistoryView />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
