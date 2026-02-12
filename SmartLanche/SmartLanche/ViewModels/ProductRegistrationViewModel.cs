@@ -323,7 +323,7 @@ namespace SmartLanche.ViewModels
                 Price = value.Price;
                 PriceDisplay = value.Price.ToString("C");
                 Description = value.Description;
-                StockQuantity = value.stockQuantity;
+                StockQuantity = value.StockQuantity;
                 MinStockLevel = value.MinStockLevel;
                 IsCombo = value.IsCombo;
 

@@ -29,7 +29,8 @@ namespace SmartLanche.ViewModels
 
             Messenger.Register<SalesViewModel, ProductsChangedMessage>(this, async (r, m) =>
             {
-                if (!r.IsBusy) await r.LoadDataAsync();
+                //if (!r.IsBusy) 
+                await r.LoadDataAsync();
             });
 
             Messenger.Register<SalesViewModel, ClientsChangedMessage>(this, async (r, m) =>
