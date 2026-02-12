@@ -30,6 +30,7 @@ namespace SmartLanche.ViewModels
             });
 
             FilteredProducts = new ObservableCollection<Product>();
+
             _ = LoadInventoryAsync();
         }
 
@@ -98,12 +99,14 @@ namespace SmartLanche.ViewModels
             }
 
             IsBusy = true;
+
             using var context = await _contextFactory.CreateDbContextAsync();
             using var transaction = await context.Database.BeginTransactionAsync();
 
             try
             {
                 var product = await context.Products.FindAsync(SelectedProduct.Id);
+
                 if (product == null) return;
 
                 double adjustment = type == MovementType.Input ? MovementAmount : -MovementAmount;
@@ -120,12 +123,15 @@ namespace SmartLanche.ViewModels
                 };
 
                 context.StockMovements.Add(movement);
+
                 await context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
+                Messenger.Send(new ProductsChangedMessage());
                 Messenger.Send(new StatusMessage($"Estoque de {product.Name} atualizado!", true));
 
                 MovementAmount = 0;
+
                 await LoadInventoryAsync();
             }
             catch (Exception ex)
@@ -133,7 +139,10 @@ namespace SmartLanche.ViewModels
                 await transaction.RollbackAsync();
                 Messenger.Send(new StatusMessage($"Erro na movimentação: {ex.Message}", false));
             }
-            finally { IsBusy = false; }
+            finally 
+            { 
+                IsBusy = false;
+            }
         }
 
         private void ApplyFilter()

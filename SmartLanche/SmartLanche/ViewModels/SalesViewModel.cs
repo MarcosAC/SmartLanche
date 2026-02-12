@@ -29,7 +29,10 @@ namespace SmartLanche.ViewModels
 
             Messenger.Register<SalesViewModel, ProductsChangedMessage>(this, async (r, m) =>
             {
-                if (!r.IsBusy) await r.LoadDataAsync();
+                await App.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    await r.LoadDataAsync();
+                });
             });
 
             Messenger.Register<SalesViewModel, ClientsChangedMessage>(this, async (r, m) =>
@@ -60,7 +63,7 @@ namespace SmartLanche.ViewModels
         private PaymentMethod selectedPaymentMethod = PaymentMethod.Cash;
 
         [ObservableProperty]
-        private Product? selectedProduct; 
+        private Product? selectedProduct;
 
         public decimal TotalOrderAmount => CartItems?.Where(item => item != null).Sum(item => item.Subtotal) ?? 0;
         public int TotalQuantity => CartItems?.Where(item => item != null).Sum(item => item.Quantity) ?? 0;
@@ -106,7 +109,7 @@ namespace SmartLanche.ViewModels
 
             try
             {
-                var existing = CartItems.FirstOrDefault(item => item.ProductId == product.Id);               
+                var existing = CartItems.FirstOrDefault(item => item.ProductId == product.Id);
 
                 if (existing == null)
                 {
@@ -119,12 +122,12 @@ namespace SmartLanche.ViewModels
                     });
 
                     UpdateTotals();
-                }                
+                }
             }
             catch (Exception ex)
             {
                 Messenger.Send(new StatusMessage("Erro ao adicionar item: " + ex.Message, false));
-            }            
+            }
         }
 
         [RelayCommand]
@@ -150,7 +153,7 @@ namespace SmartLanche.ViewModels
                 Messenger.Send(new StatusMessage("Selecione um cliente para pedidos no Fiado.", false));
                 return;
             }
-            
+
             using var context = await _contextFactory.CreateDbContextAsync();
             using var transaction = await context.Database.BeginTransactionAsync();
 
@@ -195,9 +198,9 @@ namespace SmartLanche.ViewModels
 
                 context.Orders.Add(newOrder);
                 await context.SaveChangesAsync();
-                
+
                 if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient != null)
-                {                    
+                {
                     var clientDb = await context.Clients.FindAsync(SelectedClient.Id);
                     if (clientDb != null)
                     {
@@ -213,10 +216,10 @@ namespace SmartLanche.ViewModels
                 {
                     var productInList = Products.FirstOrDefault(p => p.Id == cartItem.ProductId);
                     if (productInList != null)
-                    {                        
+                    {
                         productInList.StockQuantity -= cartItem.Quantity;
                     }
-                                        
+
                     if (SelectedPaymentMethod == PaymentMethod.Credit && SelectedClient != null)
                     {
                         var clientInList = Clients.FirstOrDefault(c => c.Id == SelectedClient.Id);
@@ -226,7 +229,7 @@ namespace SmartLanche.ViewModels
 
                 Messenger.Send(new ProductsChangedMessage());
                 Messenger.Send(new OrderCreatedMessage(newOrder));
-                
+
                 CartItems.Clear();
                 SelectedClient = null;
                 SelectedProduct = null;
@@ -267,20 +270,20 @@ namespace SmartLanche.ViewModels
                 item.Quantity--;
             }
             else
-            {                
+            {
                 CartItems.Remove(item);
             }
 
             UpdateTotals();
-        }        
-        
+        }
+
         #endregion
 
         #region Lógica de Apoio (CanExecute)
         partial void OnSelectedProductChanged(Product? value)
         {
             if (value == null) return;
-            
+
             AddProductToCart(value);
         }
 

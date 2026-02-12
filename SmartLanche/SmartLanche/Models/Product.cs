@@ -19,7 +19,7 @@ namespace SmartLanche.Models
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsLowStock))]
-        public double stockQuantity;
+        private double stockQuantity;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsLowStock))]
