@@ -108,6 +108,7 @@ namespace SmartLanche.ViewModels
             try
             {
                 var listProducts = await _repositoryProduct.GetAllAsync();
+
                 AllProducts = listProducts.Where(products => products.IsActive).ToList();
 
                 ApplyFilter();
@@ -154,6 +155,7 @@ namespace SmartLanche.ViewModels
                 else await _repositoryProduct.UpdateAsync(product);
 
                 string successMessage = Id == 0 ? "Produto cadastrado com sucesso!" : "Produto atualizado com sucesso!";
+
                 Messenger.Send(new StatusMessage(successMessage, true));
                 Messenger.Send(new ProductsChangedMessage());
 
@@ -191,6 +193,7 @@ namespace SmartLanche.ViewModels
                 }
 
                 await LoadProductsAsync();
+
                 CancelAction();
             }
             catch (Exception)
