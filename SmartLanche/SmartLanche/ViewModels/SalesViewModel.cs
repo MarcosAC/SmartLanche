@@ -285,6 +285,8 @@ namespace SmartLanche.ViewModels
             if (value == null) return;
 
             AddProductToCart(value);
+
+            SelectedProduct = null;
         }
 
         private void UpdateTotals()
